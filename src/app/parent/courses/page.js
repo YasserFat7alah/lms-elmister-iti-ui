@@ -1,0 +1,1 @@
+export default function CourseListing() { return <h1>Course Listing</h1>; }

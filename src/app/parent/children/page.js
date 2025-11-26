@@ -1,0 +1,1 @@
+export default function ChildrenList() { return <h1>My Children</h1>; }
