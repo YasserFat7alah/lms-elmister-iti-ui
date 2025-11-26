@@ -4,9 +4,15 @@
   "rsc": true,
   "tsx": false,
   "tailwind": {
+<<<<<<< HEAD
     "config": "tailwind.config.js",
     "css": "src/app/globals.css",
     "baseColor": "zinc",
+=======
+    "config": "",
+    "css": "src/app/globals.css",
+    "baseColor": "neutral",
+>>>>>>> origin/feature/dashboard-layout
     "cssVariables": true,
     "prefix": ""
   },

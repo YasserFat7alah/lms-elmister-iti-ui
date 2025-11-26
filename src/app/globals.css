@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+@plugin "tailwindcss-animate";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -24,6 +25,11 @@
   --input: 240 5.9% 90%;
   --ring: 240 10% 3.9%;
   --radius: 0.5rem;
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
 }
 
 .dark {
@@ -46,11 +52,13 @@
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
   --ring: 240 4.9% 83.9%;
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
 }
 
-/* هنا السحر كله في Tailwind 4 
-  إحنا بنربط متغيرات CSS بأسماء كلاسات تيلويند
-*/
 @theme {
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -82,8 +90,7 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-  
-  /* تعريف الأنيميشن هنا لو مش هتستخدم المكتبة */
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
@@ -97,8 +104,6 @@
   }
 }
 
-/* دلوقتي الكلاسات اتعرفت فوق، نقدر نستخدمها هنا 
-*/
 @layer base {
   * {
     @apply border-border outline-ring/50;
