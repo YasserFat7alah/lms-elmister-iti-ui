@@ -68,8 +68,6 @@ export const registerUser = async (userData) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(newUser));
     
-    // ⚠️ ملحوظة: شلنا window.location.href من هنا
-    // التوجيه هيحصل في صفحة SignUpPage باستخدام router.push("/dashboard")
   }
 
   return {

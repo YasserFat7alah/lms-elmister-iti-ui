@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import Dropdown from '../Notification/Dropdown'
+import Dropdown from './Notification/Dropdown'
 import { MenuIcon } from 'lucide-react'
 import AvatarMenu from './AvatarMenu'
 

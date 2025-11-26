@@ -5,10 +5,8 @@ import Topbar from './Topbar';
 const Layout = ({ children }) => {
   return (
     <div>
-        {/* SIDEBAR */}
         <Sidebar />
 
-        {/* MAIN CONTENT */}
         <div>
             <Topbar />
             

@@ -1,0 +1,1 @@
+export default function LessonBuilder() { return <h1>Lesson Builder Canvas</h1>; }
