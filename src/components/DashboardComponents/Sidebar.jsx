@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, MenuIcon, LayoutDashboard  } from 'lucide-react';
-import NavItem from '@/components/DashboardComponents/NavItem';
+import NavItem from '@/components/dashboardComponents/NavItem';
 
 
 const Sidebar = ({open , setOpen}) => {

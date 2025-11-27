@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
+import { Header } from "@/components/shared/Header"
+import { Footer } from "@/components/shared/Footer"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -13,7 +15,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased min-h-screen flex flex-col">
+        <Header/>
+          <main className="flex-1">
+            {children}
+          </main>
+        <Footer/>
+      </body>
     </html>
   )
 }
