@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { FaSearch } from "react-icons/fa";
 
 export function Hero() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -32,7 +33,8 @@ export function Hero() {
                 className="flex-1 outline-none text-foreground placeholder:text-muted-foreground bg-transparent"
               />
               <button className="px-4 py-2 bg-secondary rounded-lg text-white hover:bg-secondary/90 transition-colors flex items-center gap-2">
-                🔍
+                <FaSearch className="text-black text-2xl" />
+
               </button>
             </div>
           </div>

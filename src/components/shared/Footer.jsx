@@ -1,4 +1,13 @@
 import Link from "next/link"
+import {
+  RiFacebookFill,
+  RiTwitterXFill,
+  RiLinkedinFill,
+  RiInstagramFill,
+  RiMailLine,
+  RiPhoneLine,
+  RiMapPinLine,
+} from "react-icons/ri"
 
 export function Footer() {
   return (
@@ -12,16 +21,20 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <Link href="#" className="text-muted-foreground hover:text-primary transition-colors font-bold text-lg">
-                f
+                <RiFacebookFill className="text-grey text-lg"  />
+
               </Link>
               <Link href="#" className="text-muted-foreground hover:text-primary transition-colors font-bold text-lg">
-                𝕏
+                <RiTwitterXFill className="text-grey text-lg"  />
+
               </Link>
               <Link href="#" className="text-muted-foreground hover:text-primary transition-colors font-bold text-lg">
-                in
+                <RiLinkedinFill className="text-grey text-lg"  />
+                
               </Link>
               <Link href="#" className="text-muted-foreground hover:text-primary transition-colors font-bold text-lg">
-                📷
+                <RiInstagramFill className="text-grey text-lg"  />
+                
               </Link>
             </div>
           </div>
@@ -82,19 +95,19 @@ export function Footer() {
             <h4 className="font-semibold text-foreground">Contact</h4>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <span className="text-primary text-lg mt-0.5 flex-shrink-0">✉</span>
+                <span className="text-primary text-lg mt-0.5 flex-shrink-0"> <RiMailLine/>  </span>
                 <div>
                   <p className="text-sm text-muted-foreground">support@elmister.com</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-primary text-lg mt-0.5 flex-shrink-0">📞</span>
+                <span className="text-primary text-lg mt-0.5 flex-shrink-0"> <RiPhoneLine/> </span>
                 <div>
                   <p className="text-sm text-muted-foreground">+1 (800) 123-4567</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-primary text-lg mt-0.5 flex-shrink-0">📍</span>
+                <span className="text-primary text-lg mt-0.5 flex-shrink-0"> <RiMapPinLine/> </span>
                 <div>
                   <p className="text-sm text-muted-foreground"> egypt  </p>
                 </div>
