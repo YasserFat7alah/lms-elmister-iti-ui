@@ -1,6 +1,5 @@
 "use client";
-import { useField } from "formik";
-import { Label } from "@/components/ui/label";
+import { useField, useFormikContext } from "formik";
 import {
   Select,
   SelectContent,
@@ -8,22 +7,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 
-export default function FormikSelect({ label, placeholder, options, ...props }) {
-  const [field, meta, helpers] = useField(props);
+const FormikSelect = ({ label, name, options, placeholder, ...props }) => {
+  const [field, meta] = useField(name);
+  const { setFieldValue, setFieldTouched } = useFormikContext();
+
+  const handleValueChange = (val) => {
+    setFieldValue(name, val);
+  };
+
+  const handleOpenChange = (open) => {
+    if (!open) {
+      setFieldTouched(name, true);
+    }
+  };
 
   return (
-    <div className="space-y-1 text-left">
-      {label && <Label htmlFor={props.id || props.name}>{label}</Label>}
-      <Select
-        onValueChange={(value) => helpers.setValue(value)}
+    <div className="flex flex-col gap-2">
+      <Label htmlFor={name} className={meta.touched && meta.error ? "text-red-500" : ""}>
+        {label}
+      </Label>
+      
+      <Select 
+        onValueChange={handleValueChange} 
+        onOpenChange={handleOpenChange}
         defaultValue={field.value}
+        value={field.value}
       >
-        <SelectTrigger
-          className={cn(
-            meta.touched && meta.error && "border-red-500 focus:ring-red-500"
-          )}
+        <SelectTrigger 
+          id={name} 
+          className={meta.touched && meta.error ? "border-red-500" : ""}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
@@ -35,10 +49,12 @@ export default function FormikSelect({ label, placeholder, options, ...props }) 
           ))}
         </SelectContent>
       </Select>
-      
-      {meta.touched && meta.error ? (
-        <div className="text-xs text-red-500 font-medium">{meta.error}</div>
-      ) : null}
+
+      {meta.touched && meta.error && (
+        <span className="text-sm text-red-500">{meta.error}</span>
+      )}
     </div>
   );
-}
+};
+
+export default FormikSelect;

@@ -1,0 +1,85 @@
+// "use client";
+// import { useState } from "react";
+// import { Formik, Form } from "formik";
+// import { loginSchema } from "@/lib/validations"; // تأكد إن الملف ده موجود
+// import { useRouter } from "next/navigation";
+// import Link from "next/link";
+// import { useDispatch } from "react-redux";
+// import { useLoginMutation } from "@/redux/slices/usersApiSlice";
+// import { setCredentials } from "@/redux/slices/authSlice";
+
+// // Components
+// import { Button } from "@/components/ui/button";
+// import FormikInput from "@/components/authComponents/FormikInput"; 
+// import FormikPassword from "@/components/authComponents/FormikPassword";
+// import { Spinner } from "@/components/shared/Loader";
+
+// export default function LoginPage() {
+//   const router = useRouter();
+//   const dispatch = useDispatch();
+//   const [login, { isLoading }] = useLoginMutation();
+//   const [serverError, setServerError] = useState("");
+
+//   const handleLoginSubmit = async (values, { setSubmitting }) => {
+//     setServerError("");
+//     try {
+//       // 1. Call API
+//       const res = await login(values).unwrap(); // unwrap عشان يرمي Error لو فشل
+      
+//       // 2. Extract Data (حسب شكل الباك إند: { data: { user, accessToken } })
+//       const { user, accessToken } = res.data;
+
+//       // 3. Save to Redux
+//       dispatch(setCredentials({ user, token: accessToken }));
+
+//       // 4. Redirect
+//       const role = user.role;
+//       if (role === "admin") router.push("/admin");
+//       else if (role === "teacher") router.push("/teacher");
+//       else if (role === "student") router.push("/student");
+//       else if (role === "parent") router.push("/parent");
+//       else router.push("/dashboard");
+
+//     } catch (err) {
+//       // عرض الخطأ القادم من الباك إند
+//       setServerError(err?.data?.message || "Invalid email or password");
+//     } finally {
+//       setSubmitting(false);
+//     }
+//   };
+
+//   return (
+//     <div className="flex justify-center items-center min-h-screen bg-gray-50">
+//         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
+//           <h1 className="text-2xl font-bold text-center">Login</h1>
+          
+//           <Formik
+//             initialValues={{ email: "", password: "" }}
+//             validationSchema={loginSchema}
+//             onSubmit={handleLoginSubmit}
+//           >
+//             {({ isSubmitting }) => (
+//               <Form className="space-y-4">
+//                 <FormikInput label="Email" name="email" type="email" />
+//                 <FormikPassword label="Password" name="password" />
+
+//                 {serverError && (
+//                   <div className="p-3 text-sm text-red-600 bg-red-100 rounded">
+//                     {serverError}
+//                   </div>
+//                 )}
+
+//                 <Button type="submit" className="w-full" disabled={isLoading || isSubmitting}>
+//                   {isLoading ? <Spinner size={20} className="text-white" /> : "Login"}
+//                 </Button>
+                
+//                 <div className="text-center text-sm">
+//                     Don't have an account? <Link href="/signup" className="text-blue-600">Sign up</Link>
+//                 </div>
+//               </Form>
+//             )}
+//           </Formik>
+//         </div>
+//     </div>
+//   );
+// }

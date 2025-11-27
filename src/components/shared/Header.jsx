@@ -11,8 +11,11 @@ import {
   User, 
   ChevronDown 
 } from "lucide-react";
+import { apiSlice } from "@/redux/slices/apiSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "@/redux/slices/authSlice";
+import { useLogoutApiMutation } from "@/redux/slices/usersApiSlice";
 
-// UI Components
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -26,35 +29,24 @@ import {
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  // 1. Get User Data
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        try {
-          setUser(JSON.parse(storedUser));
-        } catch (error) {
-          console.error("Failed to parse user", error);
-        }
-      }
-    }
-  }, []);
+  const { userInfo } = useSelector((state) => state.auth);
+  const user = userInfo?.user; 
+  const [logoutApiCall] = useLogoutApiMutation();
 
-  // 2. Logout Logic
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("users_db");
-    window.location.href = "/login";
-  };
-
-  // Helper to get initials (e.g. "Ahmed Ali" -> "AA")
-  const getInitials = (name) => {
-    return name ? name.substring(0, 2).toUpperCase() : "U";
-  };
+const handleLogout = async () => {
+  try {
+    await logoutApiCall().unwrap().catch((err) => console.warn("Server logout failed", err));
+    
+  } finally {
+    dispatch(logout());
+    dispatch(apiSlice.util.resetApiState());
+     window.location.href = '/login'; 
+  }
+}; 
+  const getInitials = (name) => name ? name.substring(0, 2).toUpperCase() : "U";
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -68,14 +60,14 @@ export function Header() {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           
-          {/* --- LOGO --- */}
+          {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary">
               LMS
             </Link>
           </div>
 
-          {/* --- DESKTOP NAV --- */}
+          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <Link
@@ -88,10 +80,10 @@ export function Header() {
             ))}
           </div>
 
-          {/* --- AUTH SECTION (DESKTOP) --- */}
+          {/* Auth Section */}
           <div className="hidden md:flex items-center gap-4">
             {user ? (
-              // ✅ Professional Dropdown Menu
+              // حالة المسجل (Logged In)
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-auto gap-2 rounded-full pl-2 pr-4 hover:bg-muted">
@@ -108,7 +100,7 @@ export function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-56" align="end">
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{user.name}</p>
@@ -119,27 +111,18 @@ export function Header() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  
-                  <DropdownMenuItem onClick={() => router.push('/dashboard')} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => router.push('/dashboard')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
                   </DropdownMenuItem>
-                  
-                  <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  
                   <DropdownMenuSeparator />
-                  
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              // Guest State
               <div className="flex items-center gap-2">
                 <Link href="/login">
                   <Button variant="ghost">Login</Button>
@@ -151,7 +134,7 @@ export function Header() {
             )}
           </div>
 
-          {/* --- MOBILE MENU TOGGLE --- */}
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 rounded-md text-muted-foreground hover:bg-muted"
@@ -160,7 +143,7 @@ export function Header() {
           </button>
         </div>
 
-        {/* --- MOBILE MENU CONTENT --- */}
+        {/* Mobile Menu Content */}
         {isOpen && (
           <div className="md:hidden border-t py-4 animate-in slide-in-from-top-5">
             <div className="flex flex-col space-y-3 px-2">
@@ -178,7 +161,6 @@ export function Header() {
 
             <div className="mt-4 border-t pt-4 px-2">
               {user ? (
-                 // Mobile User Profile
                 <div className="space-y-3">
                     <div className="flex items-center gap-3 px-3">
                         <Avatar className="h-10 w-10">
@@ -191,7 +173,6 @@ export function Header() {
                             <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
                         </div>
                     </div>
-                    
                     <div className="grid grid-cols-2 gap-2 mt-2">
                         <Button variant="outline" className="w-full justify-start" onClick={() => router.push('/dashboard')}>
                             <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard

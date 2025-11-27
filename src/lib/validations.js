@@ -1,53 +1,64 @@
-import * as yup from "yup";
+import * as Yup from "yup";
 
 const passwordRules = /^(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
-const phoneRules = /^01[0125][0-9]{8}$/; 
 
-export const signupSchema = yup.object().shape({
-  name: yup.string().required("Full Name is required").trim(),
-  username: yup.string().required("Username is required").trim().min(3),
-  email: yup.string().email("Invalid email").required("Email is required").trim(),
-  password: yup
-    .string()
-    .min(8)
-    .matches(passwordRules, "Password must have 1 uppercase & 1 number")
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
+export const signupSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(3, "Name must be at least 3 characters")
+    .required("Name is required"),
+  
+  // Username optional if backend doesn't use it, but good to validate if input exists
+  username: Yup.string().min(3, "Username too short"),
+
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+
+  password: Yup.string()
+    .matches(
+      passwordRules,
+      "Password must contain at least 8 characters, one uppercase letter, and one number"
+    )
+    .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
+
+  role: Yup.string()
+    .oneOf(["student", "parent", "teacher"], "Invalid role")
+    .required("Role is required"),
+
+  age: Yup.number()
+    .positive("Age must be positive")
+    .integer("Age must be an integer")
+    .required("Age is required"),
+
+  // --- Conditional Validation ---
   
-  age: yup
-    .number()
-    .typeError("Age must be a number")
-    .required("Age is required")
-    .min(6, "Age must be at least 6")
-    .max(100, "Invalid age"),
-    
-  phone: yup
-    .string()
-    .matches(phoneRules, "Invalid Egyptian phone number")
-    .nullable(),
-
-  role: yup
-    .string()
-    .required("Role is required")
-    .oneOf(['student', 'parent', 'teacher', 'admin'])
-    .default('student'),
-
-  
-  specialization: yup.string().when('role', {
-    is: 'teacher',
-    then: (schema) => schema.required("Specialization is required for teachers"),
-    otherwise: (schema) => schema.nullable(),
-  }),
-
-  gradeLevel: yup.string().when('role', {
-    is: 'student',
+  // Grade Level: مطلوب فقط للطالب
+  gradeLevel: Yup.string().when("role", {
+    is: "student",
     then: (schema) => schema.required("Grade Level is required for students"),
-    otherwise: (schema) => schema.nullable(),
+    otherwise: (schema) => schema.notRequired(),
   }),
 
-  parentId: yup.string().nullable(), 
+  // Specialization: مطلوب فقط للمدرس
+  specialization: Yup.string().when("role", {
+    is: "teacher",
+    then: (schema) => schema.required("Specialization is required for teachers"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+
+  // Phone: مطلوب لولي الأمر (وممكن المدرس)
+  phone: Yup.string().when("role", {
+    is: (val) => val === "parent" || val === "teacher",
+    then: (schema) => 
+      schema.matches(phoneRegExp, "Phone number is not valid").required("Phone number is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
-export const loginSchema = yup.object().shape({
-  email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup.string().required("Password is required"),
+export const loginSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string().required("Password is required"),
 });

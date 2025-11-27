@@ -2,44 +2,42 @@
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import { loginSchema } from "@/lib/validations";
-import { loginUser } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "@/redux/slices/usersApiSlice";
+import { setCredentials } from "@/redux/slices/authSlice";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import FormikInput from "@/components/authComponents/FormikInput"; 
 import FormikPassword from "@/components/authComponents/FormikPassword";
 import { Spinner } from "@/components/shared/Loader";
 import { GraduationCap } from "lucide-react";
 
 export default function LoginPage() {
-const router = useRouter();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [login, { isLoading }] = useLoginMutation();
   const [serverError, setServerError] = useState("");
 
-  const initialValues = { email: "", password: "" };
+const handleLoginSubmit = async (values, { setSubmitting }) => {
+  setServerError("");
+  try {
+    const res = await login(values).unwrap();
 
-  const handleLoginSubmit = async (values, { setSubmitting }) => {
-    setServerError("");
-    try {
-      const response = await loginUser(values.email, values.password);
-      const role = response.user.role;
+    const responseData = res?.data || res; 
+    const { user, accessToken } = responseData;
 
-      const routes = {
-        admin: "/admin",
-        teacher: "/teacher",
-        student: "/student",
-        parent: "/parent",
-      };
-      
-      router.push(routes[role] || "/dashboard");
+    dispatch(setCredentials({ user, accessToken }));
 
-    } catch (err) {
-      setServerError(err.message || "Invalid credentials");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    const role = user.role;
+    router.push(`/${role}`);
+
+  } catch (err) {
+    setServerError(err?.data?.message || "Invalid email or password");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px]">
@@ -57,44 +55,28 @@ const router = useRouter();
             </p>
           </div>
           <Formik
-            initialValues={initialValues}
+            initialValues={{ email: "", password: "" }}
             validationSchema={loginSchema}
             onSubmit={handleLoginSubmit}
           >
             {({ isSubmitting }) => (
-              <Form className="grid gap-4">
-                
-                <FormikInput
-                  label="Email"
-                  name="email"
-                  type="email"
-                  placeholder="enter your email"
-                />
-
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
-                  </div>
-                  <FormikPassword
-                    name="password"
-                    placeholder="********"
-                  />
-                </div>
+              <Form className="space-y-4">
+                <FormikInput label="Email" name="email" type="email" />
+                <FormikPassword label="Password" name="password" />
 
                 {serverError && (
-                  <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-md text-center font-medium animate-in fade-in-50">
+                  <div className="p-3 text-sm text-red-600 bg-red-100 rounded">
                     {serverError}
                   </div>
                 )}
 
-                <Button type="submit" className="w-full font-bold" disabled={isSubmitting}>
-                  {isSubmitting ? <Spinner size={20} className="text-white" /> : "Login"}
+                <Button type="submit" className="w-full" disabled={isLoading || isSubmitting}>
+                  {isLoading ? <Spinner size={20} className="text-white" /> : "Login"}
                 </Button>
                 
-                <Button variant="outline" type="button" className="w-full gap-2" onClick={() => alert("soooooooooon")}>
-                   Login with Google
-                </Button>
-
+                <div className="text-center text-sm">
+                    Don't have an account? <Link href="/signup" className="text-blue-600">Sign up</Link>
+                </div>
               </Form>
             )}
           </Formik>
