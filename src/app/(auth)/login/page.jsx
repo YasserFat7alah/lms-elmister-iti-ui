@@ -74,9 +74,6 @@ const handleLoginSubmit = async (values, { setSubmitting }) => {
                   {isLoading ? <Spinner size={20} className="text-white" /> : "Login"}
                 </Button>
                 
-                <div className="text-center text-sm">
-                    Don't have an account? <Link href="/signup" className="text-blue-600">Sign up</Link>
-                </div>
               </Form>
             )}
           </Formik>

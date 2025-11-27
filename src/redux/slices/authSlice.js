@@ -24,11 +24,10 @@ const authSlice = createSlice({
         localStorage.setItem('userInfo', JSON.stringify(action.payload));
         
         if (action.payload.user?.role) {
-           Cookies.set('user_role', action.payload.user.role, { expires: 7 }); // 7 أيام
+           Cookies.set('user_role', action.payload.user.role, { expires: 7 }); 
         }
       }
     },
-    // دالة تسجيل الخروج
     logout: (state) => {
       state.userInfo = null;
       if (typeof window !== 'undefined') {
