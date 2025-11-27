@@ -1,13 +1,10 @@
 
 import { Hero } from "@/components/homeComponents/Hero"
-<<<<<<< HEAD
-import { Footer } from "@/components/shared/Footer"
-import { Header } from "@/components/shared/Header"
-=======
 import { Features } from "@/components/homeComponents/Features"
 import { FAQ } from "@/components/homeComponents/Faq"
 import { Testimonials } from "@/components/homeComponents/Testimonials"
->>>>>>> origin/feature/homepage-components
+import { Header } from "@/components/shared/Header"
+import { Footer } from "@/components/shared/Footer"
 
 export default function Home() {
   return (

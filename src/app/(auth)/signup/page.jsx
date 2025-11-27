@@ -125,9 +125,7 @@ export default function SignUpPage() {
                   </TabsList>
                 </Tabs>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormikInput label="Full Name" name="name" placeholder="John Doe" />
-                </div>
 
                 <FormikInput label="Email" name="email" type="email" placeholder="john@example.com" />
                 
