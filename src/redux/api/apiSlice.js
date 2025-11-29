@@ -27,16 +27,16 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     !url.includes("/login") && 
     !url.includes("/register")
   ) {
-    console.warn("⛔ Token expired. Attempting refresh...");
+    console.warn(" Token expired. Attempting refresh...");
 
     const refreshResult = await baseQuery(
-      { url: `${USERS_URL}/refresh-token`, method: "POST" }, // تأكد إن المسار ده صح
+      { url: `${USERS_URL}/refresh-token`, method: "POST" }, 
       api,
       extraOptions
     );
 
     if (refreshResult?.data) {
-      console.log("✅ Token refreshed successfully!");
+      console.log(" Token refreshed successfully!");
       
       const { user, accessToken } = refreshResult.data.data;
 
@@ -44,7 +44,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
       result = await baseQuery(args, api, extraOptions);
     } else {
-      console.error("⛔ Refresh failed. Logging out.");
+      console.error(" Refresh failed. Logging out.");
       api.dispatch(logout());
     }
   }

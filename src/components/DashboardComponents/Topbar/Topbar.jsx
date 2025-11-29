@@ -15,7 +15,6 @@ const Topbar = ({ setOpen }) => {
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between bg-white px-4 shadow-sm md:px-8 border-b">
       
-      {/* Left: Toggle Button + Welcome */}
       <div className="flex items-center gap-4">
         <button 
           onClick={() => setOpen((prev) => !prev)} 
@@ -24,7 +23,6 @@ const Topbar = ({ setOpen }) => {
           <FaBars className="text-xl" />
         </button>
         
-        {/* زرار يفتح ويقفل في الديسكتوب كمان لو حابب */}
         <button 
           onClick={() => setOpen((prev) => !prev)} 
           className="hidden md:block p-2 text-gray-500 hover:text-primary transition-colors"
@@ -39,7 +37,6 @@ const Topbar = ({ setOpen }) => {
         </div>
       </div>
 
-      {/* Right: Actions */}
       <div className="flex items-center gap-4">
         <Dropdown />
         <AvatarMenu user={user} />

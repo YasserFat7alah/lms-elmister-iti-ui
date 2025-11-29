@@ -36,7 +36,6 @@ const authSlice = createSlice({
       state.userInfo = null;
       if (typeof window !== 'undefined') {
         localStorage.removeItem('userInfo');
-        localStorage.removeItem('users_db'); 
         Cookies.remove('token');
         Cookies.remove('user_role'); 
       }

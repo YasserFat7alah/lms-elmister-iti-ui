@@ -13,6 +13,7 @@ import { Spinner } from "@/components/shared/Loader";
 import FormikInput from "@/components/authComponents/FormikInput";
 import FormikPassword from "@/components/authComponents/FormikPassword";
 import Image from "next/image";
+import logo from "@/assets/images/logo.png";
 
 
 export default function ParentSignUpPage() {
@@ -25,7 +26,7 @@ export default function ParentSignUpPage() {
     name: "",
     email: "",
     password: "",
-    confirmPassword: "", // 1. زودناها هنا
+    confirmPassword: "", 
     age: "",
     phone: "", 
     role: "parent", 
@@ -34,12 +35,10 @@ export default function ParentSignUpPage() {
   const handleSubmit = async (values, { setSubmitting }) => {
     setServerError("");
     try {
-      // 2. تنظيف البيانات قبل الإرسال
-      // بناخد نسخة من values ونشيل منها confirmPassword
       const { confirmPassword, ...rest } = values; 
 
       const payload = { 
-        ...rest, // بنبعت كل حاجة ما عدا تأكيد الباسورد
+        ...rest, 
         role: "parent" 
       };
       
@@ -60,7 +59,6 @@ export default function ParentSignUpPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
-      {/* الجزء الجانبي (الصورة) زي ما هو... */}
       
       <div className="hidden lg:block relative h-full">
          <div className="absolute inset-0 bg-black/40 flex flex-col justify-center p-12 text-white">
@@ -69,24 +67,30 @@ export default function ParentSignUpPage() {
            alt="Classroom"
            className="h-full w-full object-cover absolute inset-0 -z-10"
           />
-          {/* <h2 className="text-4xl font-bold mb-4">Parent Portal</h2>
-          <p className="text-lg">Track your child's progress easily.</p> */}
          </div>
       </div>
 
       <div className="flex items-center justify-center py-12 px-4 sm:px-8 bg-gray-50">
         
         <div className="mx-auto grid w-full max-w-[500px] gap-6">
+         <div className="mb-4 flex items-center justify-between">
+           <Link 
+             href="/" 
+             className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]"
+           >
+             Back Home
+           </Link>
+         
+           <Image 
+             src={logo} 
+             alt="El-Mister Logo" 
+             className="h-12 w-auto"
+           />
+         </div>
          
          
           <div className="grid gap-2 text-center">
             
-<Image 
-  src="/imgs/Logo.png" 
-  alt="Logo"
-  width={100}        // حط أي مقاس مناسب
-  height={100}
-/>
             <h1 className="text-3xl font-bold">Sign into Your Account</h1>
           </div>
 
@@ -106,7 +110,6 @@ export default function ParentSignUpPage() {
                     <FormikInput label="Phone Number" name="phone" placeholder="+20..." />
                 </div>
 
-                {/* 3. حقول الباسورد */}
                 <div className="grid grid-cols-1 gap-4">
                     <FormikPassword label="Password" name="password" />
                     <FormikPassword 

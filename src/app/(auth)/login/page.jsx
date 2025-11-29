@@ -5,7 +5,6 @@ import { loginSchema } from "@/lib/validations";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-// تأكد من المسار، يفضل يكون import { useLoginMutation } from "@/redux/api/endpoints/authApi";
 import { useLoginMutation } from "@/redux/api/endPoints/usersApiSlice"; 
 import { setCredentials } from "@/redux/slices/authSlice";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,9 @@ import FormikInput from "@/components/authComponents/FormikInput";
 import FormikPassword from "@/components/authComponents/FormikPassword";
 import { Spinner } from "@/components/shared/Loader";
 import { GraduationCap } from "lucide-react";
-import logo from './logo.png';
+import Image from "next/image";
+import logo from "@/assets/images/logo.png";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -59,19 +60,18 @@ export default function LoginPage() {
         
         <div className="mx-auto grid w-[350px] gap-6">
           
-            <div className="mb-4 text-start ">
+<div className="mb-4 flex items-center justify-between">
   <Link 
     href="/" 
-    className="inline-block px-4 py-2 bg-[#ff5372] text-white rounded hover:bg[#ff274f]"
+    className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]"
   >
     Back Home
   </Link>
-<img
-  src={logo}
-  alt="Logo" 
-  width={100} 
-  height={100} 
-    className="inline-block ml-4"
+
+  <Image 
+    src={logo} 
+    alt="El-Mister Logo" 
+    className="h-12 w-auto"
   />
 </div>
           <div className="grid gap-2 text-center">

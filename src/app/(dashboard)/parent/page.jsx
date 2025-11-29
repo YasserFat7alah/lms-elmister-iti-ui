@@ -11,7 +11,7 @@ export default function ParentDashboard() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">👨‍👩‍👧‍👦 Parents Portal</h1>
+      <h1 className="text-2xl font-bold"> Parents Portal</h1>
       <p>Tracking progress for: <span className="font-semibold">{userInfo?.user?.name}</span>'s children.</p>
       
       <div className="p-6 border rounded-lg bg-yellow-50">

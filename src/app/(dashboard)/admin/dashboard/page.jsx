@@ -10,7 +10,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-red-600">🛡️ Admin Control Panel</h1>
+      <h1 className="text-2xl font-bold text-red-600"> Admin Control Panel</h1>
       <p>System Overview and User Management.</p>
       
       <div className="p-10 border-2 border-dashed border-gray-300 rounded-lg text-center text-gray-400">

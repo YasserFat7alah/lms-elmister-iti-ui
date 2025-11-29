@@ -35,7 +35,6 @@ export const signupSchema = Yup.object().shape({
     .integer("Age must be an integer")
     .required("Age is required"),
 
-  // Conditional: gradeLevel required ONLY for students
   gradeLevel: Yup.string().when("role", {
     is: "student",
     then: (schema) => schema.required("Grade Level is required for students"),

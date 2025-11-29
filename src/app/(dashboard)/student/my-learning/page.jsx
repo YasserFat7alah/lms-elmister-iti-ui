@@ -9,15 +9,14 @@ export default function StudentDashboard() {
   const { userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const router = useRouter();
-  const [logoutApi] = useLogoutApiMutation(); // اختياري لو الباك اند محتاج logout
-
+  const [logoutApi] = useLogoutApiMutation(); 
   const handleLogout = async () => {
     try {
-        await logoutApi().unwrap(); // بلغ الباك اند
+        await logoutApi().unwrap(); 
     } catch (e) {
         console.log("Logout error", e);
     }
-    dispatch(logout()); // نظف الفرونت
+    dispatch(logout()); 
     router.push("/login");
   };
 

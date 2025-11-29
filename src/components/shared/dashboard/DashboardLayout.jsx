@@ -1,5 +1,5 @@
 import DashboardHeader from '@/components/dashboardComponents/Header/DashboardHeader';
-import Sidebar from '@/components/dashboardComponents/Sidebar';
+import Sidebar from '@/components/DashboardComponents/sidebar/Sidebar';
 import React from 'react'
 
 

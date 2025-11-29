@@ -11,7 +11,7 @@ export default function TeacherAnalytics() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">📊 Teacher Analytics</h1>
+      <h1 className="text-2xl font-bold"> Teacher Analytics</h1>
       <p>Welcome, Professor <span className="font-semibold text-primary">{userInfo?.user?.name}</span>.</p>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
