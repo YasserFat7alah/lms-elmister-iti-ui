@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
 import { 
-  Menu, X, LogOut, LayoutDashboard, Search, ShoppingCart, User 
+  Menu, X, LogOut, LayoutDashboard, Search, ShoppingCart, User, Lock 
 } from "lucide-react";
 import { apiSlice } from "@/redux/api/apiSlice";
-import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
 
@@ -24,16 +24,12 @@ import {
                 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 
-
-
-
-export function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+const LMSNavbar = ({ setSidebarOpen }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   
   const router = useRouter();
   const dispatch = useDispatch();
-
   const { userInfo } = useSelector((state) => state.auth);
   const [logoutApiCall] = useLogoutApiMutation();
 
@@ -45,7 +41,7 @@ export function Header() {
 
   const handleLogout = async () => {
     try {
-      await logoutApiCall().unwrap().catch((err) => console.warn("Server logout failed", err));
+      await logoutApiCall().unwrap().catch((err) => console.warn("Logout failed", err));
     } finally {
       dispatch(logout());
       dispatch(apiSlice.util.resetApiState());
@@ -58,25 +54,30 @@ export function Header() {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
-    { label: "teachers", href: "/teachers" }, 
-    { label: "Blog", href: "/blog" },
-    { label: "Contact us", href: "/contact" },
+    { label: "Instructors", href: "/instructors" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm h-20 flex items-center">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm h-20 font-sans">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-full">
           
-          <div className="flex-shrink-0 flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2 group">
+          <div className="flex items-center gap-2">
+             {setSidebarOpen && (
+                <button 
+                  onClick={() => setSidebarOpen(prev => !prev)}
+                  className="lg:hidden p-2 text-gray-600 mr-2"
+                >
+                  <Menu size={24} />
+                </button>
+             )}
 
+            <Link href="/" className="flex items-center gap-2 group">
   <Image 
     src={logo} 
     alt="El-Mister Logo" 
     className="h-12 w-auto"
   />
-
 
             </Link>
           </div>
@@ -86,30 +87,24 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-[15px] font-medium text-gray-600 transition-colors hover:text-[#FF0055]"
+                className="text-[15px] font-semibold text-gray-600 transition-colors hover:text-[#FF0055]"
               >
                 {item.label}
               </Link>
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-5">
+          <div className="flex items-center gap-3 md:gap-5">
             
-            <button className="text-gray-500 hover:text-gray-900 transition-colors">
-                <Search size={20} />
+            <button className="hidden md:block text-gray-500 hover:text-gray-900 transition-colors">
+                <Search size={22} strokeWidth={2} />
             </button>
 
-            {/* <Link href="/cart" className="relative text-gray-500 hover:text-gray-900 transition-colors">
-                <ShoppingCart size={20} />
-                <span className="absolute -top-2 -right-2 bg-[#10D876] text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold shadow-sm">
-                    1
-                </span>
-            </Link> */}
 
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="h-10 w-10 cursor-pointer border border-gray-100 shadow-sm">
+                  <Avatar className="h-10 w-10 cursor-pointer border border-gray-100 shadow-sm transition-transform hover:scale-105">
                     <AvatarImage src={user.avatar?.url} alt={user.name} />
                     <AvatarFallback className="bg-[#FF0055] text-white font-bold">
                       {getInitials(user.name)}
@@ -117,76 +112,72 @@ export function Header() {
                   </Avatar>
                 </DropdownMenuTrigger>
                 
-                <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuContent className="w-56 mt-2" align="end">
                   <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
-                      <p className="font-medium">{user.name}</p>
+                      <p className="font-medium text-gray-900">{user.name}</p>
                       <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                  <DropdownMenuItem onClick={() => router.push('/dashboard')} className="cursor-pointer">
                     <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push('/profile')}>
+                  <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" /> Profile
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" /> Log out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-3">
                 <Link href="/login">
                    <Button variant="ghost" className="font-semibold text-gray-700 hover:text-[#FF0055] hover:bg-transparent px-2">
-                     <span className="mr-2">🔐</span> Sign In
+                     <Lock size={16} className="mr-2" /> Sign In
                    </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button className="bg-[#FF0055] hover:bg-pink-600 text-white rounded-full px-6 font-semibold shadow-md shadow-pink-200">
+                  <Button className="bg-[#FF0055] hover:bg-pink-600 text-white rounded-full px-7 h-11 font-bold shadow-md shadow-pink-200 transition-all hover:shadow-lg">
                     Register
                   </Button>
                 </Link>
               </div>
             )}
-          </div>
 
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-gray-600"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          </div>
         </div>
 
-        {isOpen && (
-          <div className="lg:hidden absolute top-20 left-0 w-full bg-white border-t shadow-lg py-4 px-4 flex flex-col gap-4 animate-in slide-in-from-top-5">
+        {isMobileMenuOpen && (
+          <div className="lg:hidden absolute top-20 left-0 w-full bg-white border-t border-gray-100 shadow-xl py-4 px-4 flex flex-col gap-2 animate-in slide-in-from-top-2">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setIsOpen(false)}
-                className="block py-2 text-base font-medium text-gray-700 hover:text-[#FF0055]"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block py-3 px-2 rounded-lg text-base font-semibold text-gray-600 hover:bg-pink-50 hover:text-[#FF0055]"
               >
                 {item.label}
               </Link>
             ))}
-            <div className="border-t pt-4 flex flex-col gap-3">
-                 {!user && (
-                    <>
-                        <Button variant="outline" onClick={() => router.push('/login')} className="w-full">Sign In</Button>
-                        <Button className="w-full bg-[#FF0055]" onClick={() => router.push('/signup')}>Register</Button>
-                    </>
-                 )}
-                 {user && (
-                    <Button variant="destructive" onClick={handleLogout} className="w-full">Logout</Button>
-                 )}
-            </div>
+            
+            {!user && (
+                <div className="border-t pt-4 mt-2 flex flex-col gap-3">
+                    <Button variant="outline" onClick={() => router.push('/login')} className="w-full h-11 rounded-full border-gray-300">
+                        <Lock size={16} className="mr-2" /> Sign In
+                    </Button>
+                    <Button className="w-full bg-[#FF0055] h-11 rounded-full font-bold" onClick={() => router.push('/signup')}>
+                        Register
+                    </Button>
+                </div>
+            )}
           </div>
         )}
-      </nav>
-    </header>
+      </div>
+    </nav>
   );
-} 
+}
+
+export default LMSNavbar;

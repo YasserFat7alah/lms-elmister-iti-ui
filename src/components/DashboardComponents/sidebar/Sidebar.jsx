@@ -5,8 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice"; 
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice"; 
-import Image from "next/image";
-import logo from "@/assets/images/logo.png";
+// import Image from "next/image";
+// import logo from "@/assets/images/logo.png";
 
 // استيراد الأيقونات
 import { 
@@ -24,17 +24,13 @@ const Sidebar = ({ open, setOpen }) => {
   const { userInfo } = useSelector((state) => state.auth);
   const [logoutApi] = useLogoutApiMutation();
 
-  // --- Hydration Fix ---
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
   if (!isMounted) return null; 
-  // ---------------------
 
   const role = userInfo?.user?.role || "student";
 
-  // 1. تعريف القوائم لكل دور بالتفصيل
   const roleLinks = {
-    // --- للطالب (زي التصميم اللي فات) ---
     student: [
       { label: "Dashboard", href: "/student/my-learning", icon: LayoutDashboard },
       { label: "My Profile", href: "/student/profile", icon: User },
@@ -46,7 +42,6 @@ const Sidebar = ({ open, setOpen }) => {
       { label: "Order History", href: "/student/orders", icon: ShoppingBag },
     ],
 
-    // --- للمدرس (القائمة الطويلة اللي طلبتها) ---
     teacher: [
       { label: "Dashboard", href: "/teacher/analytics", icon: LayoutDashboard },
       { label: "Profile", href: "/teacher/profile", icon: User },
@@ -66,7 +61,7 @@ const Sidebar = ({ open, setOpen }) => {
 
     parent: [
       { label: "Overview", href: "/parent", icon: LayoutDashboard },
-      { label: "My Children", href: "/parent/children", icon: Baby }, // أيقونة طفل
+      { label: "My Children", href: "/parent/children", icon: Baby }, 
       { label: "Progress Reports", href: "/parent/reports", icon: FileBarChart },
       { label: "Teachers", href: "/parent/teachers", icon: Users },
       { label: "Payments", href: "/parent/payments", icon: CreditCard },
@@ -100,22 +95,16 @@ const Sidebar = ({ open, setOpen }) => {
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
+        className={`fixed top-10 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
           lg:static lg:translate-x-0 
           ${open ? "translate-x-0 w-64 shadow-2xl" : "-translate-x-full lg:w-[260px]"} 
         `}
       >
-        <div className="flex h-20 items-center px-6 border-b border-gray-100">
-  <Image 
-    src={logo} 
-    alt="" 
-    className="h-12 w-auto"
-  />
-
+        <div className="flex h-1 items-center px-6 border-b border-gray-100">
              <button onClick={() => setOpen(false)} className="ml-auto lg:hidden text-gray-400">
                <X size={24} />
              </button>
-        </div>
+        </div> 
 
         <div className="h-[calc(100vh-80px)] overflow-y-auto px-4 py-6 scrollbar-hide">
             

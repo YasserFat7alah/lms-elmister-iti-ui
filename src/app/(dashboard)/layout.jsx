@@ -1,25 +1,27 @@
 "use client";
 import { useState } from "react";
 import Sidebar from "@/components/DashboardComponents/Sidebar/Sidebar";
-import Topbar from "@/components/DashboardComponents/Topbar/Topbar";
+import LMSNavbar from "@/components/shared/dashboard/LMSNavbar";
+import { Header } from "@/components/shared/Header";
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-gray-50">
+    <div className="flex h-screen w-full flex-col overflow-hidden bg-gray-50">
       
-      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <LMSNavbar setSidebarOpen={setSidebarOpen} />
 
-      <div className="relative flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         
-        <Topbar setOpen={setSidebarOpen} />
+        <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scroll-smooth">
           {children}
         </main>
         
       </div>
+
     </div>
   );
 }

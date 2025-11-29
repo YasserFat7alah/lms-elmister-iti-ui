@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
 import { useRouter } from "next/navigation";
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice"; // لو عندك API logout
+import DashboardBanner from "@/components/shared/dashboard/DashboardBanner";
 
 export default function StudentDashboard() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -22,6 +23,9 @@ export default function StudentDashboard() {
 
   return (
     <div className="space-y-4">
+
+              <DashboardBanner/>
+
       <h1 className="text-2xl font-bold">🎓 My Learning Dashboard</h1>
       <p>Welcome back, <span className="font-semibold text-primary">{userInfo?.user?.name}</span>!</p>
       

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { FaBars } from "react-icons/fa"; // أيقونتك المفضلة
+import { FaBars } from "react-icons/fa"; 
 import Dropdown from "./Notification/Dropdown"; 
 import AvatarMenu from "./AvatarMenu";
 
