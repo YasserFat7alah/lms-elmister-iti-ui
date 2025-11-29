@@ -1,63 +1,70 @@
 'use client';
 import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, MenuIcon, LayoutDashboard  } from 'lucide-react';
 import NavItem from '@/components/dashboardComponents/NavItem';
+import { FaBars,FaTimes, FaCog, FaSignOutAlt } from "react-icons/fa";
 
 
-const Sidebar = ({open , setOpen}) => {
+const Sidebar = () => {
 
-  const [collapsed , setCollapsed] = useState(true);
-  
+  const [open, setOpen] = useState(false);
+
+
   return (
     <>
+      {/* MOBIL SIDEBAR BUTTON*/}
+      <button
+        className="md:hidden p-3 text-xl fixed top-1/2 bg-gray-200 rounded-r-lg cursor-pointer"
+        onClick={() => setOpen(true)}
+      >
+        <FaBars />
+      </button>
 
-      {/* SIDEBAR */}
-      <aside className={`
-        fixed lg:static h-screen z-20 top-0 left-0 bg-white shadow-md p-4 flex flex-col 
-        transform transition-all duration-300 ease-in-out
-        ${open ? "translate-x-0 w-56" : "-translate-x-full lg:translate-x-0"}
-        ${collapsed ? "lg:w-20" : "lg:w-64"}
-      `}>
-
-        {/* DESKTOP COLLAPSE BUTTON */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="
-            hidden lg:flex absolute top-4 right-[-12px]
-            bg-white p-1 rounded-full shadow border
-          "
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
-
-        {/* MOBILE CLOSE BUTTON */}
-        <button
-          onClick={() => setOpen(false)}
-          className="lg:hidden absolute top-4 right-4 bg-gray-200 p-1 rounded-full shadow hover:bg-gray-300 transition"
-        >
-          <ChevronLeft className="w-5 h-5 text-gray-700" />
-        </button>
-
-        <div className={`flex ${collapsed && 'justify-center'} items-center gap-2 border-gray-300 border-b mb-4 pb-4`}>
-          <LayoutDashboard className="w-6 h-6 text-blue-800" />
-
-            <h2 className={` font-bold text-blue-800 ${collapsed && 'lg:hidden'} ${!collapsed && 'inline'}`}>
-              Dashboard
-            </h2>
-        </div>
-
-        {/* PASS collapsed TO NavItem */}
-        <NavItem collapsed={collapsed} />
-
-      </aside>
-
-      {/* MOBILE SIDEBAR OVERLAY */}
+      {/* Overlay mobile */}
       {open && (
         <div
-        className='fixed inset-0 bg-black/10 lg:hidden z-10'
-        onClick={() => setOpen(false)}></div>
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setOpen(false)}
+        ></div>
       )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 h-full bg-white shadow-lg md:shadow-none md:border md:border-gray-200 md:rounded-md py-3 px-2 z-40 w-64
+        transform transition-transform duration-300 md:mx-12 md:w-80
+        ${open ? "translate-x-0 overflow-scroll pb-10" : "-translate-x-full"}
+        md:translate-x-0 md:static`}
+      >
+        {/* Close Button mobile only */}
+        <div className="flex items-center justify-end pt-4 pr-4  md:hidden">
+          <FaTimes className="text-xl" onClick={() => setOpen(false)} />
+        </div>
+
+        {/* MAIN CONTENT */}
+        <div className="pb-4 pl-5">
+
+          <h3 className="font-semibold text-gray-700 mb-4">Main Menu</h3>
+
+          <NavItem/>
+
+          <hr className="my-4 mr-5" />
+
+          {/*  ACCOUNT SETTING  */}
+          <h3 className="font-semibold text-gray-700 mb-4">
+            Account Settings
+          </h3>
+
+          <ul className="space-y-3">
+            <li className="flex items-center gap-3 hover:text-red-500 cursor-pointer">
+              <FaCog />
+              <span>Settings</span>
+            </li>
+            <li className="flex items-center gap-3 hover:text-red-500 cursor-pointer">
+              <FaSignOutAlt />
+              <span>Logout</span>
+            </li>
+          </ul>
+        </div>
+      </aside>
     </>
   )
 }
