@@ -1,5 +1,6 @@
 
 //ابحث عن esam ahmed  وحط الرابط بتاع env url بدل ما هو مكتوب كده
+//سيب الكومنت العربي علشان اعدل لم اضيف الباك 
 'use client';
 
 import { mockPosts } from "@/data/mockPosts";
