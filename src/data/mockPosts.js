@@ -94,3 +94,26 @@ export const mockPosts = [
     image: "/blog1.jpg"
   }
 ];
+
+
+
+export const addNewPost = (postData) => {
+  const newPost = {
+    id: Math.max(...mockPosts.map(p => p.id)) + 1,
+    ...postData,
+    date: new Date().toISOString().split('T')[0],
+  };
+  mockPosts.unshift(newPost); // إضافة في البداية
+  return newPost;
+};
+
+export const categories = [
+  "التعليم",
+  "التكنولوجيا", 
+  "الإدارة",
+  "التطوير المهني",
+  "المناهج",
+  "التقييم",
+  "الأنشطة",
+  "عام"
+];
