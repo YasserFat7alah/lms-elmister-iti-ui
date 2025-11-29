@@ -30,8 +30,8 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 h-full bg-white shadow-lg md:shadow-none md:border md:border-gray-200 md:rounded-md py-3 px-2 z-40 w-64
-        transform transition-transform duration-300 md:mx-12 md:w-80
-        ${open ? "translate-x-0 overflow-scroll pb-10" : "-translate-x-full"}
+        transform transition-transform duration-300 md:mx-12 md:w-96 overflow-y-scroll md:overflow-y-visible
+        ${open ? "translate-x-0 pb-10" : "-translate-x-full"}
         md:translate-x-0 md:static`}
       >
         {/* Close Button mobile only */}
