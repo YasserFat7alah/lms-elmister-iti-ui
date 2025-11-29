@@ -5,20 +5,17 @@ import { Formik, Form } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-
-import { signupSchema } from "@/lib/validations";
-import { useRegisterMutation } from "@/redux/slices/usersApiSlice";
+import { signupSchema } from "@/lib/validations"; 
+import { useRegisterMutation } from "@/redux/api/endPoints/usersApiSlice";
 import { setCredentials } from "@/redux/slices/authSlice";
-
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Spinner } from "@/components/shared/Loader";
-
 import FormikInput from "@/components/authComponents/FormikInput";
 import FormikPassword from "@/components/authComponents/FormikPassword";
-import FormikSelect from "@/components/authComponents/FormikSelect";
+import Image from "next/image";
 
-export default function SignUpPage() {
+
+export default function ParentSignUpPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [register, { isLoading }] = useRegisterMutation();
@@ -28,47 +25,34 @@ export default function SignUpPage() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "", // 1. زودناها هنا
     age: "",
-    phone: "",
-    role: "student",
-    specialization: "",
-    gradeLevel: "", 
+    phone: "", 
+    role: "parent", 
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setServerError("");
-    console.log("Starting Submission...", values); 
-
     try {
-      const payload = { ...values };
+      // 2. تنظيف البيانات قبل الإرسال
+      // بناخد نسخة من values ونشيل منها confirmPassword
+      const { confirmPassword, ...rest } = values; 
 
-      delete payload.username; 
+      const payload = { 
+        ...rest, // بنبعت كل حاجة ما عدا تأكيد الباسورد
+        role: "parent" 
+      };
+      
       if (payload.age) payload.age = Number(payload.age);
 
-      if (payload.role === "student") {
-        delete payload.specialization;
-      } else if (payload.role === "teacher") {
-        delete payload.gradeLevel;
-      } else if (payload.role === "parent") {
-        delete payload.gradeLevel;
-        delete payload.specialization;
-      }
-
-      if (!payload.phone) delete payload.phone;
-
-      console.log(" Payload sent to Backend:", payload); 
-
       const res = await register(payload).unwrap();
-      // console.log(" Success Response:", res); 
-
       const { user, accessToken } = res.data || res; 
-      dispatch(setCredentials({ user, token: accessToken }));
       
-      router.push("/dashboard");
+      dispatch(setCredentials({ user, accessToken }));
+      router.push("/parent");
+      
     } catch (err) {
-      console.error(" Register Error Full Object:", err); 
-            const errorMessage = err?.data?.message || err?.error || "Registration failed";
-      setServerError(errorMessage);
+      setServerError(err?.data?.message || "Registration failed");
     } finally {
       setSubmitting(false);
     }
@@ -76,27 +60,34 @@ export default function SignUpPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
-       <div className="hidden lg:block relative h-full">
-        <img
-          src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
-          alt="Classroom"
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/40 flex flex-col justify-center p-12 text-white">
-          <h2 className="text-4xl font-bold mb-4">Join Our Community</h2>
-          <p className="text-lg max-w-md text-gray-200">
-            Start your learning journey today with thousands of courses and expert teachers.
-          </p>
-        </div>
+      {/* الجزء الجانبي (الصورة) زي ما هو... */}
+      
+      <div className="hidden lg:block relative h-full">
+         <div className="absolute inset-0 bg-black/40 flex flex-col justify-center p-12 text-white">
+          <img
+           src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
+           alt="Classroom"
+           className="h-full w-full object-cover absolute inset-0 -z-10"
+          />
+          {/* <h2 className="text-4xl font-bold mb-4">Parent Portal</h2>
+          <p className="text-lg">Track your child's progress easily.</p> */}
+         </div>
       </div>
 
-      <div className="flex items-center justify-center py-12 px-4 sm:px-8 bg-gray-50 dark:bg-gray-900">
+      <div className="flex items-center justify-center py-12 px-4 sm:px-8 bg-gray-50">
+        
         <div className="mx-auto grid w-full max-w-[500px] gap-6">
+         
+         
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Create an Account</h1>
-            <p className="text-muted-foreground">
-              Choose your role and enter your details to get started.
-            </p>
+            
+<Image 
+  src="/imgs/Logo.png" 
+  alt="Logo"
+  width={100}        // حط أي مقاس مناسب
+  height={100}
+/>
+            <h1 className="text-3xl font-bold">Sign into Your Account</h1>
           </div>
 
           <Formik
@@ -104,76 +95,45 @@ export default function SignUpPage() {
             validationSchema={signupSchema}
             onSubmit={handleSubmit}
           >
-            {({ setFieldValue, values, isSubmitting, errors }) => (
+            {({ isSubmitting }) => (
               <Form className="space-y-4">
                 
-
-                <Tabs 
-                  defaultValue="student" 
-                  value={values.role}
-                  onValueChange={(val) => {
-                    setFieldValue("role", val);
-                    setFieldValue("gradeLevel", "");
-                    setFieldValue("specialization", "");
-                  }}
-                  className="w-full"
-                >
-                  <TabsList className="w-full grid grid-cols-3">
-                    <TabsTrigger value="student">Student</TabsTrigger>
-                    <TabsTrigger value="parent">Parent</TabsTrigger>
-                    <TabsTrigger value="teacher">Teacher</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-
-                    <FormikInput label="Full Name" name="name" placeholder="John Doe" />
-
-                <FormikInput label="Email" name="email" type="email" placeholder="john@example.com" />
+                <FormikInput label="Full Name" name="name" placeholder="Parent Name" />
+                <FormikInput label="Email" name="email" type="email" />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormikInput label="Age" name="age" type="number" placeholder="18" />
-                    
-                    {(values.role === "parent" || values.role === "teacher") && (
-                       <FormikInput label="Phone Number" name="phone" placeholder="+201xxxxxxxxx" />
-                    )}
+                    <FormikInput label="Age" name="age" type="number" />
+                    <FormikInput label="Phone Number" name="phone" placeholder="+20..." />
                 </div>
 
-                {values.role === "student" && (
-                  <FormikSelect 
-                    label="Grade Level" 
-                    name="gradeLevel"
-                    placeholder="Select Grade"
-                    options={[
-                        { value: "10", label: "Grade 10" },
-                        { value: "11", label: "Grade 11" },
-                        { value: "12", label: "Grade 12" },
-                    ]}
-                  />
-                )}
-
-                {values.role === "teacher" && (
-                   <FormikInput label="Specialization" name="specialization" placeholder="e.g. Mathematics" />
-                )}
-
-                <FormikPassword label="Password" name="password" placeholder="********" />
+                {/* 3. حقول الباسورد */}
+                <div className="grid grid-cols-1 gap-4">
+                    <FormikPassword label="Password" name="password" />
+                    <FormikPassword 
+                        label="Confirm Password" 
+                        name="confirmPassword" 
+                        placeholder="********" 
+                    />
+                </div>
 
                 {serverError && (
-                  <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-md text-sm">
-                     {serverError}
-                  </div>
+                  <div className="text-red-600 text-sm bg-red-50 p-2 rounded">{serverError}</div>
                 )}
 
-                <Button type="submit" className="w-full" disabled={isLoading || isSubmitting}>
+                <Button type="submit" className="w-full bg-[#FF4667] "  disabled={isLoading || isSubmitting}>
                   {isLoading ? <Spinner /> : "Sign Up"}
                 </Button>
               </Form>
             )}
           </Formik>
 
-          <div className="text-center text-sm">
-            Already have an account?
-            <Link href="/login" className="underline font-semibold hover:text-primary ms-1">
-              Log in
-            </Link>
+          <div className="text-center text-sm space-y-2">
+            <div>
+                Already have an account? 
+                <Link href="/login" className="underline font-semibold text-primary ml-1">Log in</Link>
+            </div>
+            <div className="text-muted-foreground text-xs">
+            </div>
           </div>
         </div>
       </div>

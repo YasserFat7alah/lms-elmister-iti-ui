@@ -2,14 +2,13 @@ import * as Yup from "yup";
 
 const passwordRules = /^(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
 
-const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+const phoneRegExp = /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/;
 
 export const signupSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, "Name must be at least 3 characters")
     .required("Name is required"),
-  
-  // Username optional if backend doesn't use it, but good to validate if input exists
+
   username: Yup.string().min(3, "Username too short"),
 
   email: Yup.string()
@@ -21,8 +20,11 @@ export const signupSchema = Yup.object().shape({
       passwordRules,
       "Password must contain at least 8 characters, one uppercase letter, and one number"
     )
-    .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
+
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm Password is required"),
 
   role: Yup.string()
     .oneOf(["student", "parent", "teacher"], "Invalid role")
@@ -33,27 +35,28 @@ export const signupSchema = Yup.object().shape({
     .integer("Age must be an integer")
     .required("Age is required"),
 
-  // --- Conditional Validation ---
-  
-  // Grade Level: مطلوب فقط للطالب
+  // Conditional: gradeLevel required ONLY for students
   gradeLevel: Yup.string().when("role", {
     is: "student",
     then: (schema) => schema.required("Grade Level is required for students"),
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  // Specialization: مطلوب فقط للمدرس
+  // Conditional: specialization required ONLY for teachers
   specialization: Yup.string().when("role", {
     is: "teacher",
-    then: (schema) => schema.required("Specialization is required for teachers"),
+    then: (schema) =>
+      schema.required("Specialization is required for teachers"),
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  // Phone: مطلوب لولي الأمر (وممكن المدرس)
+  // Conditional: phone required for parent OR teacher
   phone: Yup.string().when("role", {
     is: (val) => val === "parent" || val === "teacher",
-    then: (schema) => 
-      schema.matches(phoneRegExp, "Phone number is not valid").required("Phone number is required"),
+    then: (schema) =>
+      schema
+        .matches(phoneRegExp, "Phone number is not valid")
+        .required("Phone number is required"),
     otherwise: (schema) => schema.notRequired(),
   }),
 });

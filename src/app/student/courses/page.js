@@ -1,1 +1,0 @@
-export default function StudentCourses() { return <h1>My Courses</h1>; }

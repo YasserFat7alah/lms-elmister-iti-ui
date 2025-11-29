@@ -1,1 +1,0 @@
-export default function StudentLayout({ children }) { return <div className="flex"> <aside>Student Sidebar</aside> <main className="flex-1">{children}</main> </div>; }

@@ -5,13 +5,15 @@ import { loginSchema } from "@/lib/validations";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import { useLoginMutation } from "@/redux/slices/usersApiSlice";
+// تأكد من المسار، يفضل يكون import { useLoginMutation } from "@/redux/api/endpoints/authApi";
+import { useLoginMutation } from "@/redux/api/endPoints/usersApiSlice"; 
 import { setCredentials } from "@/redux/slices/authSlice";
 import { Button } from "@/components/ui/button";
 import FormikInput from "@/components/authComponents/FormikInput"; 
 import FormikPassword from "@/components/authComponents/FormikPassword";
 import { Spinner } from "@/components/shared/Loader";
 import { GraduationCap } from "lucide-react";
+import logo from './logo.png';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,41 +21,71 @@ export default function LoginPage() {
   const [login, { isLoading }] = useLoginMutation();
   const [serverError, setServerError] = useState("");
 
-const handleLoginSubmit = async (values, { setSubmitting }) => {
-  setServerError("");
-  try {
-    const res = await login(values).unwrap();
+  const handleLoginSubmit = async (values, { setSubmitting }) => {
+    setServerError("");
+    try {
+      const res = await login(values).unwrap();
 
-    const responseData = res?.data || res; 
-    const { user, accessToken } = responseData;
+      const responseData = res?.data || res; 
+      const { user, accessToken } = responseData;
 
-    dispatch(setCredentials({ user, accessToken }));
+      dispatch(setCredentials({ user, accessToken }));
 
-    const role = user.role;
-    router.push(`/${role}`);
+      const role = user.role;
+      
+      const dashboardPaths = {
+        admin: "/admin/dashboard",     
+        teacher: "/teacher/analytics",  
+        student: "/student/my-learning", 
+        parent: "/parent",     
+      };
 
-  } catch (err) {
-    setServerError(err?.data?.message || "Invalid email or password");
-  } finally {
-    setSubmitting(false);
-  }
-};
+      const targetPath = dashboardPaths[role] || "/";
+      
+      router.push(targetPath);
+
+    } catch (err) {
+      console.error("Login Error:", err);
+      setServerError(err?.data?.message || "Invalid email or password");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px]">
       
       <div className="flex items-center justify-center py-12">
+        
         <div className="mx-auto grid w-[350px] gap-6">
           
+            <div className="mb-4 text-start ">
+  <Link 
+    href="/" 
+    className="inline-block px-4 py-2 bg-[#ff5372] text-white rounded hover:bg[#ff274f]"
+  >
+    Back Home
+  </Link>
+<img
+  src={logo}
+  alt="Logo" 
+  width={100} 
+  height={100} 
+    className="inline-block ml-4"
+  />
+</div>
           <div className="grid gap-2 text-center">
+
             <div className="flex justify-center mb-4 lg:hidden">
                 <GraduationCap className="h-10 w-10 text-primary" />
             </div>
             <h1 className="text-3xl font-bold">Welcome back!</h1>
             <p className="text-balance text-muted-foreground">
-              Enter your email and password below to login in
+              Enter your email and password below to login
             </p>
+            
           </div>
+          
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={loginSchema}
@@ -70,30 +102,40 @@ const handleLoginSubmit = async (values, { setSubmitting }) => {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full" disabled={isLoading || isSubmitting}>
+                <Button type="submit" className="w-full bg-[#FF4667]" disabled={isLoading || isSubmitting}>
                   {isLoading ? <Spinner size={20} className="text-white" /> : "Login"}
                 </Button>
                 
               </Form>
             )}
           </Formik>
+          
+          {/* تعديل بسيط هنا: بما إنك فصلت التسجيل */}
           <div className="mt-4 text-center text-sm">
-            Don't have an account?
-            <Link href="/signup" className="underline font-semibold hover:text-primary">
-              Sign up
+            Don't have an account? 
+            <Link href="/signup" className="underline font-semibold hover:text-primary mx-1">
+              Register
             </Link>
+            <br />
+                        <Link href="/forgetPassword" className="underline mt-2 font-semibold hover:text-primary ">
+              forget your password
+            </Link>
+
           </div>
+          <div className=" text-center text-sm">
+          </div>
+
         </div>
       </div>
 
       <div className="hidden bg-muted lg:block relative h-full">
         <img
           src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
-          alt=""
-          className="h-full w-full object-cover  "
+          alt="Login Cover"
+          className="h-full w-full object-cover"
         />
-        
       </div>
 
-    </div>  );
+    </div>  
+  );
 }

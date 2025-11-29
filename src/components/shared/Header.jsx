@@ -11,10 +11,10 @@ import {
   User, 
   ChevronDown 
 } from "lucide-react";
-import { apiSlice } from "@/redux/slices/apiSlice";
+import { apiSlice } from "@/redux/api/apiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
-import { useLogoutApiMutation } from "@/redux/slices/usersApiSlice";
+import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

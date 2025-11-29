@@ -1,1 +1,0 @@
-export default function ParentLayout({ children }) { return <div className="flex"> <aside>Parent Sidebar</aside> <main className="flex-1">{children}</main> </div>; }

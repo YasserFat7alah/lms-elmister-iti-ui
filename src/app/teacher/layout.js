@@ -1,1 +1,0 @@
-export default function TutorLayout({ children }) { return <div className="flex"> <aside>Tutor Sidebar</aside> <main className="flex-1">{children}</main> </div>; }

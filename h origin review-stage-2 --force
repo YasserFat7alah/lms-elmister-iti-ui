@@ -1,0 +1,15 @@
+[33m79014eb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mreview-stage-2[m[33m, [m[1;31morigin/review-stage-2[m[33m)[m latest review-stage-2
+[33m360df86[m Merge feature/homepage-components into review-stage-2
+[33m88d9753[m Resolve merge conflict from staging-courses
+[33m0e8ca27[m[33m ([m[1;31morigin/feature/auth-Api+slices[m[33m, [m[1;32mfeature/auth-Api+slices[m[33m)[m Add auth API + slices -latest
+[33m8c4af54[m Add auth API + slices
+[33m2a94e52[m[33m ([m[1;31morigin/feature/homepage-components[m[33m)[m make home page components
+[33mc548d47[m[33m ([m[1;31morigin/staging-courses[m[33m)[m Courses search and filtering logic and responsive
+[33m39d9e4e[m[33m ([m[1;31morigin/staging[m[33m, [m[1;31morigin/release/v1.0.1[m[33m, [m[1;32mstaging[m[33m)[m merge: integrate redux structure into staging
+[33m4f1775f[m fix: resolve conflicts from dashboard layout merge
+[33m6bb7903[m merge: resolve conflicts between homepage and auth ui
+[33m8ccc812[m[33m ([m[1;31morigin/feature/stores-structure[m[33m)[m Added structure setup
+[33mbb11edf[m[33m ([m[1;31morigin/feature/dashboard-layout[m[33m)[m Add dashboard layout, sidebar, topbar and avatar menu
+[33m245355b[m[33m ([m[1;31morigin/feature/auth-ui-complete[m[33m, [m[1;32mfeature/auth-ui-complete[m[33m)[m feat(auth):  login/signup with formik, yup ,  mock service
+[33mbecfc7b[m[33m ([m[1;31morigin/mk/HomepageLayout[m[33m)[m make home page layout
+[33m9d031f9[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mfeature/setup-clerk-auth[m[33m)[m Initial commit from Create Next App

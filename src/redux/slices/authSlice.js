@@ -23,6 +23,10 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.setItem('userInfo', JSON.stringify(action.payload));
         
+        if (action.payload.accessToken) {
+           Cookies.set('token', action.payload.accessToken, { expires: 7 }); 
+        }
+
         if (action.payload.user?.role) {
            Cookies.set('user_role', action.payload.user.role, { expires: 7 }); 
         }
@@ -33,6 +37,7 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.removeItem('userInfo');
         localStorage.removeItem('users_db'); 
+        Cookies.remove('token');
         Cookies.remove('user_role'); 
       }
     },

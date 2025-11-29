@@ -1,9 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import StoreProvider from "@/redux/StoreProvider"; 
-import { Header } from "@/components/shared/Header"
-import { Footer } from "@/components/shared/Footer"
-
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
