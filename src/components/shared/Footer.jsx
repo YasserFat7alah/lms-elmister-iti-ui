@@ -1,138 +1,92 @@
-import Link from "next/link"
-import {
-  RiFacebookFill,
-  RiTwitterXFill,
-  RiLinkedinFill,
-  RiInstagramFill,
-  RiMailLine,
-  RiPhoneLine,
-  RiMapPinLine,
-} from "react-icons/ri"
+import Link from "next/link";
+import { RiMailLine, RiPhoneLine, RiMapPinLine } from "react-icons/ri";
 
 export function Footer() {
   return (
-    <footer className=" bg-card border-t border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-foreground">El-Mister</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Empowering educators and students worldwide through innovative technology.
-            </p>
-            <div className="flex gap-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors font-bold text-lg">
-                <RiFacebookFill className="text-grey text-lg"  />
+    <footer className="bg-[#0f172a] text-white">
+      <div className="max-w-7xl mx-auto px-6 py-16">
 
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors font-bold text-lg">
-                <RiTwitterXFill className="text-grey text-lg"  />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
 
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors font-bold text-lg">
-                <RiLinkedinFill className="text-grey text-lg"  />
-                
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors font-bold text-lg">
-                <RiInstagramFill className="text-grey text-lg"  />
-                
-              </Link>
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <img src="/logo.svg" alt="DreamsLMS" className="h-10" />
+              
             </div>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+              Platform designed to help organizations, educators, and learners manage, deliver, and track learning and training activities.
+            </p>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Product</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#features" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Features
-                </Link>
-              </li>
-              <li>
-                <Link href="#pricing" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link href="#security" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Security
-                </Link>
-              </li>
-              <li>
-                <Link href="#blog" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Blog
-                </Link>
-              </li>
+          {/*  For Instructor */}
+          <div>
+            <h3 className="font-semibold text-lg mb-6">For Instructor</h3>
+            <ul className="space-y-3 text-gray-400">
+              <li><Link href="#" className="hover:text-white transition">Search Mentors</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Login</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Register</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Booking</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Students</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Dashboard</Link></li>
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Company</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#about" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="#careers" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link href="#contact" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="#press" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                  Press
-                </Link>
-              </li>
+          {/* For Student */}
+          <div>
+            <h3 className="font-semibold text-lg mb-6">For Student</h3>
+            <ul className="space-y-3 text-gray-400">
+              <li><Link href="#" className="hover:text-white transition">Appointments</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Chat</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Login</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Register</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Instructor Dashboard</Link></li>
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Contact</h4>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <span className="text-primary text-lg mt-0.5 flex-shrink-0"> <RiMailLine/>  </span>
-                <div>
-                  <p className="text-sm text-muted-foreground">support@elmister.com</p>
-                </div>
+          <div className="space-y-8">
+            {/* Newsletter */}
+            <div>
+              <h3 className="font-semibold text-lg mb-6">Newsletter</h3>
+              <form className="flex gap-3">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  className="flex-1 bg-white/10 border border-white/20 rounded-full px-5 py-3 text-sm placeholder-gray-400 focus:outline-none focus:border-purple-500 transition"
+                />
+             <button className="bg-[#392C7D] hover:bg-[#4a3a9e] text-white font-medium px-6 py-3 rounded-full transition whitespace-nowrap">
+                  Subscribe
+             </button>
+              </form>
+            </div>
+
+            {/* Contact Info */}
+            <div className="space-y-4 text-sm text-gray-400">
+              <div className="flex items-center gap-3">
+                <RiMapPinLine className="text-purple-400 text-lg" />
+                <span>3556 Beach Street, San Francisco, California, CA 94108</span>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-primary text-lg mt-0.5 flex-shrink-0"> <RiPhoneLine/> </span>
-                <div>
-                  <p className="text-sm text-muted-foreground">+1 (800) 123-4567</p>
-                </div>
+              <div className="flex items-center gap-3">
+                <RiMailLine className="text-purple-400 text-lg" />
+                <span>dreamslms@example.com</span>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-primary text-lg mt-0.5 flex-shrink-0"> <RiMapPinLine/> </span>
-                <div>
-                  <p className="text-sm text-muted-foreground"> egypt  </p>
-                </div>
+              <div className="flex items-center gap-3">
+                <RiPhoneLine className="text-purple-400 text-lg" />
+                <span>+1 923-456-7890</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-border mb-8" />
-
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">© 2025 El-Mister. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="#privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="#terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="#cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Cookie Settings
-            </Link>
+        <div className="border-t border-white/10 mt-16 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+            <p>© 2025 DreamsLMS. All rights reserved.</p>
+            <div className="flex gap-6">
+              <Link href="#" className="hover:text-white transition">Terms & Conditions</Link>
+              <Link href="#" className="hover:text-white transition">Privacy Policy</Link>
+            </div>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }

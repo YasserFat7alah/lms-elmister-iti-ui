@@ -11,6 +11,8 @@ import {
   User, 
   ChevronDown 
 } from "lucide-react";
+import { FiLogIn, FiUserPlus } from "react-icons/fi";
+
 import { apiSlice } from "@/redux/slices/apiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
@@ -52,7 +54,9 @@ const handleLogout = async () => {
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
     { label: "Teachers", href: "/join-teacher" },
+    { label: "Pages", href: "/Pages" },
     { label: "Blog", href: "/blog" },
+    { label: "Contact us", href: "/Contactus" },
   ];
 
   return (
@@ -61,11 +65,7 @@ const handleLogout = async () => {
         <div className="flex h-16 items-center justify-between">
           
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-primary">
-              LMS
-            </Link>
-          </div>
+            <img src="/logo.svg" alt="LMS Logo" />
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
@@ -73,7 +73,7 @@ const handleLogout = async () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                className="text-sm font-medium text-black transition-colors hover:text-[#FF4667]"
               >
                 {item.label}
               </Link>
@@ -125,10 +125,17 @@ const handleLogout = async () => {
             ) : (
               <div className="flex items-center gap-2">
                 <Link href="/login">
-                  <Button variant="ghost">Login</Button>
+                <Button variant="ghost" className="rounded-full bg-[#E7E7E7] hover:bg-[#D9D9D9] text-gray-800 text-xs flex items-center gap-1">
+                    <FiLogIn size={14} />
+                           Sign in
+                </Button>
                 </Link>
+
                 <Link href="/signup">
-                  <Button>Get Started</Button>
+                 <Button className="rounded-full bg-[#FF4667] hover:bg-[#FF2855] text-white text-xs flex items-center gap-1">
+                       <FiUserPlus size={14} />
+                           Register
+                  </Button>
                 </Link>
               </div>
             )}
