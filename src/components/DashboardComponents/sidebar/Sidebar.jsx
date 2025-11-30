@@ -32,7 +32,7 @@ const Sidebar = ({ open, setOpen }) => {
   const roleLinks = {
     student: [
       { label: "Dashboard", href: "/student/my-learning", icon: LayoutDashboard },
-      { label: "My Profile", href: "/student/profile", icon: User },
+      { label: "Update Profile", href: "/student/profile", icon: User },
       { label: "Enrolled Courses", href: "/student/courses", icon: BookOpen },
       { label: "Assignments", href: "/teacher/assignments", icon: FileText },
       { label: "My Quiz Attempts", href: "/student/quizzes", icon: FileQuestion },
