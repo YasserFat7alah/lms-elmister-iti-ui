@@ -24,7 +24,7 @@ export default function TrustedBy() {
               key={partner.name}
               className="flex-shrink-0 hover:scale-110 transition-transform duration-300"
             >
-              <img
+              <Image
                 src={partner.src}
                 alt={partner.name}
                 width={100}

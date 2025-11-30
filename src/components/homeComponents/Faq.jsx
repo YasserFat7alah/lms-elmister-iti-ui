@@ -50,7 +50,7 @@ export function FAQ() {
           <div className="order-2 lg:order-1">
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl blur-3xl opacity-60 -z-10"></div>
-              <img
+              <Image
                 src="/ImageContainer.png"      
                 alt="El-Mister Team"
                 width={600}
