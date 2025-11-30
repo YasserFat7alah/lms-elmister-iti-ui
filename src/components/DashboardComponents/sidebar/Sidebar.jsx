@@ -97,7 +97,7 @@ const Sidebar = ({ open, setOpen }) => {
       <aside
         className={`fixed top-10 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
           lg:static lg:translate-x-0 
-          ${open ? "translate-x-0 w-64 shadow-2xl" : "-translate-x-full lg:w-[260px]"} 
+          ${open ? "translate-x-0 w-64 shadow-2xl bg-red-200" : "-translate-x-full lg:w-[260px]"} 
         `}
       >
         <div className="flex h-1 items-center px-6 border-b border-gray-100">
@@ -106,7 +106,7 @@ const Sidebar = ({ open, setOpen }) => {
              </button>
         </div> 
 
-        <div className="h-[calc(100vh-80px)] overflow-y-auto px-4 py-6 scrollbar-hide">
+        <div className="h-[calc(100vh-80px)] overflow-y-scroll px-4 py-14 scrollbar-hide">
             
             <div className="mb-6">
                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">Main Menu</h3>

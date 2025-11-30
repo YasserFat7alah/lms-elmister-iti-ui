@@ -40,6 +40,19 @@ const LMSNavbar = ({ setSidebarOpen }) => {
   const user = isMounted ? userInfo?.user : null;
 
   const handleLogout = async () => {
+
+
+    const [isClient, setIsClient] = useState(false);
+
+    // ____________FOR HYDRATION ERROR______________
+    useEffect(() => {
+      setIsClient(true);
+    }, []);
+
+    if (!isClient) return null;
+    // ___________________________________
+
+
     try {
       await logoutApiCall().unwrap().catch((err) => console.warn("Logout failed", err));
     } finally {

@@ -14,7 +14,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
-const CoursesList = ({courses}) => {
+const CoursesList = ({courses }) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -85,12 +85,12 @@ const CoursesList = ({courses}) => {
                 <div className="relative w-full h-48 overflow-hidden rounded-t-xl group">
                     {/* IMAGE*/}
                     <div className="w-full h-full overflow-hidden">
-                      <Image
+                      {/* <Image
                         src={course.thumbnail.url}
                         alt={course.title}
                         fill
                         className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                      />
+                      /> */}
                     </div>
 
                     {/* OVERLAY*/}
