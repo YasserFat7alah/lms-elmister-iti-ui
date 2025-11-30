@@ -9,6 +9,8 @@ const DashboardBanner = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const user = userInfo?.user || { name: "Guest User", role: "Student" }; // Fallback
 
+  
+
   return (
     <div className="relative w-full rounded-2xl overflow-hidden bg-gradient-to-r from-[#195EC2] via-[#2176E3] to-[#0A264F] shadow-lg mb-8">
       

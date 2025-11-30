@@ -64,7 +64,7 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm h-20 flex items-center">
+    <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-100 shadow-sm h-20 flex items-center">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-full">
           
@@ -141,7 +141,7 @@ export function Header() {
               <div className="flex items-center gap-3">
                 <Link href="/login">
                    <Button variant="ghost" className="font-semibold text-gray-700 hover:text-[#FF0055] hover:bg-transparent px-2">
-                     <span className="mr-2">🔐</span> Sign In
+                     Sign In
                    </Button>
                 </Link>
                 <Link href="/signup">

@@ -10,7 +10,7 @@ const CourseSearch = ({onSearch}) => {
 
 
   return (
-    <Input className="mb-10 mt-5 lg:w-[50%] " type='search' placeholder="Search about a course...." onChange={handelSearch}/>
+    <Input className="md:w-[60%] lg:w-[66%] " type='search' placeholder="Search about a course...." onChange={handelSearch}/>
   )
 }
 

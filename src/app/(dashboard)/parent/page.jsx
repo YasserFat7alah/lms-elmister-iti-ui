@@ -13,7 +13,6 @@ export default function ParentDashboard() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold"> Parents Portal</h1>
       <p>Tracking progress for: <span className="font-semibold">{userInfo?.user?.name}</span>'s children.</p>
-      
       <div className="p-6 border rounded-lg bg-yellow-50">
         <h3 className="text-lg font-medium">Children Performance</h3>
         <p className="text-sm mt-2">Connect your children accounts to see updates.</p>
