@@ -1,42 +1,53 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/redux/slices/authSlice";
-import { useRouter } from "next/navigation";
-import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice"; // لو عندك API logout
+import React from "react";
+import { studentStats, enrolledCourses } from "@/data/studentData"; 
+import DashboardCourseCard from "@/components/dashboardComponents/student/DashboardCourseCard";
+import { BookOpen, PlayCircle, Trophy } from "lucide-react";
+import PageBreadcrumb from "@/components/shared/dashboard/PageBreadcrumb";
 import DashboardBanner from "@/components/shared/dashboard/DashboardBanner";
 
-export default function StudentDashboard() {
-  const { userInfo } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const router = useRouter();
-  const [logoutApi] = useLogoutApiMutation(); 
-  const handleLogout = async () => {
-    try {
-        await logoutApi().unwrap(); 
-    } catch (e) {
-        console.log("Logout error", e);
+export default function StudentDashboardPage() {
+  
+  const getIcon = (iconName) => {
+    switch (iconName) {
+      case "book": return <BookOpen size={28} />;
+      case "play": return <PlayCircle size={28} />;
+      case "award": return <Trophy size={28} />;
+      default: return <BookOpen size={28} />;
     }
-    dispatch(logout()); 
-    router.push("/login");
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
+             <PageBreadcrumb />
+       <DashboardBanner />
 
-              <DashboardBanner/>
-
-      <h1 className="text-2xl font-bold">🎓 My Learning Dashboard</h1>
-      <p>Welcome back, <span className="font-semibold text-primary">{userInfo?.user?.name}</span>!</p>
-      
-      <div className="p-6 border rounded-lg bg-white shadow-sm">
-        <h3 className="text-lg font-medium">Enrolled Courses</h3>
-        <p className="text-muted-foreground mt-2">No courses yet. Start learning today!</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {studentStats.map((stat, index) => (
+          <div key={index} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${stat.color}`}>
+              {getIcon(stat.icon)}
+            </div>
+            <div>
+              <p className="text-gray-500 font-medium mb-1">{stat.label}</p>
+              <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
+            </div>
+          </div>
+        ))}
       </div>
 
-      <Button variant="destructive" onClick={handleLogout}>
-        Temporary Logout
-      </Button>
+      <div>
+        <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Recently Enrolled Courses</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {enrolledCourses.map((course) => (
+                <DashboardCourseCard key={course.id} course={course} />
+            ))}
+        </div>
+      </div>
+
     </div>
   );
 }

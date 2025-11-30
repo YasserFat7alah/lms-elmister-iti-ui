@@ -17,11 +17,8 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  // استخراج الرابط عشان نتأكد إنه مش لوجين
-  // args ممكن يكون string أو object، فبنتأكد
   const url = typeof args === 'string' ? args : args.url;
 
-  // الشرط الجديد: لو الإيرور 401، والعملية مش لوجين أو تسجيل (لأن دول 401 بتاعهم معناه باسورد غلط)
   if (
     (result?.error?.status === 401 || result?.error?.status === 403) &&
     !url.includes("/login") && 

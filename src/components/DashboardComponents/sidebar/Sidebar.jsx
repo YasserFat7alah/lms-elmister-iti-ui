@@ -8,7 +8,6 @@ import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
 // import Image from "next/image";
 // import logo from "@/assets/images/logo.png";
 
-// استيراد الأيقونات
 import { 
   LayoutDashboard, User, BookOpen, Award, Heart, Star, 
   FileQuestion, ShoppingBag, MessageSquare, LifeBuoy, 
@@ -35,11 +34,11 @@ const Sidebar = ({ open, setOpen }) => {
       { label: "Dashboard", href: "/student/my-learning", icon: LayoutDashboard },
       { label: "My Profile", href: "/student/profile", icon: User },
       { label: "Enrolled Courses", href: "/student/courses", icon: BookOpen },
-      { label: "My Certificates", href: "/student/certificates", icon: Award },
-      { label: "Wishlist", href: "/student/wishlist", icon: Heart },
-      { label: "Reviews", href: "/student/reviews", icon: Star },
+      { label: "Assignments", href: "/teacher/assignments", icon: FileText },
       { label: "My Quiz Attempts", href: "/student/quizzes", icon: FileQuestion },
-      { label: "Order History", href: "/student/orders", icon: ShoppingBag },
+      { label: "Wishlist", href: "/student/wishlist", icon: Heart },
+      { label: "My Certificates", href: "/student/certificates", icon: Award },
+      { label: "subscription History", href: "/student/orders", icon: ShoppingBag },
     ],
 
     teacher: [
@@ -51,10 +50,8 @@ const Sidebar = ({ open, setOpen }) => {
       { label: "Students", href: "/teacher/students", icon: Users },
       { label: "Quiz", href: "/teacher/quizzes", icon: FileQuestion },
       { label: "Quiz Results", href: "/teacher/quiz-results", icon: ClipboardCheck },
-      { label: "Certificates", href: "/teacher/certificates", icon: Award },
       { label: "Earnings", href: "/teacher/earnings", icon: Wallet },
       { label: "Payout", href: "/teacher/payout", icon: CreditCard },
-      { label: "Statements", href: "/teacher/statements", icon: FileBarChart },
       { label: "Messages", href: "/teacher/messages", icon: MessageSquare },
       { label: "Support Tickets", href: "/teacher/support", icon: LifeBuoy },
     ],

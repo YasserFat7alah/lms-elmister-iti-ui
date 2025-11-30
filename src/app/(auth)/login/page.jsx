@@ -16,6 +16,10 @@ import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 
 
+
+
+
+
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -110,7 +114,6 @@ export default function LoginPage() {
             )}
           </Formik>
           
-          {/* تعديل بسيط هنا: بما إنك فصلت التسجيل */}
           <div className="mt-4 text-center text-sm">
             Don't have an account? 
             <Link href="/signup" className="underline font-semibold hover:text-primary mx-1">

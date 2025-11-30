@@ -1,70 +1,66 @@
 "use client"
-
 import { useState } from "react"
-import Link from "next/link"
 import Image from "next/image"
 import { FaSearch } from "react-icons/fa";
+import Rating from "../shared/Rating";
 
 export function Hero() {
   const [searchQuery, setSearchQuery] = useState("")
 
   return (
-    <section className="relative w-full min-h-screen overflow-hidden">
-      <div className="absolute inset-0 w-full h-full">
-        <Image
-          src="/Homapagebackground.jpg"
-          alt="Professional woman studying online with warm lighting"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent" />
-      </div>
-
-      <div className="relative z-10 flex flex-col justify-center items-center min-h-screen px-4">
-        <div className="max-w-2xl mx-auto text-center mb-16">
-          <div className="mb-8 flex justify-center">
-            <div className="w-full max-w-md flex gap-2 bg-white/95 rounded-lg p-3 shadow-lg">
-              <input
-                type="text"
-                placeholder="Search Course"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 outline-none text-foreground placeholder:text-muted-foreground bg-transparent"
-              />
-              <button className="px-4 py-2 bg-secondary rounded-lg text-white hover:bg-secondary/90 transition-colors flex items-center gap-2">
-                <FaSearch className="text-black text-2xl" />
-
-              </button>
+<section className="relative h-auto md:h-[calc(100vh-64px)] w-full overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-white">
+      <div className="h-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-center px-6 lg:px-8">
+        {/* LEFT SECTION */}
+        <div className="space-y-4 md:space-y-5 py-5 md:py-0">
+          <p className="text-sm text-gray-600">The Leader in Online Learning</p>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
+            Engaging & Accessible
+            <span className="inline-block mx-2 md:mx-3 px-4 py-1 md:px-5 md:py-2 bg-pink-200 text-pink-600 rounded-full font-bold text-2xl md:text-3xl lg:text-4xl">
+              Online
+            </span>
+            Courses For All
+          </h1>
+          <div className="w-full bg-white shadow-lg rounded-full flex items-center border">
+            <div className="pl-4 md:pl-5 text-gray-400"><FaSearch size={20} /></div>
+            <input
+              type="text"
+              placeholder="Search Courses, Instructors"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 px-4 py-3 md:py-4 outline-none"
+            />
+            <button className="px-8 md:px-10 py-3 md:py-4 bg-purple-600 text-white rounded-full font-medium">Search</button>
+          </div>
+          <div className="pt-2">
+            <p className="text-gray-600 text-sm">
+              Trusted by over <span className="font-bold text-gray-800">15K Users</span> worldwide since 2024
+            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <Rating defaultRating={5} readOnly />
+              <span className="text-sm text-gray-700">4.9 / 200 Review</span>
             </div>
           </div>
-
-          <p className="text-xl text-white font-semibold italic mb-12">We have the largest collection of courses</p>
-
-          <Link
-            href="/courses"
-            className="bg-white text-foreground font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-white/90 transition-colors inline-block"
-          >
-            View All Courses
-          </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="text-5xl font-bold text-white mb-2">332</div>
-            <div className="text-lg text-white/80 font-medium">Courses</div>
+        {/* RIGHT SECTION */}
+        <div className="relative hidden md:block">
+          <img src="/yellow-1.png" width={400} height={800} alt="" className="absolute -top-[230px] -right-20 md:-right-28 z-10 pointer-events-none"/>
+          <img src="/yellow-2.png" width={450} height={800} alt="" className="absolute -top-[150px] -right-20 z-9 pointer-events-none"/>
+          <img src="/purple.png" width={400} height={400} alt="" className="absolute top-12 right-6 z-1 pointer-events-none"/>
+          <img src="/girlForHomePage.png" width={400} height={800} alt="hero student"  className="absolute -top-[300px] -right-14 z-10 drop-shadow-2xl" priority/>
+
+          <div className="absolute bottom-2 right-75 z-20">
+            <img src="/Container.png" alt="students" width={240} height={80} className="drop-shadow-lg"/>
           </div>
-          <div className="text-center">
-            <div className="text-5xl font-bold text-white mb-2">1403</div>
-            <div className="text-lg text-white/80 font-medium">Members</div>
-          </div>
-          <div className="text-center">
-            <div className="text-5xl font-bold text-white mb-2">60</div>
-            <div className="text-lg text-white/80 font-medium">Authors</div>
-          </div>
-          <div className="text-center">
-            <div className="text-5xl font-bold text-white mb-2">20</div>
-            <div className="text-lg text-white/80 font-medium">Subjects</div>
+
+          <div className="absolute bottom-4 -right-32 z-20">
+            <div className="bg-purple-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-[30px] rounded-bl-none shadow-xl flex items-center gap-2 md:gap-3">
+              <span className="text-xl md:text-3xl">→</span>
+              <div className="text-right">
+                <p className="font-bold text-lg md:text-xl">50+</p>
+                <p className="text-xs md:text-sm">Courses</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

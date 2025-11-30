@@ -1,5 +1,6 @@
 import { apiSlice } from '../apiSlice';
-import { USERS_URL } from '@/constants'; 
+import { USERS_URL, USERS_URL_DATA } from '@/constants'; 
+
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     
@@ -13,7 +14,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
 
     register: builder.mutation({
       query: (data) => ({
-        url: `${USERS_URL}/register`,
+        url: `${USERS_URL}/register`, 
         method: 'POST',
         body: data,
       }),
@@ -26,6 +27,29 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
+    getMe: builder.query({
+      query: () => `${USERS_URL_DATA}/me`,
+      providesTags: ['User'], 
+      keepUnusedDataFor: 5,
+    }),
+
+    updateMe: builder.mutation({
+      query: (formData) => ({
+        url: `${USERS_URL_DATA}/me`,
+        method: 'PUT',
+        body: formData,
+      }),
+      invalidatesTags: ['User'], 
+    }), 
+    
+    uploadAvatar: builder.mutation({
+      query: (formData) => ({
+        url: `${USERS_URL_DATA}/me/avatar`,
+        method: 'POST',
+        body: formData, 
+      }),
+      invalidatesTags: ['User'], 
+    }),
 
   }),
 });
@@ -34,4 +58,7 @@ export const {
   useLoginMutation, 
   useRegisterMutation, 
   useLogoutApiMutation,
+  useGetMeQuery,
+  useUpdateMeMutation,
+  useUploadAvatarMutation 
 } = usersApiSlice;
