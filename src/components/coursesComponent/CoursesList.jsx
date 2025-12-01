@@ -3,7 +3,6 @@ import React, { useState, useMemo } from 'react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Button } from '../ui/button';
 import {
   Pagination,
   PaginationContent,
@@ -13,6 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import Link from 'next/link';
 
 const CoursesList = ({courses }) => {
   const router = useRouter();
@@ -95,11 +95,9 @@ const CoursesList = ({courses }) => {
 
                     {/* OVERLAY*/}
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 -translate-x-full group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-                      <Button className="cursor-pointer"
-                        onClick={() => router.push(`/courses/${course.id}`)}
-                      >
+                      <Link className="cursor-pointer"  href={`/courses/${course.id}`}>
                         View Course
-                      </Button>
+                      </Link>
                     </div>
                 </div>
 
