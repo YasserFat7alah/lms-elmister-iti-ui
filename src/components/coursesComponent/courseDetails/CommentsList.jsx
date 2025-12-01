@@ -49,7 +49,7 @@ const CommentsList = () => {
   }
 
   return (
-    <div className='p-4 border text-black rounded-md my-5 mx-4 h-[500px] overflow-y-scroll'>
+    <div className='p-4 border text-black rounded-md my-5 mx-4 h-[370px] overflow-y-scroll'>
       <h3 className='font-bold text-gray-900 mb-3'>Comments</h3>
       <ul className='space-y-3'>
         {dummyComments.map(comment => (
