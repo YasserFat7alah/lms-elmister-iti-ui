@@ -80,9 +80,9 @@ const CoursesList = ({courses }) => {
         <>
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4'>
             {paginatedCourses.map(course=>(
-              <Link href={`/courses/${course.id}`} className="cursor-pointer">
+              <Link key={course.id} href={`/courses/${course.id}`} className="cursor-pointer">
               <Card 
-                key={course.id} 
+                 
                 className="max-w-sm mx-auto mb-4 overflow-hidden group"  
               >
             
