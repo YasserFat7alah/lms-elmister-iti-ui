@@ -3,7 +3,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { FaSearch } from "react-icons/fa";
 import Rating from "../shared/Rating";
-import Yellow1 from '../../../public/yellow-1.png';
+import Yellow1 from '../../../public/yellow1.png';
 import Yellow2 from '../../../public/yellow-2.png';
 import purple from '../../../public/purple.png';
 import girlForHome from '../../../public/girlForHomePage.png';
