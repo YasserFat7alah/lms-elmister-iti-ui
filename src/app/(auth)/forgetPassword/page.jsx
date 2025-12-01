@@ -16,8 +16,16 @@ export default function page() {
 
 
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px]">
-      
+    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px]  bg-gray-50">
+            <div className="hidden bg-muted lg:block relative h-full">
+        <img
+          src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
+          alt="Login Cover"
+          className="h-full w-full object-cover"
+        />
+      </div>
+
+
       <div className="flex items-center justify-center py-12">
         
         <div className="mx-auto grid w-[350px] gap-6">
@@ -36,7 +44,7 @@ export default function page() {
     className="h-12 w-auto"
   />
 </div>
-          <div className="grid gap-2 text-center">
+          <div className="grid gap-2 text-center ">
 
             <div className="flex justify-center mb-4 lg:hidden">
                 <GraduationCap className="h-10 w-10 text-primary" />
@@ -77,14 +85,6 @@ export default function page() {
           </div>
 
         </div>
-      </div>
-
-      <div className="hidden bg-muted lg:block relative h-full">
-        <img
-          src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
-          alt="Login Cover"
-          className="h-full w-full object-cover"
-        />
       </div>
 
     </div>  

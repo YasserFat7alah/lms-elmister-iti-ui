@@ -59,24 +59,41 @@ export default function LoginPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px]">
-      
-      <div className="flex items-center justify-center py-12">
+            <div className="hidden bg-muted lg:block relative h-full">
+        <img
+          src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
+          alt="Login Cover"
+          className="h-full w-full object-cover"
+        />
+      </div>
+
+      <div className="flex items-center justify-center py-12 bg-gray-50">
         
         <div className="mx-auto grid w-[350px] gap-6">
           
 <div className="mb-4 flex items-center justify-between">
-  <Link 
+
+
+
+
+
+
+
+    <Link 
     href="/" 
     className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]"
   >
     Back Home
   </Link>
 
+
   <Image 
     src={logo} 
     alt="El-Mister Logo" 
     className="h-12 w-auto"
   />
+
+
 </div>
           <div className="grid gap-2 text-center">
 
@@ -131,13 +148,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="hidden bg-muted lg:block relative h-full">
-        <img
-          src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
-          alt="Login Cover"
-          className="h-full w-full object-cover"
-        />
-      </div>
 
     </div>  
   );

@@ -5,8 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice"; 
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice"; 
-// import Image from "next/image";
-// import logo from "@/assets/images/logo.png";
 
 import { 
   LayoutDashboard, User, BookOpen, Award, Heart, Star, 
@@ -15,6 +13,8 @@ import {
   FileText, ClipboardCheck, Wallet, CreditCard, FileBarChart,
   Baby
 } from "lucide-react"; 
+import Image from "next/image";
+import logo from "@/assets/images/logo.png";
 
 const Sidebar = ({ open, setOpen }) => {
   const pathname = usePathname();
@@ -38,9 +38,8 @@ const Sidebar = ({ open, setOpen }) => {
       { label: "My Quiz Attempts", href: "/student/quizzes", icon: FileQuestion },
       { label: "Wishlist", href: "/student/wishlist", icon: Heart },
       { label: "My Certificates", href: "/student/certificates", icon: Award },
-      { label: "subscription History", href: "/student/orders", icon: ShoppingBag },
+      { label: "Subscription History", href: "/student/orders", icon: ShoppingBag },
     ],
-
     teacher: [
       { label: "Dashboard", href: "/teacher/analytics", icon: LayoutDashboard },
       { label: "Profile", href: "/teacher/profile", icon: User },
@@ -55,7 +54,6 @@ const Sidebar = ({ open, setOpen }) => {
       { label: "Messages", href: "/teacher/messages", icon: MessageSquare },
       { label: "Support Tickets", href: "/teacher/support", icon: LifeBuoy },
     ],
-
     parent: [
       { label: "Overview", href: "/parent", icon: LayoutDashboard },
       { label: "My Children", href: "/parent/children", icon: Baby }, 
@@ -64,7 +62,6 @@ const Sidebar = ({ open, setOpen }) => {
       { label: "Payments", href: "/parent/payments", icon: CreditCard },
       { label: "Messages", href: "/parent/messages", icon: MessageSquare },
     ],
-
     admin: [
       { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
       { label: "Manage Users", href: "/admin/users", icon: Users },
@@ -84,29 +81,48 @@ const Sidebar = ({ open, setOpen }) => {
 
   return (
     <>
-      {open && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={() => setOpen(false)}
-        ></div>
-      )}
+      {/* Mobile Overlay */}
+      <div
+        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${
+          open ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+        onClick={() => setOpen(false)}
+      />
 
+      {/* Sidebar Container */}
       <aside
-        className={`fixed top-10 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
+        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-200 
+          transform transition-transform duration-300 ease-in-out flex flex-col
           lg:static lg:translate-x-0 
-          ${open ? "translate-x-0 w-64 shadow-2xl bg-red-200" : "-translate-x-full lg:w-[260px]"} 
+          ${open ? "translate-x-0 shadow-2xl" : "-translate-x-full"} 
         `}
       >
-        <div className="flex h-1 items-center px-6 border-b border-gray-100">
-             <button onClick={() => setOpen(false)} className="ml-auto lg:hidden text-gray-400">
-               <X size={24} />
-             </button>
+        {/* Header / Logo Area */}
+        <div className="flex h-20 items-center justify-between px-6 border-b border-gray-100 shrink-0">
+          <Link href="/" className="flex items-center gap-2">
+            <Image 
+              src={logo} 
+              alt="El-Mister Logo" 
+              className="h-10 w-auto"
+              priority
+            />
+          </Link>
+          <button 
+            onClick={() => setOpen(false)} 
+            className="lg:hidden text-gray-400 hover:text-red-500 transition-colors"
+          >
+            <X size={24} />
+          </button>
         </div> 
 
-        <div className="h-[calc(100vh-80px)] overflow-y-scroll px-4 py-14 scrollbar-hide">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-4 py-6 scrollbar-none hover:scrollbar-thin scrollbar-thumb-gray-200">
             
-            <div className="mb-6">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">Main Menu</h3>
+            {/* Main Menu */}
+            <div className="mb-8">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">
+                  Main Menu
+                </h3>
                 <nav className="space-y-1">
                     {links.map((link) => {
                         const Icon = link.icon;
@@ -116,14 +132,15 @@ const Sidebar = ({ open, setOpen }) => {
                             <Link
                                 key={link.label}
                                 href={link.href}
-                                className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors
+                                onClick={() => setOpen(false)} // Close sidebar on mobile when clicking link
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                                     ${isActive 
-                                        ? "bg-red-50 text-[#FF0055]" 
-                                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                                        ? "bg-[#FF0055]/10 text-[#FF0055]" 
+                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                     }
                                 `}
                             >
-                                <Icon size={18} />
+                                <Icon size={19} className={isActive ? "text-[#FF0055]" : "text-gray-400 group-hover:text-gray-600"} />
                                 <span>{link.label}</span>
                             </Link>
                         );
@@ -131,27 +148,33 @@ const Sidebar = ({ open, setOpen }) => {
                 </nav>
             </div>
 
+            {/* Settings & Logout Section */}
             <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">Settings</h3>
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">
+                  System
+                </h3>
                 <nav className="space-y-1">
                     <Link
                         href="/settings"
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                        onClick={() => setOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                           ${pathname === '/settings' 
+                             ? "bg-[#FF0055]/10 text-[#FF0055]" 
+                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                           }
+                        `}
                     >
-                        <Settings size={18} />
-                        <span>Settings</span>
                     </Link>
 
                     <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-[#FF0055] transition-colors"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-[#FF0055] transition-colors group mt-1"
                     >
-                        <LogOut size={18} />
+                        <LogOut size={19} className="text-gray-400 group-hover:text-[#FF0055] transition-colors" />
                         <span>Logout</span>
                     </button>
                 </nav>
             </div>
-
         </div>
       </aside>
     </>

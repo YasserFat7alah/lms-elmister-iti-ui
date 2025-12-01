@@ -1,23 +1,24 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Link from "next/link"; 
 import { 
   useGetMeQuery, 
   useUpdateMeMutation 
 } from "@/redux/api/endPoints/usersApiSlice";
 import { setCredentials } from "@/redux/slices/authSlice";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Save, User, Mail, Phone, Lock } from "lucide-react";
+import { Camera, Save, User, Mail, Phone, Lock, ChevronRight } from "lucide-react";
 import { Spinner } from "@/components/shared/Loader";
+import { Button } from '@/components/ui/button';
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
-  
+    
   const { userInfo } = useSelector((state) => state.auth);
 
   const { data: userData, isLoading: isFetching } = useGetMeQuery(undefined, {
@@ -30,7 +31,6 @@ export default function ProfilePage() {
     name: "",
     email: "",
     phone: "",
-    password: "",
     avatarFile: null,
     preview: null,
   });
@@ -43,7 +43,6 @@ export default function ProfilePage() {
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
-        password: "", 
         avatarFile: null,
         preview: user.avatar?.url || user.avatar || null,
       }));
@@ -73,9 +72,6 @@ export default function ProfilePage() {
       dataToSend.append("name", formData.name);
       dataToSend.append("phone", formData.phone);
       
-      if (formData.password) {
-        dataToSend.append("password", formData.password);
-      }
 
       if (formData.avatarFile) {
         dataToSend.append("avatar", formData.avatarFile);
@@ -95,8 +91,8 @@ export default function ProfilePage() {
 
       dispatch(setCredentials(newUserInfo));
       
-      alert("Profile updated successfully! ");
-      setFormData(prev => ({ ...prev, password: "", avatarFile: null }));
+      alert("Profile updated successfully!");
+      setFormData(prev => ({ ...prev, avatarFile: null }));
 
     } catch (err) {
       console.error("Update Error:", err);
@@ -133,7 +129,7 @@ export default function ProfilePage() {
 
        <Card className="border-none shadow-sm">
          <CardContent className="pt-8">
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-5">
                     <div className="space-y-2">
                         <Label className="text-gray-700 font-medium">Full Name</Label>
@@ -178,15 +174,17 @@ export default function ProfilePage() {
                     <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <Lock size={16} className="text-[#FF0055]" /> Security
                     </h3>
-                    <div className="space-y-2">
-                        <Label className="text-gray-700 font-medium">New Password</Label>
-                        <Input 
-                            name="password" 
-                            type="password" 
-                            value={formData.password}
-                            onChange={handleChange} 
-                            placeholder="Leave empty to keep current password" 
-                        />
+                    
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <div>
+                            <p className="font-medium text-gray-900">Password</p>
+                            <p className="text-sm text-gray-500">Change your password securely</p>
+                        </div>
+                        <Link href="profile/changepassword"> 
+                            <Button type="button" variant="outline" className="hover:bg-gray-100 hover:text-[#FF0055]">
+                                Change Password <ChevronRight size={16} className="ml-2" />
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 
