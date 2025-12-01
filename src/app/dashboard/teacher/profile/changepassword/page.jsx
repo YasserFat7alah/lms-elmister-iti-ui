@@ -40,7 +40,7 @@ const handleSubmit = async (values, { setSubmitting, resetForm }) => {
       resetForm();
       
       setTimeout(() => {
-        router.push("/dashboard/student/profile"); 
+        router.push("/dashboard/teacher/profile"); 
       }, 1000);
 
     } catch (err) {
@@ -51,7 +51,7 @@ const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     }
   };
   return (
-    <div className="container max-w-6xl  py-10 px-4">
+    <div className="container max-w-6xl mx-auto py-10 px-4">
       <Button 
         variant="ghost" 
         onClick={() => router.back()} 
@@ -64,8 +64,8 @@ const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2 text-primary mb-2">
             <ShieldCheck size={28} />
-          <CardTitle className="text-2xl">Change Password</CardTitle>
           </div>
+          <CardTitle className="text-2xl">Change Password</CardTitle>
           <CardDescription>
             Ensure your account is using a long, random password to stay secure.
           </CardDescription>

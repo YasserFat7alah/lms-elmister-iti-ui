@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link"; 
 import { 
@@ -8,17 +8,16 @@ import {
 } from "@/redux/api/endPoints/usersApiSlice";
 import { setCredentials } from "@/redux/slices/authSlice";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Save, User, Mail, Phone, Lock, ChevronRight } from "lucide-react";
 import { Spinner } from "@/components/shared/Loader";
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+    Camera, Save, User, Mail, Phone, Lock, ChevronRight, Edit, X 
+} from "lucide-react";
+import { Label } from "@radix-ui/react-dropdown-menu";
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
-    
   const { userInfo } = useSelector((state) => state.auth);
 
   const { data: userData, isLoading: isFetching } = useGetMeQuery(undefined, {
@@ -27,13 +26,18 @@ export default function ProfilePage() {
   
   const [updateMe, { isLoading: isUpdating }] = useUpdateMeMutation();
 
+  const [isEditing, setIsEditing] = useState(false);
+  const profileImageRef = useRef(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    avatarFile: null,
-    preview: null,
+    role: "",
+    joinedAt: "",
   });
+
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     if (userData) {
@@ -43,56 +47,54 @@ export default function ProfilePage() {
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
-        avatarFile: null,
-        preview: user.avatar?.url || user.avatar || null,
+        role: user.role || "Student",
+        joinedAt: new Date(user.createdAt).toLocaleDateString('en-US', {
+            day: 'numeric', month: 'short', year: 'numeric'
+        }),
       }));
+
+      if (user.avatar?.url) {
+        setProfileImage({ preview: user.avatar.url });
+      }
     }
   }, [userData]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({
-        ...prev,
-        avatarFile: file,
-        preview: URL.createObjectURL(file)
-      }));
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfileImage({ file: file, preview: e.target.result });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     try {
       const dataToSend = new FormData();
       
       dataToSend.append("name", formData.name);
       dataToSend.append("phone", formData.phone);
       
-
-      if (formData.avatarFile) {
-        dataToSend.append("avatar", formData.avatarFile);
+      if (profileImage?.file) {
+        dataToSend.append("avatar", profileImage.file);
       }
 
       const res = await updateMe(dataToSend).unwrap();
-
       const updatedUser = res.data?.user || res.data || res;
       
       const newUserInfo = {
         ...userInfo, 
-        user: {
-            ...userInfo.user, 
-            ...updatedUser    
-        }
+        user: { ...userInfo.user, ...updatedUser }
       };
 
       dispatch(setCredentials(newUserInfo));
-      
-      alert("Profile updated successfully!");
-      setFormData(prev => ({ ...prev, avatarFile: null }));
+      setIsEditing(false);
 
     } catch (err) {
       console.error("Update Error:", err);
@@ -101,103 +103,132 @@ export default function ProfilePage() {
     }
   };
 
-  if (isFetching) return <div className="flex justify-center items-center h-96"><Spinner /></div>;
+  const handleCancel = () => {
+      setIsEditing(false);
+  };
+
+  if (isFetching) return <div className="flex justify-center items-center h-[50vh]"><Spinner /></div>;
 
   return (
-    <div className="space-y-6">
-       <div className="relative w-full h-48 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-900 mb-16 shadow-lg">
-          <div className="absolute -bottom-12 left-10">
-             <div className="relative">
-                <Avatar className="w-32 h-32 border-4 border-white shadow-md bg-white">
-                    <AvatarImage src={formData.preview} className="object-cover" />
-                    <AvatarFallback className="text-2xl font-bold text-gray-700">
-                        {formData.name?.charAt(0)}
-                    </AvatarFallback>
-                </Avatar>
-                
-                <label htmlFor="av-up" className="absolute bottom-0 right-0 bg-[#FF0055] hover:bg-pink-700 transition p-2 rounded-full cursor-pointer text-white shadow-sm border-2 border-white">
-                    <Camera size={18} />
-                    <input type="file" id="av-up" accept="image/*" className="hidden" onChange={handleImageChange} />
-                </label>
-             </div>
-          </div>
-          <div className="absolute -bottom-10 left-48 hidden md:block">
-              <h2 className="text-2xl font-bold text-gray-800">{formData.name}</h2>
-              <p className="text-gray-500 text-sm capitalize">{userInfo?.user?.role || "Student"}</p>
-          </div>
-       </div>
-
-       <Card className="border-none shadow-sm">
-         <CardContent className="pt-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                        <Label className="text-gray-700 font-medium">Full Name</Label>
-                        <div className="relative">
-                            <User className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                            <Input 
-                                name="name" 
-                                value={formData.name} 
-                                onChange={handleChange} 
-                                className="pl-10"
-                            />
-                        </div>
+    <div className="max-w-7xl  space-y-6 pb-10">
+       
+       <Card className="border-none shadow-sm bg-white">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+            
+            <div className="relative group shrink-0">
+              <div className="w-28 h-28 rounded-full p-1 border-2 border-gray-100 shadow-sm bg-white">
+                <div className="w-full h-full bg-gray-50 rounded-full flex items-center justify-center overflow-hidden relative">
+                  {profileImage?.preview ? (
+                    <img src={profileImage.preview} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-3xl font-bold text-gray-400">{formData.name.charAt(0).toUpperCase()}</span>
+                  )}
+                  
+                  {isEditing && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-full" onClick={() => profileImageRef.current?.click()}>
+                      <Camera className="text-white" size={24} />
+                      <input type="file" ref={profileImageRef} onChange={handleImageChange} accept="image/*" className="hidden" />
                     </div>
-
-                    <div className="space-y-2">
-                        <Label className="text-gray-700 font-medium">Phone Number</Label>
-                        <div className="relative">
-                            <Phone className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                            <Input 
-                                name="phone" 
-                                value={formData.phone} 
-                                onChange={handleChange} 
-                                className="pl-10"
-                            />
-                        </div>
-                    </div>
+                  )}
                 </div>
+              </div>
+            </div>
 
-                <div className="space-y-2">
-                    <Label className="text-gray-700 font-medium">Email Address</Label>
-                    <div className="relative">
-                        <Mail className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                        <Input 
-                            value={formData.email} 
-                            disabled 
-                            className="pl-10 bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed" 
-                        />
-                    </div>
-                </div>
+            <div className="flex-1 space-y-1">
+               <h1 className="text-2xl font-bold text-gray-900">{formData.name}</h1>
+               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
+                  <span className="capitalize px-2 py-0.5 bg-gray-100 rounded text-gray-700 font-medium">{formData.role}</span>
+                  <span className="flex items-center gap-1"><Mail size={14}/> {formData.email}</span>
+                  <span className="text-gray-400">Joined {formData.joinedAt}</span>
+               </div>
+            </div>
 
-                <div className="pt-4 border-t border-gray-100">
-                    <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <Lock size={16} className="text-[#FF0055]" /> Security
-                    </h3>
-                    
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-                        <div>
-                            <p className="font-medium text-gray-900">Password</p>
-                            <p className="text-sm text-gray-500">Change your password securely</p>
-                        </div>
-                        <Link href="profile/changepassword"> 
-                            <Button type="button" variant="outline" className="hover:bg-gray-100 hover:text-[#FF0055]">
-                                Change Password <ChevronRight size={16} className="ml-2" />
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-
-                <div className="flex justify-end pt-4">
-                    <Button 
-                        type="submit" 
-                        disabled={isUpdating} 
-                        className="bg-[#FF0055] hover:bg-pink-700 text-white min-w-[140px] h-11 font-semibold rounded-lg shadow-md shadow-pink-100"
-                    >
-                        {isUpdating ? <Spinner className="text-white" /> : <><Save size={18} className="mr-2" /> Save Changes</>}
+            <div className="flex gap-2 mt-4 md:mt-0 shrink-0">
+                  {!isEditing ? (
+                    <Button onClick={() => setIsEditing(true)} className="bg-[#FF0055] hover:bg-pink-700 text-white">
+                      <Edit size={16} className="mr-2" /> Edit Profile
                     </Button>
+                  ) : (
+                    <>
+                      <Button onClick={handleSave} disabled={isUpdating} className="bg-[#FF0055] hover:bg-pink-700 text-white min-w-[100px]">
+                         {isUpdating ? <Spinner className="text-white mr-2" /> : <Save size={16} className="mr-2" />} Save
+                      </Button>
+                      <Button onClick={handleCancel} variant="outline" className="border-gray-200 hover:bg-gray-50 text-gray-700">
+                        <X size={16} className="mr-2" /> Cancel
+                      </Button>
+                    </>
+                  )}
+            </div>
+
+          </div>
+        </CardContent>
+      </Card>
+
+       <Card className="border-none shadow-sm bg-white">
+         <CardContent className="p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <User size={20} className="text-[#FF0055]" /> Basic Information
+            </h2>
+            
+            <div className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
+                        <Label className="block text-sm font-medium text-gray-700 mb-2">Full Name</Label>
+                        {isEditing ? (
+                            <div className="relative">
+                                <User className="absolute left-3 top-2.5 text-gray-400" size={18} />
+                                <Input 
+                                    name="name" 
+                                    value={formData.name} 
+                                    onChange={(e) => handleChange('name', e.target.value)} 
+                                    className="pl-10 w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055] outline-none transition-all"
+                                />
+                            </div>
+                        ) : (
+                            <p className="text-gray-900 font-medium bg-gray-50 px-4 py-2 rounded-lg border border-transparent">{formData.name}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-2">Email Address</Label>
+                        <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed">
+                            <Mail size={18} /> {formData.email}
+                        </div>
+                    </div>
+
+                    <div>
+                        <Label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</Label>
+                        {isEditing ? (
+                             <div className="relative">
+                                <Phone className="absolute left-3 top-2.5 text-gray-400" size={18} />
+                                <Input 
+                                    name="phone" 
+                                    value={formData.phone} 
+                                    onChange={(e) => handleChange('phone', e.target.value)} 
+                                    className="pl-10 w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055] outline-none"
+                                />
+                            </div>
+                        ) : (
+                             <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-transparent rounded-lg text-gray-900 font-medium">
+                                <Phone size={18} className="text-gray-400" /> {formData.phone || "N/A"}
+                             </div>
+                        )}
+                    </div>
                 </div>
-            </form>
+
+                <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">
+                    <div>
+                        <h3 className="font-semibold text-gray-900 text-sm">Security</h3>
+                        <p className="text-xs text-gray-500">Manage your password and account security</p>
+                    </div>
+                    <Link href="/dashboard/student/profile/changepassword"> 
+                        <Button type="button" variant="outline" className="border-gray-200 hover:bg-gray-50 text-gray-700 h-9">
+                            <Lock size={14} className="mr-2" /> Change Password
+                        </Button>
+                    </Link>
+                </div>
+            </div>
          </CardContent>
        </Card>
     </div>
