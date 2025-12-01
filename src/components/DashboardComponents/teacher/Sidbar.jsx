@@ -19,20 +19,20 @@ const TeacherSidebar = ({ open, setOpen }) => {
   if (!isMounted) return null;
 
   const teacherLinks = [
-    { label: "Dashboard", href: "/teachers/dashboard", icon: LayoutDashboard },
-    { label: "My Profile", href: "/teachers/profile", icon: User },
-    { label: "Courses", href: "/teachers/courses", icon: BookOpen },
-    { label: "Announcements", href: "/teachers/announcements", icon: Megaphone },
-    { label: "Assignments", href: "/teachers/assignments", icon: FileText },
-    { label: "Students", href: "/teachers/students", icon: Users },
-    { label: "Quiz", href: "/teachers/quiz", icon: FileQuestion },
-    { label: "Quiz Results", href: "/teachers/quiz-results", icon: ClipboardCheck },
-    { label: "Certificates", href: "/teachers/certificates", icon: Award },
-    { label: "Earnings", href: "/teachers/earnings", icon: Wallet },
-    { label: "Payout", href: "/teachers/payout", icon: CreditCard },
-    { label: "Statements", href: "/teachers/statements", icon: FileBarChart },
-    { label: "Messages", href: "/teachers/messages", icon: MessageSquare },
-    { label: "Support Tickets", href: "/teachers/support-tickets", icon: LifeBuoy },
+    { label: "Dashboard", href: "/teacher/dashboard", icon: LayoutDashboard },
+    { label: "My Profile", href: "/teacher/profile", icon: User },
+    { label: "Courses", href: "/teacher/courses", icon: BookOpen },
+    { label: "Announcements", href: "/teacher/announcements", icon: Megaphone },
+    { label: "Assignments", href: "/teacher/assignments", icon: FileText },
+    { label: "Students", href: "/teacher/students", icon: Users },
+    { label: "Quiz", href: "/teacher/quiz", icon: FileQuestion },
+    { label: "Quiz Results", href: "/teacher/quiz-results", icon: ClipboardCheck },
+    { label: "Certificates", href: "/teacher/certificates", icon: Award },
+    { label: "Earnings", href: "/teacher/earnings", icon: Wallet },
+    { label: "Payout", href: "/teacher/payout", icon: CreditCard },
+    { label: "Statements", href: "/teacher/statements", icon: FileBarChart },
+    { label: "Messages", href: "/teacher/messages", icon: MessageSquare },
+    { label: "Support Tickets", href: "/teacher/support-tickets", icon: LifeBuoy },
   ];
 
   const handleLogout = async () => {
