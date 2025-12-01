@@ -21,10 +21,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-                import Image from "next/image";
-import logo from "@/assets/images/logo.png";
-
-
+import Image from "next/image";
+import logo from "@/assets/images/logo.svg";
+import { FiLogIn, FiUserPlus } from "react-icons/fi";
 
 
 export function Header() {
@@ -61,6 +60,7 @@ export function Header() {
     { label: "teachers", href: "/teachers" }, 
     { label: "Blog", href: "/blog" },
     { label: "Contact us", href: "/contact" },
+    { label: "About us", href: "/about" },
   ];
 
   return (
@@ -138,15 +138,18 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center gap-3">
+     <div className="flex items-center gap-2">
                 <Link href="/login">
-                   <Button variant="ghost" className="font-semibold text-gray-700 hover:text-[#FF0055] hover:bg-transparent px-2">
-                     Sign In
-                   </Button>
+                <Button variant="ghost" className="rounded-full bg-[#E7E7E7] hover:bg-[#D9D9D9] text-gray-800 text-xs flex items-center gap-1">
+                    <FiLogIn size={14} />
+                           Sign in
+                </Button>
                 </Link>
+
                 <Link href="/signup">
-                  <Button className="bg-[#FF0055] hover:bg-pink-600 text-white rounded-full px-6 font-semibold shadow-md shadow-pink-200">
-                    Register
+                 <Button className="rounded-full bg-[#FF4667] hover:bg-[#FF2855] text-white text-xs flex items-center gap-1">
+                       <FiUserPlus size={14} />
+                           Register
                   </Button>
                 </Link>
               </div>
