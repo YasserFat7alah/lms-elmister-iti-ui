@@ -39,10 +39,10 @@ export default function LoginPage() {
       const role = user.role;
       
       const dashboardPaths = {
-        admin: "/admin/dashboard",     
-        teacher: "/teacher/analytics",  
-        student: "/student/my-learning", 
-        parent: "/parent",     
+        admin: "/dashboard/admin/dashboard",     
+        teacher: "/dashboard/teacher/analytics",  
+        student: "/dashboard/student/my-learning", 
+        parent: "/dashboard/parent",     
       };
 
       const targetPath = dashboardPaths[role] || "/";

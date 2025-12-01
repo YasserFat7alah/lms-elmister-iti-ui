@@ -42,7 +42,7 @@ export default function TeacherSignUpPage() {
       
       dispatch(setCredentials({ user, accessToken }));
       
-      router.push("/teacher/complete-profile");
+      router.push("/dashboard/teacher/complete-profile");
       
     } catch (err) {
       console.error("Registration Error:", err);
@@ -99,7 +99,7 @@ export default function TeacherSignUpPage() {
                 <FormikInput label="Full Name" name="name" placeholder="Dr. Ahmed Ali" />
                 <FormikInput label="Email" name="email" type="email" placeholder="instructor@example.com" />
                 <FormikInput label="Phone Number" name="phone" placeholder="01xxxxxxxxx" />
-                <FormikInput label="age" name="age" placeholder="enter your age" />
+                <FormikInput label="age" name="age" placeholder="enter " />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormikPassword label="Password" name="password" placeholder="******" />

@@ -117,16 +117,16 @@ const LMSNavbar = ({ setSidebarOpen }) => {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/teacher/analytics' : '/student/my-learning')} className="cursor-pointer">
+                <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/dashboard/teacher/analytics' : '/dashboard/student/my-learning')} className="cursor-pointer">
                 <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/teacher/profile' : '/student/profile')} className="cursor-pointer">
+              <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/dashboard/teacher/profile' : '/dashboard/student/profile')} className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" /> My Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/settings')} className="cursor-pointer">
+              {/* لو عندك صفحة settings عامة */}
+              <DropdownMenuItem onClick={() => router.push('/dashboard/settings')} className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" /> Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              </DropdownMenuItem>              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" /> Log out
               </DropdownMenuItem>

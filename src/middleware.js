@@ -10,38 +10,36 @@ export function middleware(request) {
   const isAuthPath = authPaths.includes(path);
 
   const publicPaths = ['/', '/about', '/contact', '/blog', ...authPaths];
-  const isPublicPath = publicPaths.includes(path) || path.startsWith('/courses'); 
+  const isPublicPath = publicPaths.includes(path) || path.startsWith('/courses') || path.startsWith('/uploads'); 
 
   if (token && isAuthPath) {
-    if (role === 'admin') return NextResponse.redirect(new URL('/admin/dashboard', request.url));
-    if (role === 'teacher') return NextResponse.redirect(new URL('/teacher/analytics', request.url)); 
-    if (role === 'student') return NextResponse.redirect(new URL('/student/my-learning', request.url));
-    if (role === 'parent') return NextResponse.redirect(new URL('/parent', request.url));
+    if (role === 'admin') return NextResponse.redirect(new URL('/dashboard/admin/dashboard', request.url));
+    if (role === 'teacher') return NextResponse.redirect(new URL('/dashboard/teacher/analytics', request.url)); 
+    if (role === 'student') return NextResponse.redirect(new URL('/dashboard/student/my-learning', request.url));
+    if (role === 'parent') return NextResponse.redirect(new URL('/dashboard/parent', request.url));
     
     return NextResponse.redirect(new URL('/', request.url));
   }
 
-  if (!isPublicPath && !token) {
+  if (path.startsWith('/dashboard') && !token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
   
   // Admin
-  if (path.startsWith('/admin') && role !== 'admin') {
+  if (path.startsWith('/dashboard/admin') && role !== 'admin') {
     return NextResponse.redirect(new URL('/unauthorized', request.url)); 
   }
 
-  if (path.startsWith('/teacher') && path !== '/teacher-signup' && role !== 'teacher') {
+  if (path.startsWith('/dashboard/teacher') && role !== 'teacher') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Student
-  if (path.startsWith('/student') && role !== 'student') {
+  if (path.startsWith('/dashboard/student') && role !== 'student') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
   
-  // Parent
-  if (path.startsWith('/parent') && role !== 'parent') {
+  if (path.startsWith('/dashboard/parent') && role !== 'parent') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

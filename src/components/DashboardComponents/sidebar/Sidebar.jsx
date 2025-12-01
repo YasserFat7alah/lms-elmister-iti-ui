@@ -29,48 +29,50 @@ const Sidebar = ({ open, setOpen }) => {
 
   const role = userInfo?.user?.role || "student";
 
-  const roleLinks = {
+const roleLinks = {
     student: [
-      { label: "Dashboard", href: "/student/my-learning", icon: LayoutDashboard },
-      { label: "Update Profile", href: "/student/profile", icon: User },
-      { label: "Enrolled Courses", href: "/student/courses", icon: BookOpen },
-      { label: "Assignments", href: "/teacher/assignments", icon: FileText },
-      { label: "My Quiz Attempts", href: "/student/quizzes", icon: FileQuestion },
-      { label: "Wishlist", href: "/student/wishlist", icon: Heart },
-      { label: "My Certificates", href: "/student/certificates", icon: Award },
-      { label: "Subscription History", href: "/student/orders", icon: ShoppingBag },
+      { label: "Dashboard", href: "/dashboard/student/my-learning", icon: LayoutDashboard },
+      { label: "Update Profile", href: "/dashboard/student/profile", icon: User },
+      { label: "Enrolled Courses", href: "/dashboard/student/courses", icon: BookOpen },
+      { label: "Assignments", href: "/dashboard/student/assignments", icon: FileText }, // عدلتها عشان تكون متسقة
+      { label: "My Quiz Attempts", href: "/dashboard/student/quizzes", icon: FileQuestion },
+      { label: "Wishlist", href: "/dashboard/student/wishlist", icon: Heart },
+      { label: "My Certificates", href: "/dashboard/student/certificates", icon: Award },
+      { label: "Subscription History", href: "/dashboard/student/orders", icon: ShoppingBag },
     ],
+
     teacher: [
-      { label: "Dashboard", href: "/teacher/analytics", icon: LayoutDashboard },
-      { label: "Profile", href: "/teacher/profile", icon: User },
-      { label: "Courses", href: "/teacher/courses", icon: BookOpen },
-      { label: "Announcements", href: "/teacher/announcements", icon: Megaphone },
-      { label: "Assignments", href: "/teacher/assignments", icon: FileText },
-      { label: "Students", href: "/teacher/students", icon: Users },
-      { label: "Quiz", href: "/teacher/quizzes", icon: FileQuestion },
-      { label: "Quiz Results", href: "/teacher/quiz-results", icon: ClipboardCheck },
-      { label: "Earnings", href: "/teacher/earnings", icon: Wallet },
-      { label: "Payout", href: "/teacher/payout", icon: CreditCard },
-      { label: "Messages", href: "/teacher/messages", icon: MessageSquare },
-      { label: "Support Tickets", href: "/teacher/support", icon: LifeBuoy },
+      { label: "Dashboard", href: "/dashboard/teacher/analytics", icon: LayoutDashboard },
+      { label: "Profile", href: "/dashboard/teacher/profile", icon: User },
+      { label: "Courses", href: "/dashboard/teacher/courses", icon: BookOpen },
+      { label: "Announcements", href: "/dashboard/teacher/announcements", icon: Megaphone },
+      { label: "Assignments", href: "/dashboard/teacher/assignments", icon: FileText },
+      { label: "Students", href: "/dashboard/teacher/students", icon: Users },
+      { label: "Quiz", href: "/dashboard/teacher/quizzes", icon: FileQuestion },
+      { label: "Quiz Results", href: "/dashboard/teacher/quiz-results", icon: ClipboardCheck },
+      { label: "Earnings", href: "/dashboard/teacher/earnings", icon: Wallet },
+      { label: "Payout", href: "/dashboard/teacher/payout", icon: CreditCard },
+      { label: "Messages", href: "/dashboard/teacher/messages", icon: MessageSquare },
+      { label: "Support Tickets", href: "/dashboard/teacher/support", icon: LifeBuoy },
     ],
+
     parent: [
-      { label: "Overview", href: "/parent", icon: LayoutDashboard },
-      { label: "My Children", href: "/parent/children", icon: Baby }, 
-      { label: "Progress Reports", href: "/parent/reports", icon: FileBarChart },
-      { label: "Teachers", href: "/parent/teachers", icon: Users },
-      { label: "Payments", href: "/parent/payments", icon: CreditCard },
-      { label: "Messages", href: "/parent/messages", icon: MessageSquare },
+      { label: "Overview", href: "/dashboard/parent", icon: LayoutDashboard },
+      { label: "My Children", href: "/dashboard/parent/children", icon: Baby }, 
+      { label: "Progress Reports", href: "/dashboard/parent/reports", icon: FileBarChart },
+      { label: "Teachers", href: "/dashboard/parent/teachers", icon: Users },
+      { label: "Payments", href: "/dashboard/parent/payments", icon: CreditCard },
+      { label: "Messages", href: "/dashboard/parent/messages", icon: MessageSquare },
     ],
+
     admin: [
-      { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-      { label: "Manage Users", href: "/admin/users", icon: Users },
-      { label: "Manage Courses", href: "/admin/courses", icon: BookOpen },
-      { label: "Financials", href: "/admin/finance", icon: Wallet },
-      { label: "Settings", href: "/admin/settings", icon: Settings },
+      { label: "Dashboard", href: "/dashboard/admin/dashboard", icon: LayoutDashboard },
+      { label: "Manage Users", href: "/dashboard/admin/users", icon: Users },
+      { label: "Manage Courses", href: "/dashboard/admin/courses", icon: BookOpen },
+      { label: "Financials", href: "/dashboard/admin/finance", icon: Wallet },
+      { label: "Settings", href: "/dashboard/admin/settings", icon: Settings },
     ],
   };
-
   const links = roleLinks[role] || roleLinks["student"];
 
   const handleLogout = async () => {
