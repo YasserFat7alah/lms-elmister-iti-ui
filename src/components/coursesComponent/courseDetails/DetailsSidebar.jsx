@@ -47,7 +47,7 @@ const DetailsSidebar = ({ course }) => {
       <div className="hidden md:block w-full  mx-4 text-white  text-lg font-semibold">
         <div className="p-4 border font-bold text-2xl rounded-md my-5 mx-4">
                 {course.pricing.isPaid ? (
-                    <p className="text-yellow-500">${course.pricing.price}</p>
+                    <p className="text-yellow-500">{course.pricing.price} EGP</p>
                     ) : (
                     <p className="text-green-600">Free</p>
                 )}

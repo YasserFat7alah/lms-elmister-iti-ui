@@ -13,6 +13,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import Link from 'next/link';
+import { Button } from '../ui/button';
 
 const CoursesList = ({courses }) => {
   const router = useRouter();
@@ -95,9 +96,11 @@ const CoursesList = ({courses }) => {
 
                     {/* OVERLAY*/}
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 -translate-x-full group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-                      <Link className="cursor-pointer"  href={`/courses/${course.id}`}>
-                        View Course
-                      </Link>
+                        <Link className="cursor-pointer"  href={`/courses/${course.id}`}>
+                          <Button>
+                              View Course
+                          </Button>
+                        </Link>
                     </div>
                 </div>
 
