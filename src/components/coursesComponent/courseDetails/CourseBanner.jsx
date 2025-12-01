@@ -7,7 +7,7 @@ import { PiStudentDuotone } from "react-icons/pi";
 
 const CourseBanner = ({imgsrc , course , teacher}) => {
   return (
-    <div className="relative w-full h-64">
+    <div className="relative w-full h-64 ">
         {/* Background Image */}
         <div
             className="w-full h-full bg-cover bg-center"
@@ -18,7 +18,7 @@ const CourseBanner = ({imgsrc , course , teacher}) => {
         <div className="absolute inset-0 bg-black/40"></div> 
 
         {/* Text */}
-        <div className="absolute inset-0 flex flex-col items-start justify-center gap-y-2 px-6">
+        <div className="absolute inset-0 flex flex-col items-start justify-center gap-y-2 px-18">
 
             <h1 className="text-white text-3xl font-bold text-start">{course.title}</h1>
             
