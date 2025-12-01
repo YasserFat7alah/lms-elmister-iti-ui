@@ -76,48 +76,57 @@ const CoursesList = ({courses }) => {
     <div className=''>
       {courses.length === 0 ? (
         <p className='font-bold text-gray-700 text-lg my-8'>No Courses Found For Selected Subjects.</p>
-      ) :(
+      ):(
         <>
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4'>
             {paginatedCourses.map(course=>(
-
-              <Card  key={course.id} className="max-w-sm mx-auto mb-4 overflow-hidden">
-
-                <div className="relative w-full h-48 overflow-hidden rounded-t-xl group">
-                    {/* IMAGE*/}
-                    <div className="w-full h-full overflow-hidden">
-                      {/* <Image
-                        src={course.thumbnail.url}
-                        alt={course.title}
-                        fill
-                        className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                      /> */}
-                    </div>
-
-                    {/* OVERLAY*/}
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 -translate-x-full group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-                        <Link className="cursor-pointer"  href={`/courses/${course.id}`}>
-                          <Button>
-                              View Course
-                          </Button>
-                        </Link>
-                    </div>
+              <Link href={`/courses/${course.id}`} className="cursor-pointer">
+              <Card 
+                key={course.id} 
+                className="max-w-sm mx-auto mb-4 overflow-hidden group"  
+              >
+            
+                <div className="relative w-full h-48 overflow-hidden rounded-t-xl">
+            
+                  {/* IMAGE */}
+                  <div className="w-full h-full overflow-hidden">
+                    <Image
+                      src={course.thumbnail.url}
+                      alt={course.title}
+                      fill
+                      className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                    />
+                  </div>
+            
+                  {/* OVERLAY */}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 -translate-x-full group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
+                    <Button>View Course</Button>
+                  </div>
                 </div>
-
+            
                 <CardHeader>
-                    <CardTitle className="text-gray-700 cursor-pointer text-lg hover:underline">{course.title}</CardTitle>
-                    <CardDescription>{course.description}</CardDescription>
+                  <CardTitle className="text-gray-700 cursor-pointer text-lg hover:underline">
+                    {course.title}
+                  </CardTitle>
+                  <CardDescription>{course.description}</CardDescription>
                 </CardHeader>
-        
+            
                 <CardContent>
-                    <div className="flex justify-between">
-                      <span className='text-amber-800 font-bold'>{course.pricing.isPaid ? `${course.pricing.price} EGP` : "Free"}</span>
-                      <span className='bg-gray-500 text-white px-3 py-1 rounded-md'>{course.subject}</span>
-                    </div>
-                    <p className='font-semibold'>Total Lessons : {course.totalLessons}</p>
+                  <div className="flex justify-between">
+                    <span className='text-amber-800 font-bold'>
+                      {course.pricing.isPaid ? `${course.pricing.price} EGP` : "Free"}
+                    </span>
+                    <span className='bg-gray-500 text-white px-3 py-1 rounded-md'>
+                      {course.subject}
+                    </span>
+                  </div>
+                  <p className='font-semibold'>Total Lessons : {course.totalLessons}</p>
                 </CardContent>
-
+            
               </Card>
+            </Link>
+            
+
             ))}
           </div>
 

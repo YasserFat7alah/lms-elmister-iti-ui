@@ -57,7 +57,56 @@ export const mockCourses = [
       "Certificate of completion",
       "Access on mobile and TV",
       "Personalized learning path"
-    ]
+    ] ,groups: {
+      sharedGroups: [
+        {
+          id: "g1",
+          days: ["Sunday", "Tuesday", "Thursday"],
+          time: "4:00 PM",
+          currentMembers: 3,
+          maxMembers: 5,
+          status: "available" 
+        },
+        {
+          id: "g2",
+          days: ["Saturday", "Monday", "Wednesday"],
+          time: "12:00 PM",
+          currentMembers: 5,
+          maxMembers: 5,
+          status: "full"
+        }
+      ],
+  
+      privateGroups: [
+        {
+          id: "p1",
+          days: ["Friday"],
+          time: "6:00 PM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 120
+        },
+        {
+          id: "p2",
+          days: ["Sunday"],
+          time: "8:00 PM",
+          maxMembers: 1,
+          currentMembers: 1,
+          status: "full",
+          price: 120
+        },
+        {
+          id: "p3",
+          days: ["Monday", "Wednesday"],
+          time: "10:00 AM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 150
+        }
+      ]
+    }
   },
 
   {
@@ -116,7 +165,59 @@ export const mockCourses = [
       "Certificate of completion",
       "Access on mobile and TV",
       "Personalized learning path"
-    ]
+    ] ,
+    groups: {
+      // مجموعات مشتركة (Shared Groups)
+      sharedGroups: [
+        {
+          id: "g1",
+          days: ["Sunday", "Tuesday", "Thursday"],
+          time: "4:00 PM",
+          currentMembers: 3,
+          maxMembers: 5,
+          status: "available" 
+        },
+        {
+          id: "g2",
+          days: ["Saturday", "Monday", "Wednesday"],
+          time: "12:00 PM",
+          currentMembers: 5,
+          maxMembers: 5,
+          status: "full"
+        }
+      ],
+  
+      // مجموعات خاصة (Private Groups)
+      privateGroups: [
+        {
+          id: "p1",
+          days: ["Friday"],
+          time: "6:00 PM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 120 // لو سعر البرايفت أعلى
+        },
+        {
+          id: "p2",
+          days: ["Sunday"],
+          time: "8:00 PM",
+          maxMembers: 1,
+          currentMembers: 1,
+          status: "full",
+          price: 120
+        },
+        {
+          id: "p3",
+          days: ["Monday", "Wednesday"],
+          time: "10:00 AM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 150
+        }
+      ]
+    }
   },
 
   {
@@ -174,7 +275,59 @@ export const mockCourses = [
       "Certificate of completion",
       "Access on mobile and TV",
       "Personalized learning path"
-    ]
+    ] ,
+    groups: {
+      // مجموعات مشتركة (Shared Groups)
+      sharedGroups: [
+        {
+          id: "g1",
+          days: ["Sunday", "Tuesday", "Thursday"],
+          time: "4:00 PM",
+          currentMembers: 3,
+          maxMembers: 5,
+          status: "available" 
+        },
+        {
+          id: "g2",
+          days: ["Saturday", "Monday", "Wednesday"],
+          time: "12:00 PM",
+          currentMembers: 5,
+          maxMembers: 5,
+          status: "full"
+        }
+      ],
+  
+      // مجموعات خاصة (Private Groups)
+      privateGroups: [
+        {
+          id: "p1",
+          days: ["Friday"],
+          time: "6:00 PM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 120 // لو سعر البرايفت أعلى
+        },
+        {
+          id: "p2",
+          days: ["Sunday"],
+          time: "8:00 PM",
+          maxMembers: 1,
+          currentMembers: 1,
+          status: "full",
+          price: 120
+        },
+        {
+          id: "p3",
+          days: ["Monday", "Wednesday"],
+          time: "10:00 AM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 150
+        }
+      ]
+    }
   },
 
   {
@@ -225,7 +378,58 @@ export const mockCourses = [
       "Certificate of completion",
       "Access on mobile and TV",
       "Personalized learning path"
-    ]
+    ],groups: {
+      // مجموعات مشتركة (Shared Groups)
+      sharedGroups: [
+        {
+          id: "g1",
+          days: ["Sunday", "Tuesday", "Thursday"],
+          time: "4:00 PM",
+          currentMembers: 3,
+          maxMembers: 5,
+          status: "available" 
+        },
+        {
+          id: "g2",
+          days: ["Saturday", "Monday", "Wednesday"],
+          time: "12:00 PM",
+          currentMembers: 5,
+          maxMembers: 5,
+          status: "full"
+        }
+      ],
+  
+      // مجموعات خاصة (Private Groups)
+      privateGroups: [
+        {
+          id: "p1",
+          days: ["Friday"],
+          time: "6:00 PM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 120 // لو سعر البرايفت أعلى
+        },
+        {
+          id: "p2",
+          days: ["Sunday"],
+          time: "8:00 PM",
+          maxMembers: 1,
+          currentMembers: 1,
+          status: "full",
+          price: 120
+        },
+        {
+          id: "p3",
+          days: ["Monday", "Wednesday"],
+          time: "10:00 AM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 150
+        }
+      ]
+    }
   },
 
   {
@@ -275,7 +479,58 @@ export const mockCourses = [
       "Certificate of completion",
       "Access on mobile and TV",
       "Personalized learning path"
-    ]
+    ],groups: {
+      // مجموعات مشتركة (Shared Groups)
+      sharedGroups: [
+        {
+          id: "g1",
+          days: ["Sunday", "Tuesday", "Thursday"],
+          time: "4:00 PM",
+          currentMembers: 3,
+          maxMembers: 5,
+          status: "available" 
+        },
+        {
+          id: "g2",
+          days: ["Saturday", "Monday", "Wednesday"],
+          time: "12:00 PM",
+          currentMembers: 5,
+          maxMembers: 5,
+          status: "full"
+        }
+      ],
+  
+      // مجموعات خاصة (Private Groups)
+      privateGroups: [
+        {
+          id: "p1",
+          days: ["Friday"],
+          time: "6:00 PM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 120 // لو سعر البرايفت أعلى
+        },
+        {
+          id: "p2",
+          days: ["Sunday"],
+          time: "8:00 PM",
+          maxMembers: 1,
+          currentMembers: 1,
+          status: "full",
+          price: 120
+        },
+        {
+          id: "p3",
+          days: ["Monday", "Wednesday"],
+          time: "10:00 AM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 150
+        }
+      ]
+    }
   },
 
   {
@@ -324,7 +579,58 @@ export const mockCourses = [
       "Certificate of completion",
       "Access on mobile and TV",
       "Personalized learning path"
-    ]
+    ],groups: {
+      // مجموعات مشتركة (Shared Groups)
+      sharedGroups: [
+        {
+          id: "g1",
+          days: ["Sunday", "Tuesday", "Thursday"],
+          time: "4:00 PM",
+          currentMembers: 3,
+          maxMembers: 5,
+          status: "available" 
+        },
+        {
+          id: "g2",
+          days: ["Saturday", "Monday", "Wednesday"],
+          time: "12:00 PM",
+          currentMembers: 5,
+          maxMembers: 5,
+          status: "full"
+        }
+      ],
+  
+      // مجموعات خاصة (Private Groups)
+      privateGroups: [
+        {
+          id: "p1",
+          days: ["Friday"],
+          time: "6:00 PM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 120 // لو سعر البرايفت أعلى
+        },
+        {
+          id: "p2",
+          days: ["Sunday"],
+          time: "8:00 PM",
+          maxMembers: 1,
+          currentMembers: 1,
+          status: "full",
+          price: 120
+        },
+        {
+          id: "p3",
+          days: ["Monday", "Wednesday"],
+          time: "10:00 AM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 150
+        }
+      ]
+    }
   },
 
   {
@@ -374,6 +680,57 @@ export const mockCourses = [
       "Certificate of completion",
       "Access on mobile and TV",
       "Personalized learning path"
-    ]
+    ] ,groups: {
+      // مجموعات مشتركة (Shared Groups)
+      sharedGroups: [
+        {
+          id: "g1",
+          days: ["Sunday", "Tuesday", "Thursday"],
+          time: "4:00 PM",
+          currentMembers: 3,
+          maxMembers: 5,
+          status: "available" 
+        },
+        {
+          id: "g2",
+          days: ["Saturday", "Monday", "Wednesday"],
+          time: "12:00 PM",
+          currentMembers: 5,
+          maxMembers: 5,
+          status: "full"
+        }
+      ],
+  
+      // مجموعات خاصة (Private Groups)
+      privateGroups: [
+        {
+          id: "p1",
+          days: ["Friday"],
+          time: "6:00 PM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 120 // لو سعر البرايفت أعلى
+        },
+        {
+          id: "p2",
+          days: ["Sunday"],
+          time: "8:00 PM",
+          maxMembers: 1,
+          currentMembers: 1,
+          status: "full",
+          price: 120
+        },
+        {
+          id: "p3",
+          days: ["Monday", "Wednesday"],
+          time: "10:00 AM",
+          maxMembers: 1,
+          currentMembers: 0,
+          status: "available",
+          price: 150
+        }
+      ]
+    }
   }
 ];

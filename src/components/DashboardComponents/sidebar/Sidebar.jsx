@@ -92,7 +92,7 @@ const Sidebar = ({ open, setOpen }) => {
       )}
 
       <aside
-        className={`fixed top-10 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
+        className={`fixed top-10  left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
           lg:static lg:translate-x-0 
           ${open ? "translate-x-0 w-64 shadow-2xl bg-red-200" : "-translate-x-full lg:w-[260px]"} 
         `}

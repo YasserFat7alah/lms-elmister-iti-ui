@@ -7,7 +7,7 @@ import { PiStudentDuotone } from "react-icons/pi";
 
 const CourseBanner = ({imgsrc , course , teacher}) => {
   return (
-    <div className="relative w-full h-64 ">
+    <div className="relative w-full h-[350px] ">
         {/* Background Image */}
         <div
             className="w-full h-full bg-cover bg-center"
@@ -18,7 +18,7 @@ const CourseBanner = ({imgsrc , course , teacher}) => {
         <div className="absolute inset-0 bg-black/40"></div> 
 
         {/* Text */}
-        <div className="absolute inset-0 flex flex-col items-start justify-center gap-y-2 px-18">
+        <div className="absolute inset-0 flex flex-col items-start justify-center gap-y-2 px-8 mx-40">
 
             <h1 className="text-white text-3xl font-bold text-start">{course.title}</h1>
             
@@ -26,21 +26,21 @@ const CourseBanner = ({imgsrc , course , teacher}) => {
 
             <div className='flex items-center gap-10'>
                 <p className='flex items-center gap-1'>
-                    <span> <IoBookSharp/> </span>
-                   <span>{course.totalLessons}</span> 
+                    <span className='text-yellow-400'> <IoBookSharp/> </span>
+                   <span className='text-yellow-400'>{course.totalLessons}</span> 
                 </p>
                 <p className='flex items-center gap-1'>
-                    <span> < PiStudentDuotone/> </span>
-                    <span>{course.totalStudents}</span>
+                    <span className='text-blue-800'> < PiStudentDuotone/> </span>
+                    <span className='text-blue-800'>{course.totalStudents}</span>
                 </p>
             </div>
 
             <div className='mt-4'>
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-3'>
                     <Image src={teacher.avatar} height={100} width={100} alt="" className='w-16 h-16 rounded-full' />
-                    <div>
-                        <span>{teacher.name}</span>
-                        <span>Instructor</span>
+                    <div className='flex flex-col'>
+                        <span className='font-semibold'>{teacher.name}</span>
+                        <span className='text-gray-800'>Instructor</span>
                     </div>
                 </div>
             </div>
