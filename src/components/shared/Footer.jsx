@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { RiMailLine, RiPhoneLine, RiMapPinLine } from "react-icons/ri";
+import Image from "next/image";
+import logo from "@/assets/images/logo.svg";
 
 export function Footer() {
   return (
@@ -10,8 +12,12 @@ export function Footer() {
 
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <img src="/logo.svg" alt="DreamsLMS" className="h-10" />
-              
+
+            <Image 
+               src={logo} 
+               alt="El-Mister Logo" 
+               className="h-12 w-auto"
+            />              
             </div>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
               Platform designed to help organizations, educators, and learners manage, deliver, and track learning and training activities.

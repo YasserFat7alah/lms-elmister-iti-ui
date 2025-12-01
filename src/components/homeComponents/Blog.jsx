@@ -60,7 +60,7 @@ export default function Blog() {
               `}
             >
               <div className="relative overflow-hidden">
-                <img
+                <Image
                   src={post.image}
                   alt={post.title}
                   width={600}
@@ -82,7 +82,7 @@ export default function Blog() {
                 {/* Author + Date  */}
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <div className="flex items-center gap-3">
-                    <img
+                    <Image
                       src={post.authorAvatar}
                       alt={post.author}
                       width={36}

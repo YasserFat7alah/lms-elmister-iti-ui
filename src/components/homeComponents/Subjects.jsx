@@ -10,8 +10,6 @@ const subjects = [
   { icon: FaPalette, title: "Art", subTitle: "Painting & Drawing" },
   { icon: FaMusic, title: "Music", subTitle: "Singing & Instruments" },
   { icon: FaLaptopCode, title: "Computer", subTitle: "Coding & IT Skills" },
-  { icon: FaBasketballBall, title: "Sports", subTitle: "Football & Basketball" },
-  { icon: FaGlobe, title: "Geography", subTitle: "World & Maps" },
 ];
 
 export default function Subjects() {
@@ -26,7 +24,7 @@ export default function Subjects() {
 
       {/* Horizontal scroll container */}
       <div
-        className="overflow-x-auto px-4"
+        className="px-4"
         role="list"
         aria-label="Subjects list"
       >

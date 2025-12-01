@@ -50,7 +50,7 @@ export default function Testimonials() {
 
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-purple-100 shadow-lg">
-                    <img
+                    <Image
                       src={t.image}
                       alt={t.author}
                       width={64}
@@ -69,13 +69,12 @@ export default function Testimonials() {
 
           <div className="hidden lg:block">
             <div className="rounded-3xl overflow-hidden shadow-2xl h-[480px]"> {/* ارتفاع ثابت ومناسب */}
-              <img
+              <Image
                 src="/image.png"
                 alt="Happy team"
                 width={600}
                 height={400}   
                 className="w-full h-full object-cover"
-                priority
               />
             </div>
           </div>

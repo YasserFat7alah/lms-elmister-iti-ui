@@ -7,7 +7,7 @@ import { FaHeart, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "reac
 
 const instructorsData = [
   {
-    image: "/Instructor 7.png",
+    image: "/Instructor7.png",
     title: "Joyce Pence",
     subTitle: "Lead Designer",
     rating: 5.0,
@@ -15,7 +15,7 @@ const instructorsData = [
     trending: false,
   },
   {
-    image: "/Instructor 2.png",
+    image: "/Instructor2.png",
     title: "Edith Dorsey",
     subTitle: "Accountant",
     rating: 4.9,
@@ -23,7 +23,7 @@ const instructorsData = [
     trending: true,
   },
   {
-    image: "/Instructor  4.png",
+    image: "/Instructor4.png",
     title: "Ruben Holmes",
     subTitle: "Architect",
     rating: 4.8,
@@ -31,7 +31,7 @@ const instructorsData = [
     trending: false,
   },
   {
-    image: "/Instructor 10.png",
+    image: "/Instructor10.png",
     title: "Carol Magner",
     subTitle: "Lead Designer",
     rating: 5.0,
