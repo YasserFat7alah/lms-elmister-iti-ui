@@ -58,6 +58,8 @@ export function Header() {
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
     { label: "teachers", href: "/teachers" }, 
+    { label: "BecomeAnInstrcutor", href: "/becomeAnInstrcutor" }, // review
+
     { label: "Blog", href: "/blog" },
     { label: "Contact us", href: "/contact" },
     { label: "About us", href: "/about" },
