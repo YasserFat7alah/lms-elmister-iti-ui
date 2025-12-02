@@ -7,7 +7,7 @@ import { FaHeart, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "reac
 
 const instructorsData = [
   {
-    image: "/Instructor7.png",
+    image: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623475/Instructor7_wrevdm.png",
     title: "Joyce Pence",
     subTitle: "Lead Designer",
     rating: 5.0,
@@ -15,7 +15,7 @@ const instructorsData = [
     trending: false,
   },
   {
-    image: "/Instructor2.png",
+    image: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623475/Instructor2_ifmpmu.png",
     title: "Edith Dorsey",
     subTitle: "Accountant",
     rating: 4.9,
@@ -23,7 +23,7 @@ const instructorsData = [
     trending: true,
   },
   {
-    image: "/Instructor4.png",
+    image: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623475/Instructor4_jjhiuf.png",
     title: "Ruben Holmes",
     subTitle: "Architect",
     rating: 4.8,
@@ -31,7 +31,7 @@ const instructorsData = [
     trending: false,
   },
   {
-    image: "/Instructor10.png",
+    image: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623476/Instructor10_xfchpd.png",
     title: "Carol Magner",
     subTitle: "Lead Designer",
     rating: 5.0,

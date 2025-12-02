@@ -44,13 +44,13 @@ export function Hero() {
 
         {/* RIGHT SECTION */}
         <div className="relative hidden md:block">
-          <Image src="/yellow-1.png" width={400} height={800} alt="" className="absolute -top-[230px] -right-20 md:-right-28 z-10 pointer-events-none"/>
-          <Image src="/yellow-2.png" width={450} height={800} alt="" className="absolute -top-[150px] -right-20 z-9 pointer-events-none"/>
-          <Image src="/purple.png" width={400} height={400} alt="" className="absolute top-12 right-6 z-1 pointer-events-none"/>
-          <Image src="/girlForHomePage.png" width={400} height={800} alt="hero student"  className="absolute -top-[300px] -right-14 z-10 drop-shadow-2xl" />
+          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623477/yellow-1_jvovzi.png" width={400} height={800} alt="" className="absolute -top-[230px] -right-20 md:-right-28 z-10 pointer-events-none"/>
+          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623478/yellow-2_odtows.png" width={450} height={800} alt="" className="absolute -top-[150px] -right-20 z-9 pointer-events-none"/>
+          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764632411/purple_sbdqrp.png" width={400} height={400} alt="" className="absolute top-12 right-6 z-1 pointer-events-none"/>
+          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623475/girlForHomePage_lhl1ge.png" width={400} height={800} alt="hero student"  className="absolute -top-[300px] -right-14 z-10 drop-shadow-2xl" />
 
           <div className="absolute bottom-2 right-75 z-20">
-            <Image src="/Container.png" alt="students" width={240} height={80} className="drop-shadow-lg"/>
+            <img src="/Container.png" alt="students" width={240} height={80} className="drop-shadow-lg"/>
           </div>
 
           <div className="absolute bottom-4 -right-32 z-20">

@@ -1,12 +1,12 @@
 import Image from "next/image";
 
 const partners = [
-  { name: "Onblue", src: "/Vector.png" },
-  { name: "Miro", src: "/Vector-1.png" },
-  { name: "Feedly", src: "/Group.png" },
-  { name: "HubSpot", src: "/Shape.png" },
-  { name: "MailerLite", src: "/Layer 2.png" },
-  { name: "Finsweet", src: "/Vector-2.png" },
+  { name: "Onblue", src: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623476/Vector_tisp0p.png" },
+  { name: "Miro", src: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623477/Vector-1_ofzjwr.png" },
+  { name: "Feedly", src: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623472/Group_m2zvyv.png" },
+  { name: "HubSpot", src: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623477/Shape_wcgg8f.png" },
+  { name: "MailerLite", src: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623476/Layer_2_zncgr4.png" },
+  { name: "Finsweet", src: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623477/Vector-2_zpsnlw.png" },
 ];
 
 export default function TrustedBy() {
@@ -24,7 +24,7 @@ export default function TrustedBy() {
               key={partner.name}
               className="flex-shrink-0 hover:scale-110 transition-transform duration-300"
             >
-              <Image
+              <img
                 src={partner.src}
                 alt={partner.name}
                 width={100}

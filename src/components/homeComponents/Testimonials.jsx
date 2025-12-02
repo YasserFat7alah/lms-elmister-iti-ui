@@ -9,14 +9,14 @@ const testimonials = [
     text: "We swiftly found top-tier talent for our company.",
     author: "Brenda Slaton",
     role: "Designer",
-    image: "/Instructor 10.png",
+    image: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623476/Instructor10_xfchpd.png",
     rating: 5,
   },
   {
     text: "The LMS made managing my coursework simple and engaging, with everything I need easily accessible and organized.",
     author: "Adrian Dennis",
     role: "Designer",
-    image: "/Instructor 7.png",
+    image: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623475/Instructor7_wrevdm.png",
     rating: 5,
   },
 ];
@@ -50,7 +50,7 @@ export default function Testimonials() {
 
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-purple-100 shadow-lg">
-                    <Image
+                    <img
                       src={t.image}
                       alt={t.author}
                       width={64}
@@ -69,7 +69,7 @@ export default function Testimonials() {
 
           <div className="hidden lg:block">
             <div className="rounded-3xl overflow-hidden shadow-2xl h-[480px]"> {/* ارتفاع ثابت ومناسب */}
-              <Image
+              <img
                 src="/image.png"
                 alt="Happy team"
                 width={600}

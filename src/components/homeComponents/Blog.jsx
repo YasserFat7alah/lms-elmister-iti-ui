@@ -10,13 +10,13 @@ export default function Blog() {
       author: "Reni Sarow",
       authorAvatar: "/AuthorImageContainer.png",
       date: "09 Aug 2025",
-      image: "/article1.png",
+      image: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623448/article1_oqiqii.png",
     },
     {
       title: "How to Level Up Your Coding Skills with the Help of a Mentor",
       excerpt: "Whether you're a beginner or an advanced coder, this blog will explore how...",
       author: "Christoper Daniel",
-      authorAvatar: "/Instructor 7.png",
+      authorAvatar: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623448/article1_oqiqii.png",
       date: "15 Jul 2025",
       image: "/article2.png",
     },
@@ -26,7 +26,7 @@ export default function Blog() {
       author: "Andrew Jermi",
       authorAvatar: "/blog1.png",
       date: "20 Jun 2025",
-      image: "/article3.png",
+      image: "https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623449/article3_fgtv3p.png",
     },
   ];
 
@@ -60,7 +60,7 @@ export default function Blog() {
               `}
             >
               <div className="relative overflow-hidden">
-                <Image
+                <img
                   src={post.image}
                   alt={post.title}
                   width={600}
@@ -82,7 +82,7 @@ export default function Blog() {
                 {/* Author + Date  */}
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <div className="flex items-center gap-3">
-                    <Image
+                    <img
                       src={post.authorAvatar}
                       alt={post.author}
                       width={36}
