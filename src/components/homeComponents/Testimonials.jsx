@@ -69,7 +69,7 @@ export default function Testimonials() {
 
           <div className="hidden lg:block">
             <div className="rounded-3xl overflow-hidden shadow-2xl h-[480px]"> {/* ارتفاع ثابت ومناسب */}
-              <img
+              <Image
                 src="/image.png"
                 alt="Happy team"
                 width={600}

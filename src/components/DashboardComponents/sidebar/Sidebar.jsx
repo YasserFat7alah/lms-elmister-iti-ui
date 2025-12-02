@@ -93,8 +93,12 @@ const roleLinks = {
 
       {/* Sidebar Container */}
       <aside
+<<<<<<< HEAD
         className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-200 
           transform transition-transform duration-300 ease-in-out flex flex-col
+=======
+        className={`fixed top-10  left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
+>>>>>>> origin/phase2/coursespublic
           lg:static lg:translate-x-0 
           ${open ? "translate-x-0 shadow-2xl" : "-translate-x-full"} 
         `}

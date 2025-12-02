@@ -17,9 +17,16 @@ const page = () => {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
 
-  //___________FILTER LOGIC_____________
+  //__________________________FILTER LOGIC_________________________
+  const courseWithTeacher = mockCourses.map(course =>{
+    const teacher = mockTeachers.find(t => t.id === course.teacherId);
+    return {
+      ...course,
+      teacherName : teacher ? teacher.name : ""
+    }
+  })
 
-  let filteredCourses = mockCourses ;
+  let filteredCourses = courseWithTeacher ;
 
   //FILTER BY SUBJECT
   if(selectedSubjects.length > 0){
@@ -35,12 +42,13 @@ const page = () => {
     );
   }
   
-
   //FILTER BY SEARCH TEXT
   if(searchQuery.trim() !== ""){
     filteredCourses = filteredCourses.filter(course=>
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase())
+      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.teacherName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.subject.toLowerCase().includes(searchQuery.toLowerCase()) 
     )
   }
 

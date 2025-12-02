@@ -3,6 +3,12 @@ import { useState } from "react"
 import Image from "next/image"
 import { FaSearch } from "react-icons/fa";
 import Rating from "../shared/Rating";
+import Yellow1 from '../../../public/yellow1.png';
+import Yellow2 from '../../../public/yellow-2.png';
+import purple from '../../../public/purple.png';
+import girlForHome from '../../../public/girlForHomePage.png';
+import Container from '../../../public/Container.png';
+
 
 export function Hero() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -50,7 +56,7 @@ export function Hero() {
           <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623475/girlForHomePage_lhl1ge.png" width={400} height={800} alt="hero student"  className="absolute -top-[300px] -right-14 z-10 drop-shadow-2xl" />
 
           <div className="absolute bottom-2 right-75 z-20">
-            <img src="/Container.png" alt="students" width={240} height={80} className="drop-shadow-lg"/>
+            <Image src={Container} alt="students" width={240} height={80} className="drop-shadow-lg"/>
           </div>
 
           <div className="absolute bottom-4 -right-32 z-20">
