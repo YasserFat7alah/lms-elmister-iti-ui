@@ -55,19 +55,14 @@ export default function TeacherSignUpPage() {
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
       
-      <div className="hidden lg:block relative h-full bg-black">
+      <div className="hidden lg:block relative h-screen bg-black overflow-hidden">
          <div className="absolute inset-0 bg-blue-900/40 z-10 mix-blend-multiply" />
-         <Image
-           src="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1974&auto=format&fit=crop"
+         <img
+           src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764722342/pexels-fauxels-3184644_w3ztts.jpg"
            alt="Instructor teaching"
-           fill
-           className="object-cover opacity-90"
+           className="object-fit opacity-90 h-full w-full object-cover "
            priority
          />
-         <div className="relative z-20 flex flex-col justify-center h-full p-12 text-white">
-            <h2 className="text-4xl font-bold mb-4">Inspire the Next Generation</h2>
-            <p className="text-lg text-gray-200">Join our elite team of instructors. Create courses, track student progress, and earn money.</p>
-         </div>
       </div>
 
       <div className="flex items-center justify-center py-12 px-4 sm:px-8 bg-gray-50 h-full overflow-y-auto">

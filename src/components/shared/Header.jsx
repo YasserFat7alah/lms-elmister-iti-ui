@@ -58,6 +58,7 @@ export function Header() {
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
     { label: "teachers", href: "/teachers" }, 
+
     { label: "Blog", href: "/blog" },
     { label: "Contact us", href: "/contact" },
     { label: "About us", href: "/about" },
@@ -68,7 +69,7 @@ export function Header() {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-full">
           
-          <div className="flex-shrink-0 flex items-center gap-2">
+          <div className="flex-shrink-0 flex items-center-safe gap-5">
             <Link href="/" className="flex items-center gap-2 group">
 
   <Image 
@@ -78,6 +79,9 @@ export function Header() {
   />
 
 
+            </Link>
+            <Link href='/becomeAnInstrcutor' className="text-sm font-medium bg-[#FF0055] p-2 rounded text-white hover:text-gray-700 transition-colors">
+            became a teacher
             </Link>
           </div>
 

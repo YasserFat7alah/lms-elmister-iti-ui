@@ -10,7 +10,7 @@ export function middleware(request) {
   const authPaths = ['/login', '/signup', '/forgetPassword', '/teacher-signup'];
   const isAuthPath = authPaths.includes(path);
 
-  const publicPaths = ['/', '/about', '/contact', '/blog', ...authPaths];
+  const publicPaths = ['/', '/about', '/becomeAnInstrcutor',  '/contact', '/blog', ...authPaths];
   const isPublicPath = publicPaths.includes(path) || path.startsWith('/courses') || path.startsWith('/uploads'); 
 
   if (token && isAuthPath) {
