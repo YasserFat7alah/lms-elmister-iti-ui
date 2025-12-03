@@ -23,23 +23,20 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     (result?.error?.status === 401 || result?.error?.status === 403) &&
     !url.includes("/login") && 
     !url.includes("/register") &&
-    !url.includes("/refresh-token") // ✅ حماية إضافية
+    !url.includes("/refresh-token") 
   ) {
-    console.warn("⚠️ Token expired. Attempting refresh...");
-
+    console.warn(" Token expired. Attempting refresh...");
     const refreshResult = await baseQuery(
       { url: `${USERS_URL}/refresh-token`, method: "POST" }, 
       api,
       extraOptions
     );
 
-    console.log("🔍 Refresh Result Full Object:", refreshResult); // 👈 ده هيعرفنا المشكلة فين
+    console.log("🔍 Refresh Result Full Object:", refreshResult);
 
     if (refreshResult?.data) {
-      console.log("✅ Token refreshed successfully!");
+      console.log(" Token refreshed successfully!");
       
-      // ✅ تعديل مهم جداً: التعامل المرن مع هيكلة الداتا
-      // بنشوف هل الداتا جوه data.data ولا data مباشرة
       const responseData = refreshResult.data.data || refreshResult.data;
       
       const { user, accessToken } = responseData;
@@ -48,13 +45,12 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         api.dispatch(setCredentials({ user, accessToken }));
         result = await baseQuery(args, api, extraOptions);
       } else {
-        console.error("❌ Refresh succeeded but AccessToken is missing in response!", responseData);
+        console.error("Refresh succeeded but AccessToken is missing in response!", responseData);
         api.dispatch(logout());
       }
 
     } else {
-      // هنا هنعرف ليه الفشل حصل (هل 401 ولا 500 ولا حاجة تانية)
-      console.error("❌ Refresh Request Failed.");
+      console.error(" Refresh Request Failed.");
       console.error("Status:", refreshResult?.error?.status);
       console.error("Error Data:", refreshResult?.error?.data);
       
