@@ -14,6 +14,7 @@ import { Spinner } from "@/components/shared/Loader";
 import { GraduationCap } from "lucide-react";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
+import { BASE_URL } from "@/constants";
 
 
 
@@ -139,6 +140,21 @@ export default function LoginPage() {
               forget your password
             </Link>
 
+<div className="mt-4 text-center">
+  <p className="text-sm text-gray-500 mb-2">Or login with</p>
+  <a
+    href={`${BASE_URL}/api/v1/auth/google`}
+    className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+  >
+    <img
+      className="h-5 w-5 mr-2"
+      src="https://www.svgrepo.com/show/475656/google-color.svg"
+      loading="lazy"
+      alt="google logo"
+    />
+    <span>Continue with Google</span>
+  </a>
+</div>
           </div>
           <div className=" text-center text-sm">
           </div>
@@ -150,3 +166,6 @@ export default function LoginPage() {
     </div>  
   );
 }
+
+
+
