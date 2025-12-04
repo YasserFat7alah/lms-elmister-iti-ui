@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice"; 
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice"; 
+import { IoMdNotificationsOutline } from "react-icons/io";
 
 import { 
   LayoutDashboard, User, BookOpen, Award, Heart, Star, 
@@ -57,12 +58,12 @@ const roleLinks = {
     ],
 
     parent: [
-      { label: "Overview", href: "/dashboard/parent", icon: LayoutDashboard },
-      { label: "My Children", href: "/dashboard/parent/children", icon: Baby }, 
-      { label: "Progress Reports", href: "/dashboard/parent/reports", icon: FileBarChart },
+      { label: "Overview", href: "/dashboard/parent/overview", icon: LayoutDashboard },
+      { label: "My Children", href: "/dashboard/parent/children", icon: Baby , exact:true}, 
       { label: "Teachers", href: "/dashboard/parent/teachers", icon: Users },
       { label: "Payments", href: "/dashboard/parent/payments", icon: CreditCard },
       { label: "Messages", href: "/dashboard/parent/messages", icon: MessageSquare },
+      { label: "Notifications", href: "/dashboard/parent/notifications", icon: IoMdNotificationsOutline }
     ],
 
     admin: [
@@ -127,7 +128,9 @@ const roleLinks = {
                 <nav className="space-y-1">
                     {links.map((link) => {
                         const Icon = link.icon;
-                        const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
+                        const isActive = link.exact 
+                          ? pathname === link.href 
+                          : (pathname === link.href || pathname.startsWith(`${link.href}/`));
 
                         return (
                             <Link
