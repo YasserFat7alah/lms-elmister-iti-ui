@@ -30,6 +30,8 @@
   --chart-3: 197 37% 24%;
   --chart-4: 43 74% 66%;
   --chart-5: 27 87% 67%;
+  --mainPink: #FF0055;
+  --mainBlue: #392b80;
 }
 
 .dark {
@@ -128,3 +130,4 @@
   background: #f0f0f0;   
   border-radius: 6px;
 }
+

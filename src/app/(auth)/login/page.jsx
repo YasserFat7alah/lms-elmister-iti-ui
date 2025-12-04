@@ -41,7 +41,7 @@ export default function LoginPage() {
         admin: "/dashboard/admin/dashboard",     
         teacher: "/dashboard/teacher/analytics",  
         student: "/dashboard/student/my-learning", 
-        parent: "/dashboard/parent",     
+        parent: "/dashboard/parent/overview",     
       };
 
       const targetPath = dashboardPaths[role] || "/";
