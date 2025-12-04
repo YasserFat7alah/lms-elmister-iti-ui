@@ -9,7 +9,7 @@ export default function Goals() {
   ];
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#08131E] text-white">
+<section className="py-5 px-4 bg-[#08131E] text-white rounded-2xl max-w-7xl mx-auto">
       
       {/* TITLE + SUBTEXT */}
       <div className="text-center mb-8">

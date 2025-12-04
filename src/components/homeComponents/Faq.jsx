@@ -41,11 +41,10 @@ export function FAQ() {
   };
 
   return (
-    <section className="w-full bg-white py-16 md:py-20">
+    <section className="w-full bg-white py-10 md:py-10">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-          {/* الصورة على الشمال */}
           <div className="hidden lg:block order-1">
           <div className="order-2 lg:order-1">
             <div className="relative">
@@ -62,7 +61,6 @@ export function FAQ() {
           </div>
           </div>
 
-          {/* الأكورديون على اليمين */}
           <div className="order-1 lg:order-2">
             <h2 className="text-4xl md:text-4xl font-black text-gray-900 mb-4">
               Frequently Asked Questions

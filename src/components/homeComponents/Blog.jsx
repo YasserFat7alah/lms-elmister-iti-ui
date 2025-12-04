@@ -31,7 +31,7 @@ export default function Blog() {
   ];
 
   return (
-    <section className="w-full bg-gradient-to-b from-white to-purple-50 py-10 md:py-10">
+    <section className="w-full bg-gradient-to-b from-white to-purple-50 py-5">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Header */}
