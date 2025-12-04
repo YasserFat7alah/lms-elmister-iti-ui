@@ -10,7 +10,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="mt-5 py-16 px-4 sm:px-6 lg:px-8 bg-[#08131E] text-white">
+    <section className="mt-2 py-8 px-4 sm:px-6 lg:px-8 bg-[#08131E] text-white">
 
       <div className="text-center mb-12">
         <button className="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-full text-xs mb-4 transition">

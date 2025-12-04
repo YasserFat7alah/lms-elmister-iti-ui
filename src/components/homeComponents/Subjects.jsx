@@ -14,7 +14,7 @@ const subjects = [
 
 export default function Subjects() {
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-5 bg-gray-50">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-[#392C7D]">Subjects</h2>
         <p className="text-gray-600 max-w-md mx-auto mt-2">
@@ -22,15 +22,12 @@ export default function Subjects() {
         </p>
       </div>
 
-      {/* Horizontal scroll container */}
-      <div
-        className="px-4"
-        role="list"
-        aria-label="Subjects list"
-      >
-        <div className="flex gap-4 items-stretch snap-x snap-mandatory">
+     
+<div
+  className="grid grid-cols-2 gap-4 items-stretch sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
+>
           {subjects.map((sub) => (
-            <div key={sub.title} className="snap-start flex-shrink-0">
+        <div key={sub.title} className="snap-start min-w-0">
               <CustomizeCard
                 icon={sub.icon}
                 title={sub.title}
@@ -39,7 +36,6 @@ export default function Subjects() {
             </div>
           ))}
         </div>
-      </div>
     </section>
   );
 }

@@ -42,7 +42,7 @@ const instructorsData = [
 
 export default function Instructors() {
   return (
-    <section className="py-16 bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <section className="py-10 bg-gradient-to-br from-purple-50 via-white to-pink-50">
       <div className="max-w-7xl mx-auto px-4 text-center">
         {/* Trending Badge */}
         <span className="inline-block bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold px-5 py-2 rounded-full mb-4">
