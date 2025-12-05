@@ -1,13 +1,16 @@
 'use client'
+import React, { useState } from 'react'
 import CourseSearch from '@/components/coursesComponent/CourseSearch'
 import CoursesList from '@/components/coursesComponent/CoursesList'
 import Filterition from '@/components/coursesComponent/Filterition'
 import CourseBreadcrumb from '@/components/shared/courses/CourseBreadcrumb'
-import { mockCourses } from '@/data/mockCourses'
-import { mockTeachers } from '@/data/mockTeacher'
-import React, { useState } from 'react'
+import { useGetCoursesQuery } from '@/redux/api/endPoints/coursesApiSlice'
 
-const page = () => {
+const Page = () => { 
+
+  const { data: coursesData, isLoading, isError, error } = useGetCoursesQuery();
+  
+  const coursesList = coursesData?.data || []; 
 
   const [selectedSubjects , setSelectedSubjects] = useState([]);
   const [searchQuery , setSearchQuery] = useState("");
@@ -16,17 +19,9 @@ const page = () => {
   const [gradeFilter , setGradeFilter] = useState("all")
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
-
   //__________________________FILTER LOGIC_________________________
-  const courseWithTeacher = mockCourses.map(course =>{
-    const teacher = mockTeachers.find(t => t.id === course.teacherId);
-    return {
-      ...course,
-      teacherName : teacher ? teacher.name : ""
-    }
-  })
-
-  let filteredCourses = courseWithTeacher ;
+  
+  let filteredCourses = coursesList
 
   //FILTER BY SUBJECT
   if(selectedSubjects.length > 0){
@@ -36,30 +31,34 @@ const page = () => {
   }
 
   //FILTER BY TEACHER NAME
+  // في الكود القديم كنت بتفلتر بالـ ID، هنا لازم تتأكد الـ searchInstructor شايل IDs ولا Names
+  // لو الـ Filterition بيرجع IDs، يبقى الكود ده تمام لأن teacherId._id موجود في الـ JSON
   if (Array.isArray(searchInstructor) && searchInstructor.length > 0) {
     filteredCourses = filteredCourses.filter(course =>
-      searchInstructor.includes(course.teacherId)
+      searchInstructor.includes(course.teacherId?._id) 
     );
   }
   
   //FILTER BY SEARCH TEXT
   if(searchQuery.trim() !== ""){
     filteredCourses = filteredCourses.filter(course=>
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.teacherName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.subject.toLowerCase().includes(searchQuery.toLowerCase()) 
+      course.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.teacherId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || // تعديل للوصول لاسم المدرس
+      course.subject?.toLowerCase().includes(searchQuery.toLowerCase()) 
     )
   }
 
   //FILTER BY PRICE
+  // ملاحظة: الـ JSON اللي بعته مكنش فيه حقل pricing واضح، فتأكد إن الباك إند بيبعته
+  // لو مش بيبعته الكود ده مش هيشتغل صح
   if(priceFilter !== "all" && Array.isArray(priceFilter) && priceFilter.length > 0){
     filteredCourses = filteredCourses.filter((course) => {
       const isPaid = course.pricing?.isPaid === true;
       const isFree = !course.pricing || course.pricing?.isPaid === false;
       
       if(priceFilter.includes('paid') && priceFilter.includes('free')){
-        return true; // Show all if both are selected
+        return true; 
       } else if(priceFilter.includes('paid')){
         return isPaid;
       } else if(priceFilter.includes('free')){
@@ -76,22 +75,26 @@ const page = () => {
     )
   }
 
-
   //FILTER PRICE RANGE
   if(priceRange.min !== "" && priceRange.min != null) {
     filteredCourses = filteredCourses.filter(course =>
-      course.pricing?.price >= parseFloat(priceRange.min)
+      (course.pricing?.price || 0) >= parseFloat(priceRange.min)
     );
   }
   
   if(priceRange.max !== "" && priceRange.max != null) {
     filteredCourses = filteredCourses.filter(course =>
-      course.pricing?.price <= parseFloat(priceRange.max)
+      (course.pricing?.price || 0) <= parseFloat(priceRange.max)
     );
   }
   
-  return (
+  // Loading & Error States Handling
+  if (isLoading) return <div className="text-center py-10">Loading Courses...</div>;
+  if (isError) return <div className="text-center py-10 text-red-500">Error: {error?.data?.message || 'Something went wrong'}</div>;
 
+
+  
+  return (
     <>
       <CourseBreadcrumb/>
       <div className="my-5 mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[auto_1fr] justify-center lg:justify-between items-start gap-4">
@@ -107,6 +110,8 @@ const page = () => {
         onGradeChange={setGradeFilter}
         priceRange={priceRange}
         onPriceRangeChange={setPriceRange}
+        // ممكن تحتاج تبعت المدرسين الحقيقيين للفلتر لو الفلتر بيعرض قايمة يختار منها
+        // teachersList={/* unique teachers from coursesList */}
       />
 
       <div className=" w-full">
@@ -115,12 +120,16 @@ const page = () => {
         <div className="flex items-center justify-between flex-col lg:flex-row gap-5 mb-5 lg:pt-4 ">
           <CourseSearch onSearch={setSearchQuery} />
           <p className="text-gray-500 font-semibold">
-            Showing {filteredCourses.length} of {mockCourses.length} results
+            Showing {filteredCourses.length} of {coursesList.length} results
           </p>
         </div>
 
         {/* Courses List */}
-        <CoursesList courses={filteredCourses} />
+        {filteredCourses.length > 0 ? (
+           <CoursesList courses={filteredCourses} />
+        ) : (
+           <div className="text-center text-gray-500 mt-10">No courses found matching your criteria.</div>
+        )}
       
       </div>
 
@@ -130,4 +139,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

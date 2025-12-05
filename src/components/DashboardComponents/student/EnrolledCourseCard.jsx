@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PlayCircle, CheckCircle, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress"; // تأكد إنك مصطب Shadcn Progress
+import { Progress } from "@/components/ui/progress"; 
 import { Badge } from "@/components/ui/badge";
 
 const EnrolledCourseCard = ({ course }) => {
@@ -59,7 +59,7 @@ const EnrolledCourseCard = ({ course }) => {
                         <CheckCircle size={18} /> Completed
                     </Button>
                 ) : (
-                    <Link href={`/student/courses/${course.id}/play`}>
+                    <Link href={`/dashboard/student/courses/${course.id}/play`}>
                         <Button className="w-full bg-[#FF0055] hover:bg-pink-700 text-white rounded-full h-10 font-bold gap-2 shadow-md shadow-pink-100">
                             <PlayCircle size={18} /> Continue Learning
                         </Button>

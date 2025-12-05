@@ -48,7 +48,7 @@ export default function ParentSignUpPage() {
       const { user, accessToken } = res.data || res; 
       
       dispatch(setCredentials({ user, accessToken }));
-      router.push("/parent");
+      router.push("/dashboard/parent/overview");
       
     } catch (err) {
       setServerError(err?.data?.message || "Registration failed");

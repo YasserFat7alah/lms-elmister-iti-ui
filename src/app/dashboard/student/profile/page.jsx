@@ -15,7 +15,7 @@ import {
     Camera, Save, User, Mail, Phone, Lock, ChevronRight, Edit, X 
 } from "lucide-react";
 import { Label } from "@radix-ui/react-dropdown-menu";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";  
 export default function ProfilePage() {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);

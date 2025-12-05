@@ -80,7 +80,7 @@ const CoursesList = ({courses }) => {
         <>
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4'>
             {paginatedCourses.map(course=>(
-              <Link key={course.id} href={`/courses/${course.id}`} className="cursor-pointer">
+              <Link key={course._id} href={`/courses/${course._id}`} className="cursor-pointer">
               <Card 
                  
                 className="max-w-sm mx-auto mb-4 overflow-hidden group"  
@@ -90,8 +90,8 @@ const CoursesList = ({courses }) => {
             
                   {/* IMAGE */}
                   <div className="w-full h-full overflow-hidden">
-                    <Image
-                      src={course.thumbnail.url}
+                    <img
+                      src={course.thumbnail?.url}
                       alt={course.title}
                       fill
                       className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
@@ -114,7 +114,7 @@ const CoursesList = ({courses }) => {
                 <CardContent>
                   <div className="flex justify-between">
                     <span className='text-amber-800 font-bold'>
-                      {course.pricing.isPaid ? `${course.pricing.price} EGP` : "Free"}
+                      {course.pricing?.isPaid ? `${course.pricing?.price} EGP` : "Free"}
                     </span>
                     <span className='bg-gray-500 text-white px-3 py-1 rounded-md'>
                       {course.subject}
@@ -151,7 +151,7 @@ const CoursesList = ({courses }) => {
                         className="cursor-pointer"
                       >
                         {page}
-                      </PaginationLink>
+                      </PaginationLink> 
                     )}
                   </PaginationItem>
                 ))}

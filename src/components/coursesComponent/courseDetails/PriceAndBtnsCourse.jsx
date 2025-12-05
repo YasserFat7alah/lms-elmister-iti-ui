@@ -7,8 +7,8 @@ import { IoMdShare } from "react-icons/io";
 const PriceAndBtnsCourse = ({course}) => {
   return (
     <div className="p-4 border font-bold text-2xl rounded-md my-5 mx-4">
-            {course.pricing.isPaid ? (
-              <p className="text-yellow-500">{course.pricing.price} EGP</p>
+            {course.pricing?.isPaid ? (
+              <p className="text-yellow-500">{course.pricing?.price} EGP</p>
             ) : (
               <p className="text-green-600">Free</p>
             )}

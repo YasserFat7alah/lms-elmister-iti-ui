@@ -1,58 +1,91 @@
-import { mockCourses } from '@/data/mockCourses';
 import { FaGooglePlay } from "react-icons/fa";
 import { FaBookOpen } from "react-icons/fa";
 import Image from 'next/image'
 import React from 'react'
 
-const AboutInstractor = ({course , teacher}) => {
+// صورة افتراضية (Placeholder) عشان لو المدرس ملوش صورة
+const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
-    const coursesCount = mockCourses.filter(c => c.teacherId === teacher.id).length;
+const AboutInstractor = ({ course, teacher }) => {
 
-    const totalLessons = mockCourses
-        .filter(c => c.teacherId === teacher.id) 
-        .reduce((sum, course) => {
-            const lessonsInCourse = course.sections.reduce((secSum, section) => secSum + section.lessons.length, 0);
-            return sum + lessonsInCourse;
-    }, 0)
+    // تأمين: لو بيانات المدرس مش موجودة خالص
+    if (!teacher) return null;
 
-  return (
-    <div className='p-4 border rounded-md my-5 mx-4'>
-        <h3 className='font-bold text-gray-900'>About the teacher</h3>
-        {/* MAIN INFO */}
-        <div>
-            <div className='flex gap-2 items-center'>
-                <Image src={teacher.avatar} width={100} height={100} alt={teacher.name}
-                    className='w-20 h-20 rounded-full'
-                />
-                <div>
-                    <p className='text-gray-800 font-bold'>{teacher.name}</p>
-                    <p className='text-gray-500'>{teacher.specialization}</p>
-                </div>
-            </div>
-        </div>
-        {/* EXPERIENCES */}
-        <div className=' gap-10 '>
-            <div className='flex gap-10 items-center border-t border-b py-4 px-2'>
-                <div className='flex items-center gap-2 font-semibold'>
-                    <p className='text-pink-500'> <FaGooglePlay/> </p>
-                    <p className='text-gray-800'>{coursesCount > 1 ? `${coursesCount} Courses` : `${coursesCount} Course`}</p>
-                </div>
+    // ملاحظة: بما إننا معندناش كل الكورسات في الفرونت، مش هنقدر نحسب العدد بدقة
+    // المفروض الباك إند يبعت (coursesCount) جوه بيانات المدرس
+    // حالياً هنعرض 1 كقيمة افتراضية (الكورس الحالي) أو نخفيها
+    const coursesCount = teacher.coursesCount || 1; 
+    const totalLessons = teacher.totalLessons || "N/A"; 
 
-                <div className='flex items-center gap-2 font-semibold'>
-                    <p className='text-yellow-400'><FaBookOpen /></p>
-                    <p className='text-gray-800'>{totalLessons}+ Lesson</p>
-                </div>
-            </div>
-
-            <p className='my-3 text-gray-500'>{teacher.degree} - {teacher.subjects.join(", ")}</p>
-
+    return (
+        <div className='p-4 border rounded-md my-5 mx-4 bg-white shadow-sm'>
+            <h3 className='font-bold text-gray-900 mb-4'>About the teacher</h3>
+            
+            {/* MAIN INFO */}
             <div>
-                <h3 className='font-semibold text-gray-900'>Available for :</h3>
-                <p className='text-gray-500'>{teacher.availability.join(" / ")}</p>
+                <div className='flex gap-3 items-center'>
+                    {/* الصورة مع Fallback */}
+                    <div className="relative w-20 h-20 rounded-full overflow-hidden border border-gray-200">
+                        <img 
+                            src={teacher.avatar || DEFAULT_AVATAR} 
+                            alt={teacher.name || "Teacher"}
+                            fill
+                            className='object-cover'
+                        />
+                    </div>
+                    
+                    <div>
+                        <p className='text-gray-800 font-bold text-lg'>{teacher.name}</p>
+                        <p className='text-gray-500 text-sm'>
+                            {teacher.specialization || "teacher"}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* EXPERIENCES */}
+            <div className='mt-4'>
+                <div className='flex gap-6 items-center border-t border-b py-4 px-2'>
+                    <div className='flex items-center gap-2 font-semibold'>
+                        <p className='text-pink-500'> <FaGooglePlay/> </p>
+                        <p className='text-gray-800 text-sm'>
+                            {coursesCount} {coursesCount > 1 ? "Courses" : "Course"}
+                        </p>
+                    </div>
+
+                    <div className='flex items-center gap-2 font-semibold'>
+                        <p className='text-yellow-400'><FaBookOpen /></p>
+                        <p className='text-gray-800 text-sm'>
+                             {totalLessons} Lessons
+                        </p>
+                    </div>
+                </div>
+
+                {/* التفاصيل الإضافية: نتأكد إنها موجودة قبل العرض */}
+                <div className="mt-4 space-y-2">
+                    {teacher.degree && (
+                         <p className='text-gray-600 text-sm'>
+                            <span className="font-bold">Degree:</span> {teacher.degree}
+                         </p>
+                    )}
+
+                    {/* استخدام Optional Chaining ?. عشان لو subjects مش موجودة */}
+                    {teacher.subjects && teacher.subjects.length > 0 && (
+                        <p className='text-gray-600 text-sm'>
+                            <span className="font-bold">Subjects:</span> {teacher.subjects.join(", ")}
+                        </p>
+                    )}
+
+                    {teacher.availability && teacher.availability.length > 0 && (
+                        <div className="mt-3">
+                            <h3 className='font-semibold text-gray-900 text-sm'>Available for:</h3>
+                            <p className='text-gray-500 text-sm'>{teacher.availability.join(" / ")}</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default AboutInstractor

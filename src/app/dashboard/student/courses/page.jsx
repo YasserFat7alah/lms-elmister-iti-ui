@@ -7,14 +7,12 @@ import { BookOpen } from "lucide-react";
 
 export default function EnrolledCoursesPage() {
   
-  // تصفية البيانات
   const activeCourses = enrolledCourses.filter(c => c.status === "active");
   const completedCourses = enrolledCourses.filter(c => c.status === "completed");
 
   return (
     <div className="space-y-8">
       
-      {/* 1. Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -26,7 +24,6 @@ export default function EnrolledCoursesPage() {
         </div>
       </div>
 
-      {/* 2. Tabs & Grid */}
       <Tabs defaultValue="all" className="w-full">
         
         <TabsList className="bg-white border border-gray-100 p-1 rounded-lg mb-6 h-auto inline-flex">
@@ -41,7 +38,6 @@ export default function EnrolledCoursesPage() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Tab: All */}
         <TabsContent value="all" className="animate-in fade-in-50 duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {enrolledCourses.map(course => (
@@ -50,7 +46,6 @@ export default function EnrolledCoursesPage() {
             </div>
         </TabsContent>
 
-        {/* Tab: Active */}
         <TabsContent value="active" className="animate-in fade-in-50 duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {activeCourses.length > 0 ? (
@@ -61,7 +56,6 @@ export default function EnrolledCoursesPage() {
             </div>
         </TabsContent>
 
-        {/* Tab: Completed */}
         <TabsContent value="completed" className="animate-in fade-in-50 duration-300">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {completedCourses.length > 0 ? (

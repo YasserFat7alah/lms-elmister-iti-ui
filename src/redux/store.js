@@ -1,12 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { apiSlice } from './api/apiSlice';
 import authReducer from './slices/authSlice';
-import notificationReducer from './slices/notificationSlice';
 
 const appReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
   auth: authReducer,
-  notifications: notificationReducer
 });
 
 const rootReducer = (state, action) => {

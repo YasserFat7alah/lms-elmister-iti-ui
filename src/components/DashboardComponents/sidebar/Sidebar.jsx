@@ -22,10 +22,9 @@ const ROLE_LINKS = {
       { label: "Dashboard", href: "/dashboard/student/my-learning", icon: LayoutDashboard },
       { label: "Update Profile", href: "/dashboard/student/profile", icon: User },
       { label: "Enrolled Courses", href: "/dashboard/student/courses", icon: BookOpen },
+      { label: "live-sessions", href: "/dashboard/student/live-sessions", icon: Award },
       { label: "Assignments", href: "/dashboard/student/assignments", icon: FileText }, 
       { label: "Study Material", href: "/dashboard/student/materials", icon: FileQuestion },
-      { label: "Wishlist", href: "/dashboard/student/wishlist", icon: Heart },
-      { label: "My Certificates", href: "/dashboard/student/certificates", icon: Award },
       { label: "Subscription History", href: "/dashboard/student/orders", icon: ShoppingBag },
     ],
 
