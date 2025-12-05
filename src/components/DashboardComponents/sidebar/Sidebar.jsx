@@ -46,6 +46,7 @@ const ROLE_LINKS = {
 
     parent: [
       { label: "Overview", href: "/dashboard/parent/overview", icon: LayoutDashboard },
+      { label: "Profile", href: "/dashboard/parent/profile", icon: User },
       { label: "My Children", href: "/dashboard/parent/children", icon: Baby , exact:true}, 
       { label: "Teachers", href: "/dashboard/parent/teachers", icon: Users },
       { label: "Payments", href: "/dashboard/parent/payments", icon: CreditCard },
