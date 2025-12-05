@@ -11,6 +11,7 @@ import logo from "@/assets/images/logo.png";
 import { useRouter } from "next/navigation";
 
 import { useForgotPasswordMutation } from "@/redux/api/endPoints/usersApiSlice";
+import toast from "react-hot-toast";
 
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email address").required("Email is required"),

@@ -11,6 +11,7 @@ import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import { useResetPasswordMutation } from "@/redux/api/endPoints/usersApiSlice";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const resetPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -41,12 +42,12 @@ const dataToSend = {
       console.log("Data being sent to Backend:", dataToSend); 
       const res = await resetPassword(dataToSend).unwrap();
       
-      alert("Password reset successfully! You can login now.");
+      toast.success("Password reset successfully! You can login now.");
       
       router.push("/login");
       
     } catch (err) {
-      alert(err?.data?.message || err.error || "Failed to reset password");
+      toast.error(err?.data?.message || err.error || "Failed to reset password");
     }
   };
 
