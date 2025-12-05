@@ -92,7 +92,6 @@ const CoursesList = ({courses }) => {
                     <img
                       src={course.thumbnail?.url}
                       alt={course.title}
-                      fill
                       className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                     />
                   </div>

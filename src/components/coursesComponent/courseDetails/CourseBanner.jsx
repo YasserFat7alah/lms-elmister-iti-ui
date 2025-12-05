@@ -6,6 +6,9 @@ import { PiStudentDuotone } from "react-icons/pi";
 
 
 const CourseBanner = ({imgsrc , course , teacher}) => {
+
+                                                const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+
   return (
     <div className="relative w-full h-[350px] ">
         {/* Background Image */}
@@ -37,7 +40,11 @@ const CourseBanner = ({imgsrc , course , teacher}) => {
 
             <div className='mt-4'>
                 <div className='flex items-center gap-3'>
-                    <Image src={teacher.avatar} height={100} width={100} alt="" className='w-16 h-16 rounded-full' />
+                    <img src={teacher.avatar || DEFAULT_AVATAR}
+                    
+                    
+                    
+                    height={100} width={100} alt="" className='w-16 h-16 rounded-full' />
                     <div className='flex flex-col'>
                         <span className='font-semibold'>{teacher.name}</span>
                         <span className='text-gray-800'>teacher</span>

@@ -27,9 +27,9 @@ const AboutInstractor = ({ course, teacher }) => {
                     {/* الصورة مع Fallback */}
                     <div className="relative w-20 h-20 rounded-full overflow-hidden border border-gray-200">
                         <img 
+                        
                             src={teacher.avatar || DEFAULT_AVATAR} 
                             alt={teacher.name || "Teacher"}
-                            fill
                             className='object-cover'
                         />
                     </div>
