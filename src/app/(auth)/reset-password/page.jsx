@@ -92,13 +92,13 @@ const dataToSend = {
           {/* Formik Integration */}
           <Formik
             initialValues={{ 
-                email: emailFromUrl, // لو الإيميل جاي في الرابط هيتكتب لوحده
+                email: emailFromUrl,
                 otp: "", 
                 password: "", 
                 confirmPassword: "" 
             }}
             validationSchema={resetPasswordSchema}
-            enableReinitialize // مهم عشان لو الإيميل اتأخر في التحميل الفورم يحدث نفسه
+            enableReinitialize 
             onSubmit={handleFormikSubmit}
           >
             {({ isSubmitting }) => (
