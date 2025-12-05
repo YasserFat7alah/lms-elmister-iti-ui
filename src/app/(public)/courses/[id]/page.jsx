@@ -45,7 +45,6 @@ export default function Page() {
                 
                 <OverView course={course} />
                 
-                {/* تأكد إن الـ course.groups عبارة عن Array */}
                 <CourseGroup groups={course.groups || []} />
 
                 <div className='md:hidden'>

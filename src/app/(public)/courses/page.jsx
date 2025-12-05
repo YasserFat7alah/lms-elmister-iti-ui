@@ -30,16 +30,12 @@ const Page = () => {
     );
   }
 
-  //FILTER BY TEACHER NAME
-  // في الكود القديم كنت بتفلتر بالـ ID، هنا لازم تتأكد الـ searchInstructor شايل IDs ولا Names
-  // لو الـ Filterition بيرجع IDs، يبقى الكود ده تمام لأن teacherId._id موجود في الـ JSON
   if (Array.isArray(searchInstructor) && searchInstructor.length > 0) {
     filteredCourses = filteredCourses.filter(course =>
       searchInstructor.includes(course.teacherId?._id) 
     );
   }
   
-  //FILTER BY SEARCH TEXT
   if(searchQuery.trim() !== ""){
     filteredCourses = filteredCourses.filter(course=>
       course.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -48,10 +44,6 @@ const Page = () => {
       course.subject?.toLowerCase().includes(searchQuery.toLowerCase()) 
     )
   }
-
-  //FILTER BY PRICE
-  // ملاحظة: الـ JSON اللي بعته مكنش فيه حقل pricing واضح، فتأكد إن الباك إند بيبعته
-  // لو مش بيبعته الكود ده مش هيشتغل صح
   if(priceFilter !== "all" && Array.isArray(priceFilter) && priceFilter.length > 0){
     filteredCourses = filteredCourses.filter((course) => {
       const isPaid = course.pricing?.isPaid === true;

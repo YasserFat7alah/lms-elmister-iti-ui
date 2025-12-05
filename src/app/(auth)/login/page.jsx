@@ -16,9 +16,6 @@ import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import { BASE_URL } from "@/constants";
 
-
-
-
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -31,12 +28,11 @@ export default function LoginPage() {
       const res = await login(values).unwrap();
 
       const responseData = res?.data || res; 
-      const { user, accessToken } = responseData;
+      const { user, accessToken, refreshToken } = responseData;
 
-      dispatch(setCredentials({ user, accessToken }));
+      dispatch(setCredentials({ user, accessToken, refreshToken }));
 
       const role = user.role;
-      
       const dashboardPaths = {
         admin: "/dashboard/admin/dashboard",     
         teacher: "/dashboard/teacher/analytics",  
@@ -45,7 +41,6 @@ export default function LoginPage() {
       };
 
       const targetPath = dashboardPaths[role] || "/";
-      
       router.push(targetPath);
 
     } catch (err) {
@@ -58,7 +53,8 @@ export default function LoginPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px]">
-            <div className="hidden bg-muted lg:block relative h-full">
+       {/* Left Image */}
+       <div className="hidden bg-muted lg:block relative h-full">
         <img
           src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
           alt="Login Cover"
@@ -67,35 +63,16 @@ export default function LoginPage() {
       </div>
 
       <div className="flex items-center justify-center py-12 bg-gray-50">
-        
         <div className="mx-auto grid w-[350px] gap-6">
           
-<div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 flex items-center justify-between">
+            <Link href="/" className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]">
+              Back Home
+            </Link>
+            <Image src={logo} alt="El-Mister Logo" className="h-12 w-auto" />
+          </div>
 
-
-
-
-
-
-
-    <Link 
-    href="/" 
-    className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]"
-  >
-    Back Home
-  </Link>
-
-
-  <Image 
-    src={logo} 
-    alt="El-Mister Logo" 
-    className="h-12 w-auto"
-  />
-
-
-</div>
           <div className="grid gap-2 text-center">
-
             <div className="flex justify-center mb-4 lg:hidden">
                 <GraduationCap className="h-10 w-10 text-primary" />
             </div>
@@ -103,7 +80,6 @@ export default function LoginPage() {
             <p className="text-balance text-muted-foreground">
               Enter your email and password below to login
             </p>
-            
           </div>
           
           <Formik
@@ -125,7 +101,6 @@ export default function LoginPage() {
                 <Button type="submit" className="w-full bg-[#FF4667]" disabled={isLoading || isSubmitting}>
                   {isLoading ? <Spinner size={20} className="text-white" /> : "Login"}
                 </Button>
-                
               </Form>
             )}
           </Formik>
@@ -136,36 +111,29 @@ export default function LoginPage() {
               Register
             </Link>
             <br />
-                        <Link href="/forgetPassword" className="underline mt-2 font-semibold hover:text-primary ">
-              forget your password
+            <Link href="/forgot-password" className="underline mt-2 font-semibold hover:text-primary ">
+               Forget your password?
             </Link>
 
-<div className="mt-4 text-center">
-  <p className="text-sm text-gray-500 mb-2">Or login with</p>
-  <a
-    href={`${BASE_URL}/api/v1/auth/google`}
-    className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-  >
-    <img
-      className="h-5 w-5 mr-2"
-      src="https://www.svgrepo.com/show/475656/google-color.svg"
-      loading="lazy"
-      alt="google logo"
-    />
-    <span>Continue with Google</span>
-  </a>
-</div>
+            {/* زرار جوجل: مجرد لينك بيروح للباك إند */}
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-500 mb-2">Or login with</p>
+              <a
+                href={`${BASE_URL}/api/v1/auth/google`}
+                className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"
+              >
+                <img
+                  className="h-5 w-5 mr-2"
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  loading="lazy"
+                  alt="google logo"
+                />
+                <span>Continue with Google</span>
+              </a>
+            </div>
           </div>
-          <div className=" text-center text-sm">
-          </div>
-
         </div>
       </div>
-
-
     </div>  
   );
 }
-
-
-

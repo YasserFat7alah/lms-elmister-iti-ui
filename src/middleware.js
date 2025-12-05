@@ -1,17 +1,13 @@
-
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
   const path = request.nextUrl.pathname;
   
-  const token = request.cookies.get('token')?.value;
-  const role = request.cookies.get('user_role')?.value; 
+  const token = request.cookies.get('accessToken')?.value || request.cookies.get('token')?.value;
+  const role = request.cookies.get('user_role')?.value || request.cookies.get('role')?.value; 
 
-  const authPaths = ['/login', '/signup', '/forgetPassword', '/teacher-signup'];
-  const isAuthPath = authPaths.includes(path);
-
-  const publicPaths = ['/', '/about', '/becomeAnInstrcutor',  '/contact', '/blog', ...authPaths];
-  const isPublicPath = publicPaths.includes(path) || path.startsWith('/courses') || path.startsWith('/uploads'); 
+  const authPaths = ['/login', '/signup', '/forgetPassword', '/teacher-signup', '/reset-password'];
+  const isAuthPath = authPaths.some(p => path.startsWith(p));
 
   if (token && isAuthPath) {
     if (role === 'admin') return NextResponse.redirect(new URL('/dashboard/admin/dashboard', request.url));
@@ -22,14 +18,14 @@ export function middleware(request) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
+  // 3. حماية الداشبورد
   if (path.startsWith('/dashboard') && !token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
-
   
-  // Admin
+  // 4. حماية الرولات
   if (path.startsWith('/dashboard/admin') && role !== 'admin') {
-    return NextResponse.redirect(new URL('/unauthorized', request.url)); 
+    return NextResponse.redirect(new URL('/login', request.url)); 
   }
 
   if (path.startsWith('/dashboard/teacher') && role !== 'teacher') {
@@ -49,6 +45,6 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|images).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|images|assets).*)',
   ],
 };

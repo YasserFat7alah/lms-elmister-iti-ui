@@ -40,7 +40,7 @@ const CourseBanner = ({imgsrc , course , teacher}) => {
                     <Image src={teacher.avatar} height={100} width={100} alt="" className='w-16 h-16 rounded-full' />
                     <div className='flex flex-col'>
                         <span className='font-semibold'>{teacher.name}</span>
-                        <span className='text-gray-800'>Instructor</span>
+                        <span className='text-gray-800'>teacher</span>
                     </div>
                 </div>
             </div>

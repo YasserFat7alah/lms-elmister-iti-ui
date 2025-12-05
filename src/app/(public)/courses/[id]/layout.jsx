@@ -24,7 +24,6 @@ const Layout = ({ children }) => {
 
     return (
         <div>
-            {/* عرض البانر بالبيانات الحقيقية */}
             <CourseBanner 
                 imgsrc={course.thumbnail?.url} 
                 course={course} 
