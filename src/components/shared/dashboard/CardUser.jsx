@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Edit2, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react'
 
 const CardUser = ({user , fieldKey , className}) => {
@@ -13,7 +14,7 @@ const CardUser = ({user , fieldKey , className}) => {
                     </AvatarFallback>
                 </Avatar>
                 <div className="absolute bottom-1 right-1 bg-[#10D876] text-white p-1 rounded-full border-2 border-[#195EC2]">
-                    <CheckCircle size={14} fill="white" className="text-[#10D876]" />
+                        <CheckCircle size={14} fill="white" className="text-[#10D876]" />
                 </div>
             </div>
 
