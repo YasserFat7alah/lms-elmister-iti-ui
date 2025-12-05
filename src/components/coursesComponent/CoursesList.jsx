@@ -88,7 +88,6 @@ const CoursesList = ({courses }) => {
             
                 <div className="relative w-full h-48 overflow-hidden rounded-t-xl">
             
-                  {/* IMAGE */}
                   <div className="w-full h-full overflow-hidden">
                     <img
                       src={course.thumbnail?.url}
@@ -98,7 +97,6 @@ const CoursesList = ({courses }) => {
                     />
                   </div>
             
-                  {/* OVERLAY */}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 -translate-x-full group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
                     <Button>View Course</Button>
                   </div>
