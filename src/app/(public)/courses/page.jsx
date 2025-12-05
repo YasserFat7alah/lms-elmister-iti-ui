@@ -40,7 +40,7 @@ const Page = () => {
     filteredCourses = filteredCourses.filter(course=>
       course.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.teacherId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || // تعديل للوصول لاسم المدرس
+      course.teacherId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
       course.subject?.toLowerCase().includes(searchQuery.toLowerCase()) 
     )
   }
@@ -102,8 +102,6 @@ const Page = () => {
         onGradeChange={setGradeFilter}
         priceRange={priceRange}
         onPriceRangeChange={setPriceRange}
-        // ممكن تحتاج تبعت المدرسين الحقيقيين للفلتر لو الفلتر بيعرض قايمة يختار منها
-        // teachersList={/* unique teachers from coursesList */}
       />
 
       <div className=" w-full">

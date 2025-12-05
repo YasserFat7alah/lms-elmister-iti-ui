@@ -2,7 +2,6 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import StoreProvider from "@/redux/StoreProvider"; 
 import { Toaster } from 'react-hot-toast';
-import AuthPersist from "@/components/authComponents/AuthPersist";
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -18,10 +17,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="font-sans antialiased">
         <StoreProvider>
-          <AuthPersist>
 
           {children}
-          </AuthPersist>
                   <Toaster position="top-center" />
 
         </StoreProvider>
