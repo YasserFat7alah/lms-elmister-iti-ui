@@ -32,7 +32,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       extraOptions
     );
 
-    console.log("🔍 Refresh Result Full Object:", refreshResult);
+    console.log(" Refresh Result Full Object:", refreshResult);
 
     if (refreshResult?.data) {
       console.log(" Token refreshed successfully!");
