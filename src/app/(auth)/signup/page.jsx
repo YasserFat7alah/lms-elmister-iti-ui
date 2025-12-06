@@ -15,6 +15,7 @@ import FormikPassword from "@/components/authComponents/FormikPassword";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import { BASE_URL, USERS_URL_DATA } from "@/constants";
+import { HomeIcon } from "lucide-react";
 
 export default function CompleteProfileOrSignUp() {
   const router = useRouter();
@@ -157,9 +158,9 @@ export default function CompleteProfileOrSignUp() {
   }
 
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
-      <div className="hidden lg:block relative h-full">
-        <div className="absolute inset-0 bg-black/40 flex flex-col justify-center p-12 text-white">
+    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 ">
+      <div className="hidden lg:block relative h-fit">
+        <div className="absolute inset-0 bg-black/40 flex flex-col justify-center p-12 text-white h-screen overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
             alt="Classroom"
@@ -172,7 +173,7 @@ export default function CompleteProfileOrSignUp() {
         <div className="mx-auto grid w-full max-w-[500px] gap-6">
           <div className="mb-4 flex items-center justify-between">
             <Link href="/" className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]">
-              Back Home
+              <HomeIcon className="inline-block h-5 w-5 mr-1" /> back 
             </Link>
 
             <Image src={logo} alt="El-Mister Logo" className="h-12 w-auto" />
@@ -225,7 +226,7 @@ export default function CompleteProfileOrSignUp() {
               </Link>
             </div>
                         <div className="mt-4 text-center">
-                          <p className="text-sm text-gray-500 mb-2">Or login with</p>
+                          <p className="text-sm text-gray-500 mb-2">Register with</p>
                           <a
                             href={`${BASE_URL}/api/v1/auth/google`}
                             className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"

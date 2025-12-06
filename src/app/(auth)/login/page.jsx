@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import FormikInput from "@/components/authComponents/FormikInput";
 import FormikPassword from "@/components/authComponents/FormikPassword";
 import { Spinner } from "@/components/shared/Loader";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, HomeIcon } from "lucide-react";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import { BASE_URL, USERS_URL_DATA } from "@/constants";
@@ -115,10 +115,9 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px]">
-      {/* Left Image */}
-      <div className="hidden bg-muted lg:block relative h-full">
+      <div className="hidden bg-muted lg:block relative h-screen overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1616531770192-6eaea74c2456?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
           alt="Login Cover"
           className="h-full w-full object-cover"
         />
@@ -128,7 +127,7 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="mb-4 flex items-center justify-between">
             <Link href="/" className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]">
-              Back Home
+              <HomeIcon className="inline-block h-5 w-5 mr-1" /> back 
             </Link>
             <Image src={logo} alt="El-Mister Logo" className="h-12 w-auto" />
           </div>
@@ -152,6 +151,12 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
                     {oauthProcessing ? "Processing Google sign-in..." : serverError}
                   </div>
                 )}
+<div className="text-center">
+              <Link href="/forgetPassword" className="underline  text-sm  mt-2 font-semibold hover:text-primary ">
+              Forget your password?
+            </Link>
+
+</div>
 
                 <Button type="submit" className="w-full bg-[#FF4667]" disabled={isLoading || isSubmitting || oauthProcessing}>
                   {isLoading || oauthProcessing ? <Spinner size={20} className="text-white" /> : "Login"}
@@ -160,18 +165,15 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
             )}
           </Formik>
 
-          <div className="mt-4 text-center text-sm">
+          <div className=" text-center text-sm">
             Don't have an account?
             <Link href="/signup" className="underline font-semibold hover:text-primary mx-1">
               Register
             </Link>
             <br />
-            <Link href="/forgot-password" className="underline mt-2 font-semibold hover:text-primary ">
-              Forget your password?
-            </Link>
 
             <div className="mt-4 text-center">
-              <p className="text-sm text-gray-500 mb-2">Or login with</p>
+              <p className="text-sm text-gray-500 mb-2"> login with</p>
               <a
                 href={`${BASE_URL}/api/v1/auth/google`}
                 className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"
