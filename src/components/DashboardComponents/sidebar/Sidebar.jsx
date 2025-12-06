@@ -58,6 +58,8 @@ const ROLE_LINKS = {
       { label: "Manage Users", href: "/dashboard/admin/users", icon: Users },
       { label: "Manage Courses", href: "/dashboard/admin/courses", icon: BookOpen },
       { label: "Financials", href: "/dashboard/admin/finance", icon: Wallet },
+      { label: "Messages", href: "/dashboard/admin/messages", icon: MessageSquare },
+      { label: "Profile", href: "/dashboard/admin/profile", icon: User },
       { label: "Settings", href: "/dashboard/admin/settings", icon: Settings },
     ],
 };
