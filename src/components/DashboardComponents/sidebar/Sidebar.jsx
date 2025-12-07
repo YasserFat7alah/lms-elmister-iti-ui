@@ -21,7 +21,7 @@ const ROLE_LINKS = {
     student: [
       { label: "Dashboard", href: "/dashboard/student/my-learning", icon: LayoutDashboard },
       { label: "Update Profile", href: "/dashboard/student/profile", icon: User },
-      { label: "Enrolled Courses", href: "/dashboard/student/courses", icon: BookOpen },
+      { label: " Courses", href: "/dashboard/student/courses", icon: BookOpen },
       { label: "live-sessions", href: "/dashboard/student/live-sessions", icon: Award },
       { label: "Assignments", href: "/dashboard/student/assignments", icon: FileText }, 
       { label: "Study Material", href: "/dashboard/student/materials", icon: FileQuestion },
@@ -92,7 +92,6 @@ const Sidebar = ({ open, setOpen }) => {
         onClick={() => setOpen(false)}
       />
 
-      {/* Sidebar Container */}
       <aside
         className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r border-gray-200 
           transform transition-transform duration-300 ease-in-out flex flex-col
@@ -165,7 +164,6 @@ const Sidebar = ({ open, setOpen }) => {
                            }
                         `}
                     >
-                        {/* ضيف أيقونة Settings هنا لو حابب */}
                         <Settings size={19} className={pathname === '/settings' ? "text-[#FF0055]" : "text-gray-400"} />
                         <span>Settings</span>
                     </Link>

@@ -17,8 +17,6 @@ export default function StudentWeeklySchedule() {
     { id: 'fri', name: 'Friday', date: '18 Oct' },
   ];
 
-  // 2. بيانات الحصص (مجمعة من كل المواد)
-  // المفروض البيانات دي تيجي من الباك إند مترتبة
   const scheduleData = [
     {
       id: 101,
@@ -27,7 +25,7 @@ export default function StudentWeeklySchedule() {
       group: 'Group A',
       teacher: 'Mr. Ahmed Hassan',
       time: '02:00 PM - 04:00 PM',
-      type: 'center', // سنتر او اونلاين
+      type: 'center', 
       isLive: false,
       color: 'bg-purple-100 text-purple-700 border-purple-200'
     },
@@ -39,7 +37,7 @@ export default function StudentWeeklySchedule() {
       teacher: 'Mr. Mohamed Ali',
       time: '08:00 PM - 10:00 PM',
       type: 'online',
-      isLive: true, // الحصة شغالة دلوقتي
+      isLive: true, 
       color: 'bg-green-100 text-green-700 border-green-200'
     },
     {
@@ -77,7 +75,6 @@ export default function StudentWeeklySchedule() {
     },
   ];
 
-  // دالة مساعدة لتصفية الحصص حسب اليوم
   const getSessionsForDay = (dayId) => {
     return scheduleData.filter(session => session.day === dayId);
   };
@@ -85,7 +82,6 @@ export default function StudentWeeklySchedule() {
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
       
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -100,26 +96,20 @@ export default function StudentWeeklySchedule() {
         </div>
       </div>
 
-      {/* SCHEDULE GRID */}
-      {/* grid-cols-1 للموبايل (تحت بعض)
-         md:grid-cols-7 للديسك توب (جنب بعض)
-      */}
       <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
         
         {daysOfWeek.map((day) => {
           const sessions = getSessionsForDay(day.id);
-          const isToday = day.id === 'sat'; // افتراض أن اليوم هو السبت (للتجربة)
+          const isToday = day.id === 'sat';
 
           return (
             <div key={day.id} className="flex flex-col gap-3 min-w-[140px]">
               
-              {/* Day Header */}
               <div className={`text-center p-3 rounded-xl border ${isToday ? 'bg-slate-900 text-white border-slate-900 shadow-md' : 'bg-white text-gray-500 border-gray-200'}`}>
                 <p className="font-bold text-lg">{day.name.slice(0, 3)}</p> {/* Sat, Sun... */}
                 <p className={`text-xs ${isToday ? 'text-slate-300' : 'text-gray-400'}`}>{day.date}</p>
               </div>
 
-              {/* Sessions List for this day */}
               <div className="space-y-3 h-full">
                 {sessions.length > 0 ? (
                   sessions.map((session) => (
@@ -127,7 +117,6 @@ export default function StudentWeeklySchedule() {
                       key={session.id} 
                       className={`border shadow-sm transition-all hover:shadow-md relative overflow-hidden ${session.isLive ? 'ring-2 ring-red-500 ring-offset-1' : ''}`}
                     >
-                      {/* Live Badge if Active */}
                       {session.isLive && (
                          <div className="absolute top-0 right-0 bg-red-500 text-white text-[10px] px-2 py-0.5 font-bold rounded-bl-lg animate-pulse">
                            LIVE
@@ -135,12 +124,10 @@ export default function StudentWeeklySchedule() {
                       )}
 
                       <CardContent className="p-3">
-                        {/* Subject Label */}
                         <div className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase mb-2 ${session.color}`}>
                           {session.subject}
                         </div>
 
-                        {/* Teacher & Group */}
                         <div className="mb-2">
                            <h4 className="font-bold text-gray-800 text-sm leading-tight">{session.group}</h4>
                            <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
@@ -148,7 +135,6 @@ export default function StudentWeeklySchedule() {
                            </p>
                         </div>
 
-                        {/* Time & Location */}
                         <div className="pt-2 border-t border-gray-100 mt-2 space-y-1">
                           <p className="text-xs font-semibold text-gray-700 flex items-center gap-1">
                             <Clock size={12} className="text-[#FF0055]" />
@@ -161,7 +147,6 @@ export default function StudentWeeklySchedule() {
                           </p>
                         </div>
 
-                        {/* Join Button (Only if Online & Live) */}
                         {session.isLive && session.type === 'online' && (
                           <Button className="w-full mt-3 h-7 text-xs bg-red-600 hover:bg-red-700 text-white">
                             Join Now
@@ -171,7 +156,6 @@ export default function StudentWeeklySchedule() {
                     </Card>
                   ))
                 ) : (
-                  // Empty State for the day
                   <div className="h-24 border-2 border-dashed border-gray-100 rounded-xl flex items-center justify-center">
                     <p className="text-xs text-gray-300">No classes</p>
                   </div>

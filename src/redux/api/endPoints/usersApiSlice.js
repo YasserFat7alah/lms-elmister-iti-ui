@@ -72,6 +72,14 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     body: data, 
   }),
 }),
+completeProfile: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/complete-profile`, 
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['User'], 
+    }),
 
 
   }),
@@ -86,5 +94,6 @@ export const {
   useUpdateMeMutation,
   useUploadAvatarMutation ,
   useForgotPasswordMutation,
-  useResetPasswordMutation
+  useResetPasswordMutation,
+  useCompleteProfileMutation
 } = usersApiSlice;

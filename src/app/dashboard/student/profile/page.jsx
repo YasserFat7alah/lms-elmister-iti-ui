@@ -173,22 +173,29 @@ export default function ProfilePage() {
             
             <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
-                        <Label className="block text-sm font-medium text-gray-700 mb-2">Full Name</Label>
-                        {isEditing ? (
-                            <div className="relative">
-                                <User className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                                <Input 
-                                    name="name" 
-                                    value={formData.name} 
-                                    onChange={(e) => handleChange('name', e.target.value)} 
-                                    className="pl-10 w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055] outline-none transition-all"
-                                />
-                            </div>
-                        ) : (
-                            <p className="text-gray-900 font-medium bg-gray-50 px-4 py-2 rounded-lg border border-transparent">{formData.name}</p>
-                        )}
-                    </div>
+<div className="md:col-span-2">
+  <Label className="block text-sm font-medium text-gray-700 mb-2">Full Name</Label>
+
+  {isEditing ? (
+    <div className="relative">
+      <User 
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" 
+        size={18} 
+      />
+
+      <Input
+        name="name"
+        value={formData.name}
+        onChange={(e) => handleChange("name", e.target.value)}
+        className="w-full pl-10 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055] outline-none transition-all"
+      />
+    </div>
+  ) : (
+    <p className="text-gray-900 font-medium bg-gray-50 px-4 py-2 rounded-lg border border-transparent">
+      {formData.name}
+    </p>
+  )}
+</div>
 
                     <div>
                         <Label className="block text-sm font-medium text-gray-700 mb-2">Email Address</Label>
@@ -197,24 +204,25 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                    <div>
-                        <Label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</Label>
-                        {isEditing ? (
-                             <div className="relative">
-                                <Phone className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                                <Input 
-                                    name="phone" 
-                                    value={formData.phone} 
-                                    onChange={(e) => handleChange('phone', e.target.value)} 
-                                    className="pl-10 w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055] outline-none"
-                                />
-                            </div>
-                        ) : (
-                             <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-transparent rounded-lg text-gray-900 font-medium">
-                                <Phone size={18} className="text-gray-400" /> {formData.phone || "N/A"}
-                             </div>
-                        )}
-                    </div>
+<div>
+  <Label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</Label>
+  {isEditing ? (
+    <div className="relative">
+      <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+      <input
+        name="phone"
+        value={formData.phone}
+        onChange={(e) => handleChange("phone", e.target.value)}
+        className="w-full pl-10 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055] outline-none"
+      />
+    </div>
+  ) : (
+    <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-transparent rounded-lg text-gray-900 font-medium">
+      <Phone size={18} className="text-gray-400" />
+      <span className="truncate">{formData.phone || "N/A"}</span>
+    </div>
+  )}
+</div>
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">

@@ -38,7 +38,6 @@ router.push(`/reset-password?email=${values.email}`);
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px] bg-gray-50">
       
-      {/* Left Side Image */}
       <div className="hidden bg-muted lg:block relative h-full">
         <img
           src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
@@ -47,11 +46,9 @@ router.push(`/reset-password?email=${values.email}`);
         />
       </div>
 
-      {/* Right Side Form */}
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           
-          {/* Header & Logo */}
           <div className="mb-4 flex items-center justify-between">
             <Link 
               href="/" 

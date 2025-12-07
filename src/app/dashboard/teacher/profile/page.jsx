@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import Link from "next/link"; // ✅ استيراد Link
+import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { 
   useGetMeQuery, 
@@ -10,17 +10,18 @@ import { setCredentials } from "@/redux/slices/authSlice";
 import { Spinner } from "@/components/shared/Loader";
 import {
   User, Mail, Phone, Camera, Edit, Save, X, 
-  Briefcase, GraduationCap, Lock, ChevronRight // ✅ استيراد Lock
+  Briefcase, GraduationCap, Lock, BookOpen, Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "react-hot-toast"; 
 
 const TeacherProfile = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
 
-  // --- Logic (نفس الكود القديم) ---
-  const { data: userData, isLoading: isFetching } = useGetMeQuery(undefined, {
+  // 1. Fetch Data
+  const { data: userData, isLoading: isFetching, refetch } = useGetMeQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
 
@@ -35,7 +36,10 @@ const TeacherProfile = () => {
     phone: "",
     role: "",
     joinedAt: "",
-    bio: "Passionate instructor dedicated to sharing knowledge.",
+    bio: "",
+    subjects: [],
+    qualifications: [],
+    yearsOfExperience: 0,
   });
 
   const [profileImage, setProfileImage] = useState(null);
@@ -43,16 +47,22 @@ const TeacherProfile = () => {
   useEffect(() => {
     if (userData) {
       const user = userData.data?.user || userData.data || userData;
-      setProfileData(prev => ({
-        ...prev,
+      const teacherInfo = user.teacherData || {};
+
+      setProfileData({
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
-        role: user.role || "Instructor",
-        joinedAt: new Date(user.createdAt).toLocaleDateString('en-US', {
-            day: 'numeric', month: 'short', year: 'numeric'
-        }),
-      }));
+        role: user.role || "teatcher",
+        joinedAt: user.createdAt 
+          ? new Date(user.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
+          : "N/A",
+        
+        bio: teacherInfo.bio || "No biography added yet.",
+        subjects: teacherInfo.subjects || [],
+        qualifications: teacherInfo.qualifications || [],
+        yearsOfExperience: teacherInfo.yearsOfExperience || 0,
+      });
 
       if (user.avatar?.url) {
         setProfileImage({ preview: user.avatar.url });
@@ -78,8 +88,15 @@ const TeacherProfile = () => {
   const handleSave = async () => {
     try {
       const formData = new FormData();
+      
       formData.append("name", profileData.name);
       formData.append("phone", profileData.phone);
+      
+      const teacherDataUpdate = {
+        bio: profileData.bio,
+      };
+      formData.append("teacherData", JSON.stringify(teacherDataUpdate));
+
       if (profileImage?.file) {
         formData.append("avatar", profileImage.file);
       }
@@ -89,10 +106,12 @@ const TeacherProfile = () => {
       
       dispatch(setCredentials({ ...userInfo, user: { ...userInfo.user, ...updatedUser } }));
       setIsEditing(false);
-
+      refetch(); 
+      toast.success("Profile updated successfully!");
+      
     } catch (err) {
       console.error("Update failed", err);
-      alert("Failed to update profile");
+      toast.error(err?.data?.message || "Update failed. Please try again.");
     }
   };
 
@@ -103,21 +122,19 @@ const TeacherProfile = () => {
   if (isFetching) return <div className="flex justify-center items-center h-[50vh]"><Spinner /></div>;
 
   return (
-    <div className="max-w-7xl  space-y-6 pb-10">
+    <div className="max-w-7xl space-y-6 pb-10">
 
-      {/* Header Card */}
       <Card className="border-none shadow-sm bg-white">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             
-            {/* Avatar */}
             <div className="relative group shrink-0">
               <div className="w-28 h-28 rounded-full p-1 border-2 border-gray-100 shadow-sm bg-white">
                 <div className="w-full h-full bg-gray-50 rounded-full flex items-center justify-center overflow-hidden relative">
                   {profileImage?.preview ? (
                     <img src={profileImage.preview} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-3xl font-bold text-gray-400">{profileData.name.charAt(0).toUpperCase()}</span>
+                    <span className="text-3xl font-bold text-gray-400">{profileData.name?.charAt(0)?.toUpperCase()}</span>
                   )}
                   
                   {isEditing && (
@@ -130,7 +147,6 @@ const TeacherProfile = () => {
               </div>
             </div>
 
-            {/* Name & Main Info */}
             <div className="flex-1 space-y-1">
                <h1 className="text-2xl font-bold text-gray-900">{profileData.name}</h1>
                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
@@ -138,9 +154,17 @@ const TeacherProfile = () => {
                   <span className="flex items-center gap-1"><Mail size={14}/> {profileData.email}</span>
                   <span className="text-gray-400">Joined {profileData.joinedAt}</span>
                </div>
+               {profileData.subjects.length > 0 && (
+                 <div className="flex flex-wrap gap-2 mt-3">
+                   {profileData.subjects.map((sub, idx) => (
+                     <span key={idx} className="text-xs px-2 py-1 bg-pink-50 text-[#FF0055] rounded-full border border-pink-100">
+                       {sub}
+                     </span>
+                   ))}
+                 </div>
+               )}
             </div>
 
-            {/* Action Buttons */}
             <div className="flex gap-2 mt-4 md:mt-0 shrink-0">
                   {!isEditing ? (
                     <Button onClick={() => setIsEditing(true)} className="bg-[#FF0055] hover:bg-pink-700 text-white">
@@ -149,7 +173,7 @@ const TeacherProfile = () => {
                   ) : (
                     <>
                       <Button onClick={handleSave} disabled={isUpdating} className="bg-[#FF0055] hover:bg-pink-700 text-white min-w-[100px]">
-                         {isUpdating ? <Spinner className="text-white mr-2" /> : <Save size={16} className="mr-2" />} Save
+                          {isUpdating ? <Spinner className="text-white mr-2" /> : <Save size={16} className="mr-2" />} Save
                       </Button>
                       <Button onClick={handleCancel} variant="outline" className="border-gray-200 hover:bg-gray-50 text-gray-700">
                         <X size={16} className="mr-2" /> Cancel
@@ -162,20 +186,17 @@ const TeacherProfile = () => {
         </CardContent>
       </Card>
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* Left Column: Basic Info & Bio */}
         <div className="lg:col-span-2 space-y-6">
           <Card className="border-none shadow-sm bg-white">
             <CardContent className="p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <User size={20} className="text-[#FF0055]" /> Basic Information
+              <User size={20} className="text-[#FF0055]" /> About & Information
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
-              {/* Full Name */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 {isEditing ? (
@@ -190,7 +211,6 @@ const TeacherProfile = () => {
                 )}
               </div>
 
-              {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                 <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed">
@@ -198,7 +218,6 @@ const TeacherProfile = () => {
                 </div>
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                 {isEditing ? (
@@ -207,10 +226,10 @@ const TeacherProfile = () => {
                     value={profileData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055] outline-none"
-                  />
+                  />  
                 ) : (
                   <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-transparent rounded-lg text-gray-900 font-medium">
-                     <Phone size={16} className="text-gray-400" /> {profileData.phone || "N/A"}
+                      <Phone size={16} className="text-gray-400" /> {profileData.phone || "N/A"}
                   </div>
                 )}
               </div>
@@ -224,6 +243,7 @@ const TeacherProfile = () => {
                 onChange={(e) => handleInputChange('bio', e.target.value)}
                 rows="4"
                 className={`w-full px-4 py-3 border rounded-lg resize-none outline-none transition-all ${isEditing ? 'border-gray-200 focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055]' : 'bg-gray-50 border-transparent text-gray-600'}`}
+                placeholder="Tell students about yourself..."
               />
             </div>
 
@@ -242,19 +262,40 @@ const TeacherProfile = () => {
             </CardContent>
           </Card>
 
-          {/* Experience */}
+          <Card className="border-none shadow-sm bg-white">
+            <CardContent className="p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                 <BookOpen size={20} className="text-[#FF0055]" /> Teaching Subjects
+              </h2>
+              {profileData.subjects.length > 0 ? (
+                <div className="flex flex-wrap gap-3">
+                  {profileData.subjects.map((subject, index) => (
+                    <div key={index} className="px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-700 font-medium">
+                      {subject}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm italic">No subjects listed yet.</p>
+              )}
+            </CardContent>
+          </Card>
+
           <Card className="border-none shadow-sm bg-white">
             <CardContent className="p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-               <Briefcase size={20} className="text-[#FF0055]" /> Experience
+               <Briefcase size={20} className="text-[#FF0055]" /> Professional Experience
             </h2>
             <div className="space-y-4">
                 <div className="flex gap-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
                   <div className="w-2 h-2 mt-2 bg-[#FF0055] rounded-full shrink-0"></div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Senior Instructor</h3>
-                    <p className="text-gray-600 text-sm">El-Mister Platform</p>
-                    <p className="text-xs text-gray-400 mt-1">2020 - Present</p>
+                    <h3 className="font-semibold text-gray-900">Teaching Experience</h3>
+                    <p className="text-gray-600 text-sm">
+                      {profileData.yearsOfExperience > 0 
+                        ? `${profileData.yearsOfExperience} Years of Experience in the field.` 
+                        : "Fresh Instructor"}
+                    </p>
                   </div>
                 </div>
             </div>
@@ -262,39 +303,42 @@ const TeacherProfile = () => {
           </Card>
         </div>
 
-        {/* Right Column: Stats & Education */}
         <div className="space-y-6">
           
-          {/* Stats Card */}
           <Card className="border-none shadow-sm bg-white">
             <CardContent className="p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-6">Profile Statistics</h2>
             <div className="space-y-4">
-              <StatItem label="Published Courses" value="12" />
-              <StatItem label="Enrolled Students" value="854" />
-              <StatItem label="Total Earnings" value="$4,200" color="text-green-600" />
+              <StatItem label="Published Courses" value="0" /> 
+              <StatItem label="Years Exp." value={profileData.yearsOfExperience} />
+              
               <div className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
                 <span className="text-gray-600 text-sm">Rating</span>
                 <div className="flex items-center gap-1 font-bold text-gray-900">
-                  4.9 <span className="text-yellow-400 text-xs">⭐</span>
+                  0.0 <span className="text-yellow-400 text-xs">⭐</span>
                 </div>
               </div>
             </div>
             </CardContent>
           </Card>
 
-          {/* Education */}
           <Card className="border-none shadow-sm bg-white">
             <CardContent className="p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                 <GraduationCap size={20} className="text-[#FF0055]" /> Education
             </h2>
             <div className="space-y-6">
-               <div className="pl-4 border-l-2 border-[#FF0055]">
-                  <h3 className="font-semibold text-gray-900 text-sm">Bachelor's Degree</h3>
-                  <p className="text-gray-500 text-xs mt-1">Faculty of Education</p>
-                  <p className="text-gray-400 text-[10px] mt-1">2010 - 2014</p>
-               </div>
+              {profileData.qualifications.length > 0 ? (
+                profileData.qualifications.map((qual, index) => (
+                  <div key={index} className="pl-4 border-l-2 border-[#FF0055]">
+                    <h3 className="font-semibold text-gray-900 text-sm">{qual.degree}</h3>
+                    <p className="text-gray-500 text-xs mt-1">{qual.university}</p>
+                    <p className="text-gray-400 text-[10px] mt-1">Graduated: {qual.year}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm">No education details added.</p>
+              )}
             </div>
             </CardContent>
           </Card>

@@ -12,7 +12,6 @@ const EnrolledCourseCard = ({ course }) => {
   return (
     <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full">
       
-      {/* 1. Image Section */}
       <div className="relative w-full h-44 overflow-hidden">
         <Image 
           src={course.image} 
@@ -27,20 +26,16 @@ const EnrolledCourseCard = ({ course }) => {
         </div>
       </div>
 
-      {/* 2. Content Section */}
       <div className="p-5 flex flex-col flex-1">
         
-        {/* Instructor */}
         <p className="text-xs text-gray-500 mb-2 font-medium">
             Instructor: <span className="text-gray-900">{course.instructor}</span>
         </p>
 
-        {/* Title */}
         <h3 className="text-base font-bold text-gray-900 mb-4 line-clamp-2 flex-1 group-hover:text-[#FF0055] transition-colors">
             {course.title}
         </h3>
 
-        {/* Progress Section */}
         <div className="mt-auto space-y-3">
             <div className="flex justify-between items-end text-xs mb-1">
                 <span className="text-gray-500">
@@ -49,7 +44,6 @@ const EnrolledCourseCard = ({ course }) => {
                 <span className="font-bold text-[#FF0055]">{course.progress}%</span>
             </div>
             
-            {/* Progress Bar (Custom Color) */}
             <Progress value={course.progress} className="h-2 bg-gray-100" indicatorColor="bg-[#FF0055]" />
 
             {/* Action Button */}

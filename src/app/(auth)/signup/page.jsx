@@ -16,6 +16,7 @@ import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import { BASE_URL, USERS_URL_DATA } from "@/constants";
 import { HomeIcon } from "lucide-react";
+import LogoLoader from "@/components/shared/LogoLoader";
 
 export default function CompleteProfileOrSignUp() {
   const router = useRouter();
@@ -68,7 +69,6 @@ export default function CompleteProfileOrSignUp() {
 
         setLoadingSession(false);
       } catch (err) {
-        console.error("[CompleteProfile] fetch /me error:", err);
         setServerError("Network error while checking session. You can still sign up manually.");
         setIsOauthSession(false);
         setLoadingSession(false);
@@ -97,7 +97,6 @@ export default function CompleteProfileOrSignUp() {
       };
       router.push(map[role] || "/");
     } catch (err) {
-      console.error("Register Error:", err);
       setServerError(err?.data?.message || err?.message || "Registration failed");
     } finally {
       setSubmitting(false);
@@ -139,7 +138,6 @@ export default function CompleteProfileOrSignUp() {
       };
       router.push(map[role] || "/");
     } catch (err) {
-      console.error("[CompleteProfile] submit error:", err);
       setServerError(err?.message || "Failed to complete profile");
     } finally {
       setSubmitting(false);
@@ -147,36 +145,35 @@ export default function CompleteProfileOrSignUp() {
   };
 
   if (loadingSession) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="mb-2">Checking session...</div>
-          <Spinner />
-        </div>
-      </div>
-    );
+    return <LogoLoader variant="pulse" background="bg-white" />;
   }
 
+  const btnPrimary = "inline-flex items-center gap-2 px-4 py-2 h-10 rounded-md bg-gradient-to-r from-[#FF4667] to-[#FF0055] text-white font-medium shadow-sm";
+
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 ">
-      <div className="hidden lg:block relative h-fit">
-        <div className="absolute inset-0 bg-black/40 flex flex-col justify-center p-12 text-white h-screen overflow-hidden">
-          <img
+    <div className="min-h-screen lg:grid lg:grid-cols-2">
+      <div className="hidden lg:block relative">
+        <div className="absolute inset-0 -z-10">
+          <Image
             src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
             alt="Classroom"
-            className="h-full w-full object-cover absolute inset-0 -z-10"
+            fill
+            className="object-cover"
+            priority={false}
           />
         </div>
       </div>
 
-      <div className="flex items-center justify-center py-12 px-4 sm:px-8 bg-gray-50">
-        <div className="mx-auto grid w-full max-w-[500px] gap-6">
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-8 bg-gray-50">
+        <div className="mx-auto w-full max-w-[500px] gap-6">
           <div className="mb-4 flex items-center justify-between">
-            <Link href="/" className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]">
-              <HomeIcon className="inline-block h-5 w-5 mr-1" /> back 
+            <Link href="/" aria-label="Back to home">
+              <p className={btnPrimary}>
+                <HomeIcon className="inline-block h-5 w-5 mr-1" /> back
+              </p>
             </Link>
 
-            <Image src={logo} alt="El-Mister Logo" className="h-12 w-auto" />
+            <Image src={logo} alt="El-Mister Logo" width={160} height={44} />
           </div>
 
           <div className="grid gap-2 text-center">
@@ -201,7 +198,6 @@ export default function CompleteProfileOrSignUp() {
                   <FormikInput label="Phone Number" name="phone" placeholder="+20..." />
                 </div>
 
-                {/* Only show passwords for normal signup */}
                 {!isOauthSession && (
                   <div className="grid grid-cols-1 gap-4">
                     <FormikPassword label="Password" name="password" />
@@ -218,24 +214,24 @@ export default function CompleteProfileOrSignUp() {
             )}
           </Formik>
 
-          <div className="text-center text-sm space-y-2">
+          <div className="text-center text-sm space-y-2 mt-2">
             <div>
               Already have an account?
-              <Link href="/login" className="underline font-semibold text-primary ml-1">
-                Log in
+              <Link href="/login">
+                <p className="underline font-semibold text-primary ml-1">Log in</p>
               </Link>
             </div>
-                        <div className="mt-4 text-center">
-                          <p className="text-sm text-gray-500 mb-2">Register with</p>
-                          <a
-                            href={`${BASE_URL}/api/v1/auth/google`}
-                            className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"
-                          >
-                            <img className="h-5 w-5 mr-2" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
-                            <span>Continue with Google</span>
-                          </a>
-                        </div>
-            
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-500 mb-2">Register with</p>
+              <a
+                href={`${BASE_URL}/api/v1/auth/google`}
+                className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"
+              >
+                <img className="h-5 w-5 mr-2" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
+                <span>Continue with Google</span>
+              </a>
+            </div>
+
             <div className="text-muted-foreground text-xs"></div>
           </div>
         </div>
