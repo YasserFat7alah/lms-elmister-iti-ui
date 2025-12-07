@@ -16,7 +16,7 @@ const CircleChart = () => {
         { name: "Teachers", value: 40, color: "#6366f1" }, 
         { name: "Students", value: 32, color: "#FF0055" }, 
         { name: "Parents", value: 28, color: "#392b80" },  
-      ];
+    ];
 
     return (
         <div className="w-full p-4 bg-transparent pl-8">
