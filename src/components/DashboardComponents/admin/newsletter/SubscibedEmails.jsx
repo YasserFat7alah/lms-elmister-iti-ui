@@ -1,9 +1,24 @@
 "use client";
 import React, { useState } from "react";
-import { Trash2, Mail, Search, Plus, Trash2Icon } from "lucide-react";
+import {
+  Trash2,
+  Mail,
+  Search,
+  Plus,
+  Trash2Icon,
+  AlertTriangle,
+  X,
+} from "lucide-react";
 import AddEmailInput from "./AddEmailInput";
+import { Dialog } from "@/components/ui/dialog";
+import PopUp from "../PopUp";
 
-const SubscibedEmails = ({ emails, setEmails, selectedEmails, setSelectedEmails }) => {
+const SubscibedEmails = ({
+  emails,
+  setEmails,
+  selectedEmails,
+  setSelectedEmails,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteTarget, setDeleteTarget] = useState(null);
 
@@ -57,6 +72,10 @@ const SubscibedEmails = ({ emails, setEmails, selectedEmails, setSelectedEmails 
     );
   };
 
+  const cancelDelete = () => {
+    setDeleteTarget(null);
+  };
+
   return (
     <div className="space-y-2">
       {/* Header */}
@@ -75,7 +94,7 @@ const SubscibedEmails = ({ emails, setEmails, selectedEmails, setSelectedEmails 
           placeholder="Search emails..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF0055]/20 focus:border-[#FF0055] transition-all"
+          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#392b80c9]/20 focus:border-green-500 transition-all"
         />
       </div>
 
@@ -116,10 +135,11 @@ const SubscibedEmails = ({ emails, setEmails, selectedEmails, setSelectedEmails 
         {filteredEmails.map((item) => (
           <div
             key={item.id}
-            className={`flex items-center justify-between p-4 border rounded-xl transition-all ${selectedEmails.includes(item.id)
+            className={`flex items-center justify-between p-4 border rounded-xl transition-all ${
+              selectedEmails.includes(item.id)
                 ? "bg-green-500/5 border-green-500/30 shadow-sm"
                 : "bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm"
-              }`}
+            }`}
           >
             <div className="flex items-center gap-3 flex-1">
               <input
@@ -128,7 +148,10 @@ const SubscibedEmails = ({ emails, setEmails, selectedEmails, setSelectedEmails 
                 onChange={() => toggleSelect(item.id)}
                 className="w-4 h-4 cursor-pointer accent-green-600"
               />
-              <div onClick={() => toggleSelect(item.id)} className="cursor-pointer">
+              <div
+                onClick={() => toggleSelect(item.id)}
+                className="cursor-pointer"
+              >
                 <p className="font-medium text-[#392b80]">{item.email}</p>
                 <p className="text-xs text-gray-500">
                   Subscribed: {item.subscribed}
@@ -138,7 +161,7 @@ const SubscibedEmails = ({ emails, setEmails, selectedEmails, setSelectedEmails 
 
             <button
               onClick={() => setDeleteTarget(item.id)}
-              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition cursor-pointer "
             >
               <Trash2 className="w-5 h-5" />
             </button>
@@ -153,37 +176,66 @@ const SubscibedEmails = ({ emails, setEmails, selectedEmails, setSelectedEmails 
         )}
       </div>
       {/* ________________Confirm Delete Selected Emails______________ */}
-      {deleteTarget !== null && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-xl w-80 text-center animate-fadeIn">
-            <h2 className="text-lg font-bold text-gray-800 mb-3">
-              {deleteTarget === "all" ? "Delete Selected?" : "Delete Email?"}
-            </h2>
+      <PopUp isOpen={deleteTarget !== null} onClose={cancelDelete}>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-red-50 to-rose-50 p-6 border-b border-red-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-red-100 rounded-full">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
 
-            <p className="text-gray-600 text-sm mb-6">
-              {deleteTarget === "all"
-                ? `Are you sure you want to delete ${selectedEmails.length} emails?`
-                : "Are you sure you want to delete this email?"}
-            </p>
-
-            <div className="flex items-center justify-between gap-3">
-              <button
-                onClick={() => setDeleteTarget(null)}
-                className="w-1/2 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={handleConfirmDelete}
-                className="w-1/2 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition"
-              >
-                Delete
-              </button>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Confirm Delete
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  This action cannot be undone.
+                </p>
+              </div>
             </div>
+
+            <button
+              onClick={cancelDelete}
+              className="p-2 hover:bg-red-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
           </div>
         </div>
-      )}
+
+        {/* Body */}
+        <div className="p-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-3">
+            {deleteTarget === "all"
+              ? "Delete Selected Emails?"
+              : "Delete Email?"}
+          </h2>
+
+          <p className="text-gray-600 text-sm mb-6">
+            {deleteTarget === "all"
+              ? `Are you sure you want to delete ${selectedEmails.length} emails?`
+              : `Are you sure you want to delete this email?`}
+          </p>
+
+          {/* Buttons */}
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={cancelDelete}
+              className="px-5 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={handleConfirmDelete}
+              className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </PopUp>
     </div>
   );
 };
