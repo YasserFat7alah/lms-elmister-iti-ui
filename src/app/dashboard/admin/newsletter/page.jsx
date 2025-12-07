@@ -96,10 +96,10 @@ const page = () => {
           <div className="flex items-center gap-3">
             <div>
               <h1 className="text-2xl font-bold text-[#FF0055]">
-                Course Management
+                NewsLetter Support
               </h1>
               <p className="text-[#392b80] text-sm mt-1">
-                Manage all platform users and their roles
+                Manage and track all your newsletters in one place
               </p>
             </div>
           </div>
