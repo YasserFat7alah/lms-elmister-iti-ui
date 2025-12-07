@@ -11,7 +11,7 @@ const partners = [
 
 export default function TrustedBy() {
   return (
-    <section className=" mt-2 py-3 bg-[#0F1121]">
+    <section className="py-3 bg-[#0F1121]">
       <div className="max-w-7xl mx-auto px-6">
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-x-12 gap-y-8 items-center justify-items-center">

@@ -20,8 +20,6 @@ export default function Home() {
         <Subjects/>
         <Features/>
         <Instructors/>
-                        <Goals/>
-
         <TrustedBy/>
         <Testimonials/>
          <NewsletterSection/>
