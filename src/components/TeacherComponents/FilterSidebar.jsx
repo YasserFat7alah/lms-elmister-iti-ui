@@ -4,13 +4,13 @@ import { useState } from "react"
 import { FaChevronDown } from "react-icons/fa"
 import { Card } from "@/components/ui/card"
 
-export function FilterSidebar({ selectedCategory, onCategoryChange }) {
+export function FilterSidebar({ teachers = [], filters = {}, onFilterChange }) {
   const [expandedSections, setExpandedSections] = useState({
-    category: true,
-    rating: false,
-    price: false,
-    language: false,
-    level: false,
+    subjects: false,
+    gender: false,
+    totalRatings: false,
+    degree: false,
+    university: false,
   })
 
   const toggleSection = (section) => {
@@ -20,11 +20,12 @@ export function FilterSidebar({ selectedCategory, onCategoryChange }) {
     }))
   }
 
-  const categories = ["Web Design", "Development", "UI/UX", "Data Science", "Marketing"]
-  const ratings = ["4.5+", "4.0+", "3.5+", "3.0+"]
-  const priceRanges = ["Free", "$0 - $50", "$50 - $100", "$100+"]
-  const languages = ["English", "Spanish", "French", "German", "Chinese"]
-  const levels = ["Beginner", "Intermediate", "Advanced", "Expert"]
+  // ===== Generate dynamic filter options =====
+  const subjects = Array.from(new Set(teachers.flatMap(t => t.teacherData?.subjects || [])))
+  const genders = Array.from(new Set(teachers.map(t => t.gender)))
+  const totalRatingsOptions = Array.from(new Set(teachers.map(t => t.teacherData?.totalRatings))).sort((a,b)=>b-a)
+  const degrees = Array.from(new Set(teachers.flatMap(t => t.teacherData?.qualifications?.map(q => q.degree) || [])))
+  const universities = Array.from(new Set(teachers.flatMap(t => t.teacherData?.qualifications?.map(q => q.university) || [])))
 
   const FilterSection = ({ title, sectionKey, children }) => (
     <div className="mb-6 border-b border-border pb-6 last:border-b-0">
@@ -42,70 +43,131 @@ export function FilterSidebar({ selectedCategory, onCategoryChange }) {
     </div>
   )
 
+  const handleChange = (section, value) => {
+    if (section === "subjects" || section === "degree" || section === "university") {
+      const current = filters[section] || [];
+      const updated = current.includes(value)
+        ? current.filter(v => v !== value)
+        : [...current, value];
+      onFilterChange({ ...filters, [section]: updated });
+    } else {
+      onFilterChange({ ...filters, [section]: value });
+    }
+  }
+
   return (
     <div className="w-64 flex-shrink-0">
       <Card className="p-6 sticky top-20">
-        <h2 className="text-lg font-bold text-foreground mb-6">Filters</h2>
 
-        <FilterSection title="Categories" sectionKey="category">
+        {/* Header + Clear Button */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-bold text-foreground">Filters</h2>
+
+          <button
+            onClick={() =>
+              onFilterChange({
+                subjects: [],
+                gender: "",
+                totalRatings: "",
+                degree: [],
+                university: []
+              })
+            }
+              className="text-sm text-[#FF4667] underline hover:text-[#FF2855] transition-colors"
+          >
+            Clear
+          </button>
+        </div>
+
+        {/* Subjects */}
+        <FilterSection title="Subjects" sectionKey="subjects">
           <div className="space-y-3">
-            {categories.map((cat) => (
-              <label key={cat} className="flex items-center cursor-pointer">
+            {subjects.map(sub => (
+              <label key={sub} className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={selectedCategory === cat}
-                  onChange={() => onCategoryChange(cat)}
+                  checked={filters.subjects?.includes(sub) || false}
+                  onChange={() => handleChange('subjects', sub)}
                   className="w-4 h-4 rounded border-border"
                 />
-                <span className="ml-3 text-sm text-foreground">{cat}</span>
+                <span className="ml-3 text-sm text-foreground">{sub}</span>
               </label>
             ))}
           </div>
         </FilterSection>
 
-        <FilterSection title="Rating" sectionKey="rating">
+        {/* Gender */}
+        <FilterSection title="Gender" sectionKey="gender">
           <div className="space-y-3">
-            {ratings.map((rating) => (
-              <label key={rating} className="flex items-center cursor-pointer">
-                <input type="radio" name="rating" className="w-4 h-4" />
-                <span className="ml-3 text-sm text-foreground">{rating}</span>
+            {genders.map(g => (
+              <label key={g} className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="gender"
+                  checked={filters.gender === g}
+                  onChange={() => handleChange('gender', g)}
+                  className="w-4 h-4"
+                />
+                <span className="ml-3 text-sm text-foreground">{g}</span>
               </label>
             ))}
           </div>
         </FilterSection>
 
-        <FilterSection title="Price" sectionKey="price">
+        {/* Total Ratings */}
+        <FilterSection title="Total Ratings" sectionKey="totalRatings">
           <div className="space-y-3">
-            {priceRanges.map((range) => (
-              <label key={range} className="flex items-center cursor-pointer">
-                <input type="radio" name="price" className="w-4 h-4" />
-                <span className="ml-3 text-sm text-foreground">{range}</span>
+            {totalRatingsOptions.map(r => (
+              <label key={r} className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="totalRatings"
+                  checked={filters.totalRatings === r}
+                  onChange={() => handleChange('totalRatings', r)}
+                  className="w-4 h-4"
+                />
+                <span className="ml-3 text-sm text-foreground">
+                  {r} People Rated
+                </span>
               </label>
             ))}
           </div>
         </FilterSection>
 
-        <FilterSection title="Language" sectionKey="language">
+        {/* Degree */}
+        <FilterSection title="Degree" sectionKey="degree">
           <div className="space-y-3">
-            {languages.map((lang) => (
-              <label key={lang} className="flex items-center cursor-pointer">
-                <input type="checkbox" className="w-4 h-4" />
-                <span className="ml-3 text-sm text-foreground">{lang}</span>
+            {degrees.map(d => (
+              <label key={d} className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.degree?.includes(d) || false}
+                  onChange={() => handleChange('degree', d)}
+                  className="w-4 h-4"
+                />
+                <span className="ml-3 text-sm text-foreground">{d}</span>
               </label>
             ))}
           </div>
         </FilterSection>
 
-        <FilterSection title="Level" sectionKey="level">
+        {/* University */}
+        <FilterSection title="University" sectionKey="university">
           <div className="space-y-3">
-            {levels.map((level) => (
-              <label key={level} className="flex items-center cursor-pointer">
-                <input type="radio" name="level" className="w-4 h-4" />
-                <span className="ml-3 text-sm text-foreground">{level}</span>
+            {universities.map(u => (
+              <label key={u} className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.university?.includes(u) || false}
+                  onChange={() => handleChange('university', u)}
+                  className="w-4 h-4"
+                />
+                <span className="ml-3 text-sm text-foreground">{u}</span>
               </label>
             ))}
           </div>
         </FilterSection>
+
       </Card>
     </div>
   )

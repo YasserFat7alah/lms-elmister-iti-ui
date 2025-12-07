@@ -12,7 +12,7 @@ export function EducationSection({ education }) {
             <FaCheckCircle className="text-[#03C95A] mt-1 flex-shrink-0" size={20} />
             <div>
               <h4 className="font-bold text-foreground">{item.degree}</h4>
-              <p className="text-muted-foreground">{item.school}</p>
+              <p className="text-muted-foreground">{item.university}</p>
               <p className="text-sm text-muted-foreground">{item.year}</p>
             </div>
           </div>
