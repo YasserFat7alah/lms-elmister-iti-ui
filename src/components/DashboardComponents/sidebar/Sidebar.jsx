@@ -21,7 +21,7 @@ const ROLE_LINKS = {
     student: [
       { label: "Dashboard", href: "/dashboard/student/my-learning", icon: LayoutDashboard },
       { label: "Update Profile", href: "/dashboard/student/profile", icon: User },
-      { label: " Courses", href: "/dashboard/student/courses", icon: BookOpen },
+      { label: "Courses Schedule", href: "/dashboard/student/courses", icon: BookOpen },
       { label: "live-sessions", href: "/dashboard/student/live-sessions", icon: Award },
       { label: "Assignments", href: "/dashboard/student/assignments", icon: FileText }, 
       { label: "Study Material", href: "/dashboard/student/materials", icon: FileQuestion },
@@ -32,7 +32,7 @@ const ROLE_LINKS = {
       { label: "Dashboard", href: "/dashboard/teacher/analytics", icon: LayoutDashboard },
       { label: "Profile", href: "/dashboard/teacher/profile", icon: User },
       { label: "Courses", href: "/dashboard/teacher/courses", icon: BookOpen },
-      { label: "Announcements", href: "/dashboard/teacher/announcements", icon: Megaphone },
+      { label: "student Schedule", href: "/dashboard/teacher/schedule", icon: Megaphone },
       { label: "Assignments", href: "/dashboard/teacher/assignments", icon: FileText },
       { label: "Students", href: "/dashboard/teacher/students", icon: Users },
       { label: "Quiz", href: "/dashboard/teacher/quizzes", icon: FileQuestion },
@@ -142,7 +142,7 @@ const Sidebar = ({ open, setOpen }) => {
                                 `}
                             >
                                 <Icon size={19} className={isActive ? "text-[#FF0055]" : "text-gray-400 group-hover:text-gray-600"} />
-                                <span>{link.label}</span>
+                                <p>{link.label}</p>
                             </Link>
                         );
                     })}

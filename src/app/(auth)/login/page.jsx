@@ -114,7 +114,7 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
   };
 
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 ">
       <div className="hidden bg-muted lg:block relative h-screen overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1616531770192-6eaea74c2456?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
