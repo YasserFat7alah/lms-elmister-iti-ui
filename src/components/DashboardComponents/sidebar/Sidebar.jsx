@@ -12,7 +12,7 @@ import {
   FileQuestion, ShoppingBag, MessageSquare, LifeBuoy, 
   Settings, LogOut, X, Users, Megaphone, 
   FileText, ClipboardCheck, Wallet, CreditCard, FileBarChart,
-  Baby
+  Baby, Mail
 } from "lucide-react"; 
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
@@ -46,7 +46,7 @@ const ROLE_LINKS = {
     parent: [
       { label: "Overview", href: "/dashboard/parent/overview", icon: LayoutDashboard },
       { label: "Profile", href: "/dashboard/parent/profile", icon: User },
-      { label: "My Children", href: "/dashboard/parent/children", icon: Baby , exact:true}, 
+      { label: "My Children", href: "/dashboard/parent/children", icon: Baby, exact: true }, 
       { label: "Teachers", href: "/dashboard/parent/teachers", icon: Users },
       { label: "Payments", href: "/dashboard/parent/payments", icon: CreditCard },
       { label: "Messages", href: "/dashboard/parent/messages", icon: MessageSquare },
@@ -54,13 +54,34 @@ const ROLE_LINKS = {
     ],
 
     admin: [
-      { label: "Dashboard", href: "/dashboard/admin/dashboard", icon: LayoutDashboard },
-      { label: "Manage Users", href: "/dashboard/admin/users", icon: Users },
-      { label: "Manage Courses", href: "/dashboard/admin/courses", icon: BookOpen },
-      { label: "Financials", href: "/dashboard/admin/finance", icon: Wallet },
-      { label: "Messages", href: "/dashboard/admin/messages", icon: MessageSquare },
-      { label: "Profile", href: "/dashboard/admin/profile", icon: User },
-      { label: "Settings", href: "/dashboard/admin/settings", icon: Settings },
+      {
+        group: "Dashboard",
+        items: [
+          { label: "Overview", href: "/dashboard/admin/overview", icon: LayoutDashboard },
+        ],
+      },
+      {
+        group: "Management",
+        items: [
+          { label: "Users", href: "/dashboard/admin/users", icon: Users },
+          { label: "Courses", href: "/dashboard/admin/courses", icon: BookOpen },
+          { label: "Subscriptions", href: "/dashboard/admin/subscriptions", icon: Wallet },
+        ],
+      },
+      {
+        group: "Support",
+        items: [
+          { label: "Tickets", href: "/dashboard/admin/tickets", icon: MessageSquare },
+          { label: "Newsletter", href: "/dashboard/admin/newsletter", icon: Mail },
+        ],
+      },
+      {
+        group: "Financial",
+        items: [
+          { label: "Payouts", href: "/dashboard/admin/payouts", icon: Wallet },
+          { label: "Invoices", href: "/dashboard/admin/invoices", icon: FileText },
+        ],
+      },
     ],
 };
 
@@ -72,15 +93,42 @@ const Sidebar = ({ open, setOpen }) => {
   const { userInfo } = useSelector((state) => state.auth);
   const [logoutApi] = useLogoutApiMutation();
 
-  const links = useMemo(() => {
+  const { links, isAdmin } = useMemo(() => {
      const role = userInfo?.user?.role || "student";
-     return ROLE_LINKS[role] || ROLE_LINKS["student"];
+     return {
+       links: ROLE_LINKS[role] || ROLE_LINKS["student"],
+       isAdmin: role === "admin"
+     };
   }, [userInfo]); 
 
   const handleLogout = async () => {
     try { await logoutApi().unwrap(); } catch (err) {}
     dispatch(logout());
     router.push("/login");
+  };
+
+  const renderLink = (link) => {
+    const Icon = link.icon;
+    const isActive = link.exact 
+      ? pathname === link.href 
+      : (pathname === link.href || pathname.startsWith(`${link.href}/`));
+
+    return (
+      <Link
+        key={link.label}
+        href={link.href}
+        onClick={() => setOpen(false)}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+          ${isActive 
+            ? "bg-[#FF0055]/10 text-[#FF0055]" 
+            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          }
+        `}
+      >
+        <Icon size={19} className={isActive ? "text-[#FF0055]" : "text-gray-400 group-hover:text-gray-600"} />
+        <span>{link.label}</span>
+      </Link>
+    );
   };
 
   return (
@@ -118,65 +166,63 @@ const Sidebar = ({ open, setOpen }) => {
 
         <div className="flex-1 overflow-y-auto px-4 py-6 scrollbar-none hover:scrollbar-thin scrollbar-thumb-gray-200">
             
+          {isAdmin ? (
+            // Admin grouped layout
+            <div className="space-y-6">
+              {links.map((group, index) => (
+                <div key={group.group}>
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-3">
+                    {group.group}
+                  </h3>
+                  <nav className="space-y-1">
+                    {group.items.map((link) => renderLink(link))}
+                  </nav>
+                  {index < links.length - 1 && (
+                    <div className="h-px bg-gray-100 my-4" />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            // Regular layout for other roles
             <div className="mb-8">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">
-                  Main Menu
-                </h3>
-                <nav className="space-y-1">
-                    {links.map((link) => {
-                        const Icon = link.icon;
-                        const isActive = link.exact 
-                          ? pathname === link.href 
-                          : (pathname === link.href || pathname.startsWith(`${link.href}/`));
-
-                        return (
-                            <Link
-                                key={link.label}
-                                href={link.href}
-                                onClick={() => setOpen(false)}
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                                    ${isActive 
-                                        ? "bg-[#FF0055]/10 text-[#FF0055]" 
-                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                                    }
-                                `}
-                            >
-                                <Icon size={19} className={isActive ? "text-[#FF0055]" : "text-gray-400 group-hover:text-gray-600"} />
-                                <p>{link.label}</p>
-                            </Link>
-                        );
-                    })}
-                </nav>
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">
+                Main Menu
+              </h3>
+              <nav className="space-y-1">
+                {links.map((link) => renderLink(link))}
+              </nav>
             </div>
+          )}
 
-            <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">
-                  System
-                </h3>
-                <nav className="space-y-1">
-                    <Link
-                        href="/settings"
-                        onClick={() => setOpen(false)}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                           ${pathname === '/settings' 
-                             ? "bg-[#FF0055]/10 text-[#FF0055]" 
-                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                           }
-                        `}
-                    >
-                        <Settings size={19} className={pathname === '/settings' ? "text-[#FF0055]" : "text-gray-400"} />
-                        <span>Settings</span>
-                    </Link>
+          <div className="pt-4 border-t border-gray-100 mt-6">
+            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">
+              System
+            </h3>
+            <nav className="space-y-1">
+              <Link
+                href="/settings"
+                onClick={() => setOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  ${pathname === '/settings' 
+                    ? "bg-[#FF0055]/10 text-[#FF0055]" 
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }
+                `}
+              >
+                <Settings size={19} className={pathname === '/settings' ? "text-[#FF0055]" : "text-gray-400"} />
+                <span>Settings</span>
+              </Link>
 
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-[#FF0055] transition-colors group mt-1"
-                    >
-                        <LogOut size={19} className="text-gray-400 group-hover:text-[#FF0055] transition-colors" />
-                        <span>Logout</span>
-                    </button>
-                </nav>
-            </div>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-[#FF0055] transition-colors group mt-1"
+              >
+                <LogOut size={19} className="text-gray-400 group-hover:text-[#FF0055] transition-colors" />
+                <span>Logout</span>
+              </button>
+            </nav>
+          </div>
         </div>
       </aside>
     </>

@@ -62,7 +62,7 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
         }
         const role = user?.role;
         const dashboardPaths = {
-          admin: "/dashboard/admin/dashboard",
+          admin: "/dashboard/admin/overview",
           teacher: "/dashboard/teacher/analytics",
           student: "/dashboard/student/my-learning",
           parent: "/dashboard/parent/overview",
