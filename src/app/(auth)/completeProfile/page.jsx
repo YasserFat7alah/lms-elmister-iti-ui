@@ -41,7 +41,6 @@ const [completeProfile, { isLoading }] = useCompleteProfileMutation();
 const handleSubmit = async (values, { setSubmitting }) => {
     setServerError("");
     try {
-      // 1. Prepare Arrays
       const subjectsArray = values.subjects.split(",").map((s) => s.trim()).filter((s) => s !== "");
       const qualificationsArray = [{
         degree: values.degree,
@@ -49,7 +48,6 @@ const handleSubmit = async (values, { setSubmitting }) => {
         year: Number(values.graduationYear),
       }];
 
-      // 2. Payload: EVERYTHING FLAT (No teacherData wrapper)
       const payload = {
         gender: values.gender,
         bio: values.bio,
@@ -60,7 +58,6 @@ const handleSubmit = async (values, { setSubmitting }) => {
 
       console.log("Sending Flat Payload:", payload);
 
-      // 3. Send Request
 const res = await completeProfile(payload).unwrap();
       router.push("/dashboard/teacher/analytics");
       
@@ -96,7 +93,6 @@ const res = await completeProfile(payload).unwrap();
             {({ isSubmitting, errors, touched }) => (
               <Form className="space-y-5">
                 
-                {/* Gender Select */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Gender</label>
                   <Field
@@ -109,7 +105,6 @@ const res = await completeProfile(payload).unwrap();
                   </Field>
                 </div>
 
-                {/* Bio */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Bio & About You</label>
                     <Field
@@ -122,7 +117,6 @@ const res = await completeProfile(payload).unwrap();
                      <ErrorMessage name="bio" component="div" className="text-red-500 text-xs mt-1" />
                 </div>
 
-                {/* Years of Experience */}
                 <FormikInput 
                     label="Years of Experience" 
                     name="yearsOfExperience" 
@@ -130,7 +124,6 @@ const res = await completeProfile(payload).unwrap();
                     placeholder="e.g. 5" 
                 />
 
-                {/* Subjects */}
                 <div>
                     <FormikInput 
                         label="Subjects (Comma Separated)" 
