@@ -2,9 +2,9 @@ import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
 const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selectedCount }) => {
-  if (!isOpen || !item) return null;
+  if (!isOpen) return null;
 
-   return (
+  return (
     <div
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
       onClick={onCancel}
@@ -43,7 +43,7 @@ const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selecte
           {isBulk ? (
             <>
               <p className="text-gray-700 mb-2">
-                Are you sure you want to delete <span className="font-bold text-red-600">{selectedCount}</span> newsletter{selectedCount > 1 ? 's' : ''}?
+                Are you sure you want to delete <span className="font-bold text-red-600">{selectedCount}</span> ticket{selectedCount > 1 ? 's' : ''}?
               </p>
               <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
                 <p className="text-sm text-gray-600">
@@ -54,13 +54,13 @@ const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selecte
           ) : (
             <>
               <p className="text-gray-700 mb-2">
-                Are you sure you want to delete this newsletter?
+                Are you sure you want to delete this ticket?
               </p>
               <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
                 <p className="text-sm font-semibold text-gray-900 mb-1">
                   {item?.title}
                 </p>
-                <p className="text-xs text-gray-600">{item?.subject}</p>
+                <p className="text-xs text-gray-600">{item?.fullName} - {item?.email}</p>
               </div>
             </>
           )}

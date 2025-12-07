@@ -4,6 +4,7 @@ import { Trash2, Pencil, Calendar, Share, EyeIcon, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import ViewPopup from "./ViewPopup";
 import ConfirmDeletePopUp from "./ConfirmDeletePopup";
+import BulkBtn from "../BulkBtn";
 
 const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) => {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -92,7 +93,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
             </div>
 
             {/* Bulk Delete Button */}
-            {selectedRows.length > 0 && (
+            {/* {selectedRows.length > 0 && (
               <div className="flex items-center gap-3 animate-in slide-in-from-right duration-300">
                 <span className="text-sm font-medium text-gray-700">
                   {selectedRows.length} selected
@@ -104,7 +105,12 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
-            )}
+            )} */}
+            <BulkBtn
+              selectedCount={selectedRows.length}
+              onDelete={handleBulkDelete}
+              label="newsletter selected"
+            />
           </div>
         </div>
 
