@@ -32,12 +32,12 @@ const ROLE_LINKS = {
       { label: "Dashboard", href: "/dashboard/teacher/analytics", icon: LayoutDashboard },
       { label: "Profile", href: "/dashboard/teacher/profile", icon: User },
       { label: "Courses", href: "/dashboard/teacher/courses", icon: BookOpen },
+      { label: "create Course", href: "/dashboard/teacher/createCourse", icon: Wallet },
       { label: "student Schedule", href: "/dashboard/teacher/schedule", icon: Megaphone },
       { label: "Assignments", href: "/dashboard/teacher/assignments", icon: FileText },
       { label: "Students", href: "/dashboard/teacher/students", icon: Users },
       { label: "Quiz", href: "/dashboard/teacher/quizzes", icon: FileQuestion },
       { label: "Quiz Results", href: "/dashboard/teacher/quiz-results", icon: ClipboardCheck },
-      { label: "Earnings", href: "/dashboard/teacher/earnings", icon: Wallet },
       { label: "Payout", href: "/dashboard/teacher/payout", icon: CreditCard },
       { label: "Messages", href: "/dashboard/teacher/messages", icon: MessageSquare },
       { label: "Support Tickets", href: "/dashboard/teacher/support", icon: LifeBuoy },
@@ -167,7 +167,6 @@ const Sidebar = ({ open, setOpen }) => {
         <div className="flex-1 overflow-y-auto px-4 py-6 scrollbar-none hover:scrollbar-thin scrollbar-thumb-gray-200">
             
           {isAdmin ? (
-            // Admin grouped layout
             <div className="space-y-6">
               {links.map((group, index) => (
                 <div key={group.group}>
@@ -184,7 +183,6 @@ const Sidebar = ({ open, setOpen }) => {
               ))}
             </div>
           ) : (
-            // Regular layout for other roles
             <div className="mb-8">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">
                 Main Menu

@@ -27,6 +27,7 @@
     "autoprefixer": "^10.4.22",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "format": "^0.2.2",
     "formik": "^2.4.9",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",

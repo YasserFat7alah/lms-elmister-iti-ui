@@ -1,6 +1,5 @@
-
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Formik, Form } from "formik";
 import { loginSchema } from "@/lib/validations";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -16,7 +15,7 @@ import { GraduationCap, HomeIcon } from "lucide-react";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import { BASE_URL, USERS_URL_DATA } from "@/constants";
-
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,76 +24,78 @@ export default function LoginPage() {
   const [login, { isLoading }] = useLoginMutation();
   const [serverError, setServerError] = useState("");
   const [oauthProcessing, setOauthProcessing] = useState(false);
+  const oauthToastId = useRef(null);
 
-useEffect(() => {
-  const success = searchParams.get("success") === "true";
-  const error = searchParams.get("error");
+  useEffect(() => {
+    const success = searchParams.get("success") === "true";
+    const error = searchParams.get("error");
 
-  if (error) {
-    setServerError("Google sign-in failed. Please try again.");
-    if (typeof window !== "undefined") {
-      window.history.replaceState({}, "", window.location.pathname);
-    }
-    return;
-  }
-
-  if (!success) return;
-
-  (async () => {
-    setOauthProcessing(true);
-
-    try {
-const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
-        method: "GET",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const text = await res.text();
-      let body;
-      try { body = JSON.parse(text); } catch (e) { body = text; }
-
-      if (res.ok) {
-        const user = body.user || body.data?.user || body;
-        dispatch(setCredentials({ user, accessToken: null }));
-        if (typeof window !== "undefined") {
-          window.history.replaceState({}, "", window.location.pathname);
-        }
-        const role = user?.role;
-        const dashboardPaths = {
-          admin: "/dashboard/admin/overview",
-          teacher: "/dashboard/teacher/analytics",
-          student: "/dashboard/student/my-learning",
-          parent: "/dashboard/parent/overview",
-        };
-        router.push(dashboardPaths[role] || "/");
-        return;
-      } else {
-        console.warn("[OAuth] /me returned not ok:", res.status, body);
-        if (typeof window !== "undefined") {
-          window.history.replaceState({}, "", window.location.pathname);
-        }
-        setServerError("Google sign-in failed to validate session. Please login manually.");
+    if (error) {
+      setServerError("Google sign-in failed. Please try again.");
+      if (typeof window !== "undefined") {
+        window.history.replaceState({}, "", window.location.pathname);
       }
-    } catch (err) {
-      console.error("[OAuth] fetch /me error:", err);
-      setServerError("Network error during Google sign-in. Please try again.");
-    } finally {
-      setOauthProcessing(false);
+      toast.error("Google sign-in failed");
+      return;
     }
-  })();
-}, [searchParams?.toString()]);
+
+    if (!success) return;
+
+    (async () => {
+      setOauthProcessing(true);
+      oauthToastId.current = toast.loading("Signing in with Google...");
+      try {
+        const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        const text = await res.text();
+        let body;
+        try { body = JSON.parse(text); } catch (e) { body = text; }
+
+        if (res.ok) {
+          const user = body.user || body.data?.user || body;
+          dispatch(setCredentials({ user, accessToken: null }));
+          if (typeof window !== "undefined") {
+            window.history.replaceState({}, "", window.location.pathname);
+          }
+          const role = user?.role;
+          const dashboardPaths = {
+            admin: "/dashboard/admin/overview",
+            teacher: "/dashboard/teacher/analytics",
+            student: "/dashboard/student/my-learning",
+            parent: "/dashboard/parent/overview",
+          };
+          toast.success("Signed in with Google", { id: oauthToastId.current });
+          router.push(dashboardPaths[role] || "/");
+          return;
+        } else {
+          if (typeof window !== "undefined") {
+            window.history.replaceState({}, "", window.location.pathname);
+          }
+          setServerError("Google sign-in failed to validate session. Please login manually.");
+          toast.error("Google sign-in validation failed", { id: oauthToastId.current });
+        }
+      } catch (err) {
+        setServerError("Network error during Google sign-in. Please try again.");
+        toast.error("Network error during Google sign-in", { id: oauthToastId.current });
+      } finally {
+        setOauthProcessing(false);
+        oauthToastId.current = null;
+      }
+    })();
+  }, [searchParams?.toString(), dispatch, router]);
 
   const handleLoginSubmit = async (values, { setSubmitting }) => {
     setServerError("");
+    const toastId = toast.loading("Logging in...");
     try {
       const res = await login(values).unwrap();
-
       const responseData = res?.data || res;
       const { user, accessToken, refreshToken } = responseData;
-
       dispatch(setCredentials({ user, accessToken, refreshToken }));
-
       const role = user.role;
       const dashboardPaths = {
         admin: "/dashboard/admin/dashboard",
@@ -102,11 +103,11 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
         student: "/dashboard/student/my-learning",
         parent: "/dashboard/parent/overview",
       };
-
       const targetPath = dashboardPaths[role] || "/";
+      toast.success("Logged in", { id: toastId });
       router.push(targetPath);
     } catch (err) {
-      console.error("Login Error:", err);
+      toast.error(err?.data?.message || "Invalid email or password", { id: toastId });
       setServerError(err?.data?.message || "Invalid email or password");
     } finally {
       setSubmitting(false);
@@ -127,7 +128,7 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="mb-4 flex items-center justify-between">
             <Link href="/" className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]">
-              <HomeIcon className="inline-block h-5 w-5 mr-1" /> back 
+              <HomeIcon className="inline-block h-5 w-5 mr-1" /> back
             </Link>
             <Image src={logo} alt="El-Mister Logo" className="h-12 w-auto" />
           </div>
@@ -151,12 +152,12 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
                     {oauthProcessing ? "Processing Google sign-in..." : serverError}
                   </div>
                 )}
-<div className="text-center">
-              <Link href="/forgetPassword" className="underline  text-sm  mt-2 font-semibold hover:text-primary ">
-              Forget your password?
-            </Link>
 
-</div>
+                <div className="text-center">
+                  <Link href="/forgetPassword" className="underline text-sm mt-2 font-semibold hover:text-primary">
+                    Forget your password?
+                  </Link>
+                </div>
 
                 <Button type="submit" className="w-full bg-[#FF4667]" disabled={isLoading || isSubmitting || oauthProcessing}>
                   {isLoading || oauthProcessing ? <Spinner size={20} className="text-white" /> : "Login"}
@@ -165,7 +166,7 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
             )}
           </Formik>
 
-          <div className=" text-center text-sm">
+          <div className="text-center text-sm">
             Don't have an account?
             <Link href="/signup" className="underline font-semibold hover:text-primary mx-1">
               Register
@@ -173,7 +174,7 @@ const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
             <br />
 
             <div className="mt-4 text-center">
-              <p className="text-sm text-gray-500 mb-2"> login with</p>
+              <p className="text-sm text-gray-500 mb-2">login with</p>
               <a
                 href={`${BASE_URL}/api/v1/auth/google`}
                 className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"

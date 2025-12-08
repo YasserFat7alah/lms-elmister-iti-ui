@@ -1,341 +1,248 @@
 "use client";
-import React, { useState } from "react";
+
+import { useState } from "react";
 import Link from "next/link";
-import {
-  Plus, Filter, Search, Edit, Trash2, Eye,
-  BookOpen, Clock, Users, DollarSign
+import { useSelector } from "react-redux";
+import { 
+  Plus, Search, Edit3, Trash2, BookOpen, Users, Calendar, Filter, CheckCircle2, Loader2 
 } from "lucide-react";
 
-const TeacherCourses = () => {
-  const [activeFilter, setActiveFilter] = useState("published");
-  const [searchTerm, setSearchTerm] = useState("");
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/shared/Loader";
+import { useGetCoursesQuery, useDeleteCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
+import { toast } from "react-hot-toast";
 
-  // Course statistics
-  const courseStats = [
-    { title: "Active Courses", value: "45", color: "bg-green-500", icon: BookOpen },
-    { title: "Pending Courses", value: "21", color: "bg-yellow-500", icon: Clock },
-    { title: "Draft Courses", value: "15", color: "bg-blue-500", icon: BookOpen },
-    { title: "Free Courses", value: "16", color: "bg-purple-500", icon: Users },
-    { title: "Paid Courses", value: "21", color: "bg-red-500", icon: DollarSign },
-  ];
-
-  // Sample courses data
-  const courses = [
-    {
-      id: 1,
-      title: "Information About UI/UX Design & Degree",
-      description: "Complete guide to UI/UX design principles and degree programs",
-      price: 200,
-      originalPrice: 900,
-      lessons: "12+ Lessons",
-      duration: "9hr 30min",
-      students: 45,
-      status: "published",
-      category: "Design",
-      image: "/api/placeholder/300/200"
-    },
-    {
-      id: 2,
-      title: "Leading Program - Learn Angular Fundamental From Beginning to Advanced",
-      description: "Master Angular framework from basics to advanced concepts",
-      price: 150,
-      originalPrice: 600,
-      lessons: "15+ Lessons",
-      duration: "12hr 45min",
-      students: 32,
-      status: "published",
-      category: "Development",
-      image: "/api/placeholder/300/200"
-    },
-    {
-      id: 3,
-      title: "Wordpress for Beginners - Master Wordpress Quickly",
-      description: "Learn WordPress development and theme customization",
-      price: 99,
-      originalPrice: 299,
-      lessons: "10+ Lessons",
-      duration: "8hr 20min",
-      students: 28,
-      status: "published",
-      category: "Development",
-      image: "/api/placeholder/300/200"
-    },
-    {
-      id: 4,
-      title: "C# Developers Double Your Coding Speed",
-      description: "Advanced C# techniques to improve coding efficiency",
-      price: 179,
-      originalPrice: 450,
-      lessons: "18+ Lessons",
-      duration: "14hr 15min",
-      students: 19,
-      status: "published",
-      category: "Programming",
-      image: "/api/placeholder/300/200"
-    },
-    {
-      id: 5,
-      title: "Sketch from A to Z (2022): Become an app designer",
-      description: "Complete Sketch tutorial for app design and prototyping",
-      price: 0,
-      originalPrice: 199,
-      lessons: "14+ Lessons",
-      duration: "10hr 30min",
-      students: 67,
-      status: "published",
-      category: "Design",
-      image: "/api/placeholder/300/200"
-    },
-    {
-      id: 6,
-      title: "Build Responsive Real World Websites",
-      description: "Learn to create modern responsive websites from scratch",
-      price: 129,
-      originalPrice: 399,
-      lessons: "20+ Lessons",
-      duration: "16hr 45min",
-      students: 53,
-      status: "published",
-      category: "Web Development",
-      image: "/api/placeholder/300/200"
-    }
-  ];
-
-  // Filter options
-  const filters = [
-    { key: "published", label: "Published (45)", count: 45 },
-    { key: "pending", label: "Pending (2)", count: 2 },
-    { key: "draft", label: "Draft (1)", count: 1 },
-    { key: "inactive", label: "Inactive (3)", count: 3 }
-  ];
-
-  // Filter courses based on active filter and search term
-  const filteredCourses = courses.filter(course => {
-    const matchesFilter = activeFilter === "published" || course.status === activeFilter;
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const handleDeleteCourse = (courseId) => {
-    if (confirm("Are you sure you want to delete this course?")) {
-      console.log("Deleting course:", courseId);
-      // Add your delete logic here
-    }
+const StatusBadge = ({ status }) => {
+  const styles = {
+    published: "bg-green-100 text-green-700 border-green-200",
+    "in-review": "bg-blue-100 text-blue-700 border-blue-200",
+    draft: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    archived: "bg-gray-100 text-gray-700 border-gray-200",
   };
 
-  const handleEditCourse = (courseId) => {
-    console.log("Editing course:", courseId);
-    // Add your edit navigation logic here
+  const labels = {
+    published: "Published",
+    "in-review": "In Review",
+    draft: "Draft",
+    archived: "Archived",
   };
 
   return (
-
-    <div className="max-w-7xl mx-auto space-y-6">
-
-      {/* Header Section */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Courses</h1>
-          <p className="text-gray-600 mt-2">Manage and organize your courses</p>
-        </div>
-
-        <Link href="/teachers/courses/create">
-          <button className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-            <Plus size={20} />
-            <span>Add New Course</span>
-          </button>
-        </Link>
-      </div>
-
-
-      {/* Course Statistics */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {courseStats.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
-                  <p className="text-sm text-gray-600 mt-1">{stat.title}</p>
-                </div>
-                <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center text-white`}>
-                  <Icon size={24} />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Search and Filters Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-
-          {/* Search Bar */}
-          <div className="relative flex-1 lg:max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search courses..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Filter Buttons */}
-          <div className="flex space-x-2 overflow-x-auto">
-            {filters.map((filter) => (
-              <button
-                key={filter.key}
-                onClick={() => setActiveFilter(filter.key)}
-                className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${activeFilter === filter.key
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Courses Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCourses.map((course) => (
-          <div key={course.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-
-            {/* Course Image */}
-            <div className="h-48 bg-gradient-to-br from-blue-500 to-purple-600 relative">
-              {/* You can replace this with actual course image */}
-              <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                <BookOpen size={48} className="text-white opacity-80" />
-              </div>
-
-              {/* Price Badge */}
-              <div className="absolute top-4 right-4 bg-white rounded-lg px-3 py-1 shadow-md">
-                <div className="flex items-center space-x-1">
-                  {course.price === 0 ? (
-                    <span className="text-green-600 font-bold text-lg">FREE</span>
-                  ) : (
-                    <>
-                      <span className="text-gray-900 font-bold text-lg">${course.price}</span>
-                      <span className="text-gray-500 text-sm line-through">${course.originalPrice}</span>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Status Badge */}
-              <div className="absolute top-4 left-4">
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${course.status === 'published' ? 'bg-green-100 text-green-800' :
-                    course.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      course.status === 'draft' ? 'bg-blue-100 text-blue-800' :
-                        'bg-red-100 text-red-800'
-                  }`}>
-                  {course.status.charAt(0).toUpperCase() + course.status.slice(1)}
-                </span>
-              </div>
-            </div>
-
-            {/* Course Content */}
-            <div className="p-6">
-              <div className="mb-4">
-                <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                  {course.category}
-                </span>
-              </div>
-
-              <h3 className="font-bold text-gray-800 text-lg mb-2 line-clamp-2">
-                {course.title}
-              </h3>
-
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                {course.description}
-              </p>
-
-              {/* Course Meta */}
-              <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1">
-                    <BookOpen size={16} />
-                    <span>{course.lessons}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Clock size={16} />
-                    <span>{course.duration}</span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Users size={16} />
-                  <span>{course.students} students</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handleEditCourse(course.id)}
-                    className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition-colors"
-                  >
-                    <Edit size={16} />
-                    <span className="text-sm font-medium">Edit</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleDeleteCourse(course.id)}
-                    className="flex items-center space-x-1 text-red-600 hover:text-red-800 transition-colors"
-                  >
-                    <Trash2 size={16} />
-                    <span className="text-sm font-medium">Delete</span>
-                  </button>
-                </div>
-
-                <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-800 transition-colors">
-                  <Eye size={16} />
-                  <span className="text-sm font-medium">Preview</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Pagination */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between">
-          <p className="text-gray-600">
-            Showing <span className="font-medium">1</span> to <span className="font-medium">6</span> of{' '}
-            <span className="font-medium">45</span> courses
-          </p>
-
-          <div className="flex items-center space-x-2">
-            <button className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-              Previous
-            </button>
-
-            <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              1
-            </button>
-
-            <button className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
-              2
-            </button>
-
-            <button className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
-              Next
-            </button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
+    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${styles[status] || styles.draft}`}>
+      {labels[status] || status}
+    </span>
   );
 };
 
-export default TeacherCourses;
+export default function MyCoursesPage() {
+  const { userInfo } = useSelector((state) => state.auth);
+  
+  const [activeTab, setActiveTab] = useState("all"); 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const queryParams = userInfo?._id ? { teacherId: userInfo._id } : {};
+
+  const { data: coursesResponse, isLoading, refetch } = useGetCoursesQuery(queryParams, {
+    refetchOnMountOrArgChange: true 
+  });
+  
+  const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
+
+  const courses = coursesResponse?.data || coursesResponse?.courses || [];
+
+  const filteredCourses = courses.filter((course) => {
+    const status = course.status === 'inReview' ? 'in-review' : course.status;
+    const matchesTab = activeTab === "all" ? true : status === activeTab;
+    const matchesSearch = course.title?.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
+
+  const handleDelete = async (id) => {
+    if (confirm("Are you sure you want to delete/archive this course?")) {
+      try {
+        await deleteCourse(id).unwrap();
+        toast.success("Course processed successfully");
+        refetch(); 
+      } catch (err) {
+        toast.error("Failed to process request");
+      }
+    }
+  };
+
+  if (isLoading) return <div className="h-screen flex items-center justify-center"><Spinner /></div>;
+
+  return (
+    <div className="p-6 min-h-screen bg-gray-50/50 space-y-6">
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">My Courses</h1>
+          <p className="text-sm text-gray-500 mt-1">Manage your curriculum, track status, and update content.</p>
+        </div>
+        <Link href="/dashboard/teacher/createCourse">
+          <Button className="bg-[#FF4667] hover:bg-[#ff2e53] text-white gap-2">
+            <Plus size={18} /> Create New Course
+          </Button>
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
+           <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><BookOpen size={24}/></div>
+           <div>
+             <p className="text-gray-500 text-xs font-bold uppercase">Total Courses</p>
+             <h3 className="text-2xl font-bold">{courses.length}</h3>
+           </div>
+        </div>
+        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
+           <div className="p-3 bg-green-50 text-green-600 rounded-lg"><CheckCircle2 size={24}/></div>
+           <div>
+             <p className="text-gray-500 text-xs font-bold uppercase">Published</p>
+             <h3 className="text-2xl font-bold">{courses.filter(c => c.status === 'published').length}</h3>
+           </div>
+        </div>
+        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
+           <div className="p-3 bg-purple-50 text-purple-600 rounded-lg"><Users size={24}/></div>
+           <div>
+             <p className="text-gray-500 text-xs font-bold uppercase">Total Students</p>
+             <h3 className="text-2xl font-bold">
+               {courses.reduce((acc, curr) => acc + (curr.totalStudents || 0), 0)}
+             </h3>
+           </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+        <div className="p-4 border-b flex flex-col sm:flex-row justify-between gap-4 items-center">
+          
+          <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+            {['all', 'published', 'in-review', 'draft', 'archived'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                  activeTab === tab 
+                  ? "bg-white text-gray-900 shadow-sm" 
+                  : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <input 
+              type="text" 
+              placeholder="Search courses..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF4667]"
+            />
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-600">
+            <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-500">
+              <tr>
+                <th className="px-6 py-4">Course Info</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Students</th>
+                <th className="px-6 py-4">Grade / Subject</th>
+                <th className="px-6 py-4">Date</th>
+                <th className="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filteredCourses.length > 0 ? (
+                filteredCourses.map((course) => (
+                  <tr key={course._id} className="hover:bg-gray-50/80 transition">
+                    
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-12 w-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                          {course.thumbnail?.url ? (
+                            <img src={course.thumbnail.url} alt="" className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center text-gray-400"><BookOpen size={16}/></div>
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900 line-clamp-1 max-w-[200px]">{course.title}</p>
+                          <p className="text-xs text-gray-400">{course.language || course.courseLanguage}</p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <StatusBadge status={course.status} />
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-1.5">
+                        <Users size={16} className="text-gray-400" />
+                        <span className="font-semibold text-gray-700">{course.totalStudents || 0}</span>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4">
+                        <p className="text-gray-900">{course.subject}</p>
+                        <p className="text-xs text-gray-500">{course.gradeLevel}</p>
+                    </td>
+
+                    <td className="px-6 py-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Calendar size={14} />
+                        {course.createdAt ? new Date(course.createdAt).toLocaleDateString() : "-"}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/dashboard/teacher/courses/${course._id}/edit`}>
+                          <button className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit">
+                            <Edit3 size={18} />
+                          </button>
+                        </Link>
+
+                        {(course.status === 'draft' || course.status === 'archived' || course.status === 'in-review' || course.status === 'inReview') ? (
+                          <button 
+                            onClick={() => handleDelete(course._id)}
+                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition" 
+                            title="Archive / Delete"
+                            disabled={isDeleting}
+                          >
+                            {isDeleting ? <Loader2 className="animate-spin" size={18}/> : <Trash2 size={18} />}
+                          </button>
+                        ) : (
+                           <button disabled className="p-2 text-gray-300 cursor-not-allowed" title="Cannot delete published course">
+                            <Trash2 size={18} />
+                           </button>
+                        )}
+                      </div>
+                    </td>
+
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <div className="bg-gray-100 p-4 rounded-full mb-3">
+                        <Filter size={32} />
+                      </div>
+                      <p className="font-semibold">No courses found</p>
+                      <p className="text-sm">Try changing filters or create a new one.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

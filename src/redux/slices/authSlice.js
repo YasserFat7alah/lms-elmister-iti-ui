@@ -18,17 +18,27 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.userInfo = action.payload;
+      const { user, accessToken, refreshToken } = action.payload;
+
+      state.userInfo = {
+        ...state.userInfo, 
+        ...action.payload,
+        refreshToken: refreshToken || state.userInfo?.refreshToken,
+        user: {
+            ...state.userInfo?.user,
+            ...user
+        }
+      };
       
       if (typeof window !== 'undefined') {
-        localStorage.setItem('userInfo', JSON.stringify(action.payload));
+        localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
         
-        if (action.payload.accessToken) {
-           Cookies.set('token', action.payload.accessToken, { expires: 7 }); 
+        if (accessToken) {
+           Cookies.set('token', accessToken, { expires: 7 }); 
         }
 
-        if (action.payload.user?.role) {
-           Cookies.set('user_role', action.payload.user.role, { expires: 7 }); 
+        if (state.userInfo.user?.role) {
+           Cookies.set('user_role', state.userInfo.user.role, { expires: 7 }); 
         }
       }
     },

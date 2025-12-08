@@ -50,7 +50,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       }
 
     } else {
-      console.error(" Refresh Request Failed.");
       console.error("Status:", refreshResult?.error?.status);
       console.error("Error Data:", refreshResult?.error?.data);
       
@@ -63,6 +62,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["User", "Courses"],
+  tagTypes: ["User", "Courses","Groups"],
   endpoints: (builder) => ({}),
 });
