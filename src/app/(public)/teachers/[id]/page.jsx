@@ -1,11 +1,14 @@
 "use client"
 
-import { FilterSidebar } from "@/components/TeacherComponents/FilterSidebar"
-import { TeacherCard } from "@/components/TeacherComponents/TeacherCard"
-import { Pagination } from "@/components/TeacherComponents/Pagination"
-import { useState, useMemo } from "react"
-import CourseBreadcrumb from "@/components/shared/courses/CourseBreadcrumb"
+import { AboutSection } from "@/components/TeacherDetailsComponents/AboutSection"
+import { CoursesSection } from "@/components/TeacherDetailsComponents/CoursesSection"
+import { EducationSection } from "@/components/TeacherDetailsComponents/EducationSection"
+import { ExperienceSection } from "@/components/TeacherDetailsComponents/ExperienceSection"
+import { TeacherHeader } from "@/components/TeacherDetailsComponents/TeacherHeader"
+import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa"
+import { useParams } from 'next/navigation'
 
+// هنا تجيب بيانات كل المعلمين
 const teachers = [
   {
     _id: "6931b09ada0a1f809a19bac0",
@@ -355,79 +358,71 @@ const teachers = [
     id: "f081k99ada6j0f809a19bc43"
   }
 ];
-export default function TeachersPage() {
-  const [currentPage, setCurrentPage] = useState(1)
-const [filters, setFilters] = useState({
-  subjects: [],
-  gender: "",
-  totalRatings: null,
-  degree: [],
-  university: []
-})
-  const itemsPerPage = 6
+export default function InstructorDetailPage() {
+  const { id } = useParams();
 
-// ========== FILTER LOGIC ==========
-  const filteredTeachers = useMemo(() => {
-    return teachers.filter((teacher) => {
-      const td = teacher.teacherData
-      const { subjects, gender, totalRatings, degree, university } = filters
+  const teacher = teachers.find(t => t._id === id);
 
-      // Filter: subjects
-      if (subjects.length > 0 && !td.subjects.some(sub => subjects.includes(sub))) return false
-
-      // Filter: gender
-      if (gender && teacher.gender !== gender) return false
-
-      // Filter: totalRatings
-      if (totalRatings !== null && td.totalRatings < totalRatings) return false
-
-      // Filter: degree
-      if (degree.length > 0 && !td.qualifications.some(q => degree.includes(q.degree))) return false
-
-      // Filter: university
-      if (university.length > 0 && !td.qualifications.some(q => university.includes(q.university))) return false
-
-      return true
-    })
-  }, [filters])
-
-const totalPages = Math.ceil(filteredTeachers.length / itemsPerPage)
-
-  const startIdx = (currentPage - 1) * itemsPerPage
-  const displayedTeachers = filteredTeachers.slice(startIdx, startIdx + itemsPerPage)
+  if (!teacher) {
+    return <p className="text-center py-20">Instructor not found</p>
+  }
 
   return (
     <main className="bg-background">
-
-<CourseBreadcrumb title="teachers" currentPage="teachers" />
-
+      <div className="bg-gradient-to-r from-pink-50 to-blue-50 py-8">
+        <div className="container mx-auto px-4">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+            <span>Home</span>
+            <span>/</span>
+            <span>Instructor Detail</span>
+          </nav>
+          <h1 className="text-4xl font-bold">Instructor Detail</h1>
+        </div>
+      </div>
       <div className="container mx-auto px-4 py-12">
-        <div className="flex gap-8">
-          {/* Sidebar */}
-          <FilterSidebar
-            teachers={teachers}
-            filters={filters}
-            onFilterChange={(newFilters) => {
-              setFilters(newFilters)
-              setCurrentPage(1) // reset page when filter changes
-            }}
-          />
-
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Instructor Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {displayedTeachers.map((teacher) => (
-                <TeacherCard key={teacher.name} teacher={teacher} /> //use .name
-              ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+<TeacherHeader teacher={teacher} />
+            <AboutSection about={{ preview: teacher.teacherData.bio, full: teacher.teacherData.bio }} />
+            <EducationSection education={teacher.teacherData.qualifications} />
+<ExperienceSection teacher={teacher} />
+            <CoursesSection courses={teacher.teacherData.courses || []} /> // i need this data
+          </div>
+          <div>
+            <div className="bg-card border border-border rounded-lg p-6 sticky top-4">
+              <h3 className="text-lg text-[#392C7D] font-bold mb-4">Certifications</h3>
+              <div className="flex gap-4 mb-6">
+                {teacher.teacherData.certificates?.map((cert, idx) => (
+                  <img
+                    key={idx}
+                    src={cert || "/placeholder.svg"}
+                    alt="certification"
+                    className="w-12 h-12 rounded-full"
+                  />
+                ))}
+              </div>
+              <h3 className="text-lg font-bold text-[#392C7D] mb-4">Contact Details</h3>
+              <div className="space-y-3">
+                {[
+                  { icon: <FaEnvelope size={16} />, label: "Email", value: teacher.email },
+                  { icon: <FaPhone size={16} />, label: "Phone", value: "+1 (123) 456-7890" },//need phone
+                  { icon: <FaMapMarkerAlt size={16} />, label: "Address", value: "N/A" }// need Address
+                ].map((contact, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-[#392C7D] rounded-full flex items-center justify-center text-primary-foreground flex-shrink-0">
+                      {contact.icon}
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">{contact.label}</p>
+                      <p className="font-medium">{contact.value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            {/* Pagination */}
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
           </div>
         </div>
       </div>
-
     </main>
   )
 }
