@@ -92,7 +92,7 @@ const page = () => {
   return (
     <div className="space-y-6 p-6  min-h-screen">
       {/* Header */}
-      <HeaderAdmin>
+      <div className="rounded-2xl p-5 bg-white border ">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div>
@@ -106,7 +106,7 @@ const page = () => {
           </div>
           <AddNewsLetterBtn onOpenPopup={handleAddNew} />
         </div>
-      </HeaderAdmin>
+      </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-6">

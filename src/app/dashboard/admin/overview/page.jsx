@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Shield, } from "lucide-react";
 import Linechart from "@/components/dashboardComponents/admin/overviewComponents/LineChart";
 import DashboardState from "@/components/dashboardComponents/admin/overviewComponents/DashboardState";
+import HeaderAdmin from "@/components/dashboardComponents/admin/HeaderAdmin";
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -13,23 +14,9 @@ export default function AdminDashboard() {
 
    return (
     <div className="space-y-6 p-6 min-h-screen">
+      
       {/* Header Section */}
-      <div className="text-[#FF0055] rounded-2xl p-8 bg-white  border">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-3 b  rounded-xl">
-            <Shield className="w-8 h-8" />
-          </div>
-          <div>
-            <h1 className="text-2xl  font-bold ">
-              Admin Control Panel
-            </h1>
-            <p className=" text-sm mt-1 text-[#392b80] font-semibold">
-              Manage and monitor your platform
-            </p>
-          </div>
-        </div>
-      </div>
-
+      <HeaderAdmin title="Admin Control Panel" description=" Manage and monitor your platform"/>
       {/* Dashboard State Section */}
       <DashboardState />
 

@@ -1,10 +1,11 @@
 "use client";
-import { Eye, Mail, Phone, Trash2 } from "lucide-react";
+import { Eye, Mail, Phone, Trash2, Ticket, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import BulkBtn from "../BulkBtn";
 import ConfirmDeletePopUp from "../newsletter/ConfirmDeletePopup";
 import ViewTicket from "./ViewTicket";
+import StatsCard from "../payouts/StatsCard";
 
 const TicketsTable = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -68,6 +69,14 @@ const TicketsTable = () => {
     },
   ]);
 
+  // Calculate statistics
+  const stats = {
+    total: ticketsData.length,
+    open: ticketsData.filter((ticket) => ticket.status === "open").length,
+    pending: ticketsData.filter((ticket) => ticket.status === "pending").length,
+    resolved: ticketsData.filter((ticket) => ticket.status === "resolved").length,
+  };
+
   // _________________Selection Logic________________________
 
   // Toggle single row selection
@@ -98,7 +107,6 @@ const TicketsTable = () => {
   // Delete function
   const handleDelete = (id) => {
     setTicketsData((prev) => prev.filter((ticket) => ticket.id !== id));
-    // Also remove from selected rows if it was selected
     setSelectedRows((prev) => prev.filter((rowId) => rowId !== id));
   };
 
@@ -127,7 +135,7 @@ const TicketsTable = () => {
     }
     setDeleteConfirm(null);
     setIsBulkDelete(false);
-    setIsOpenView(false); // Close view popup after delete
+    setIsOpenView(false); 
   };
 
   // Cancel delete
@@ -143,18 +151,18 @@ const TicketsTable = () => {
         ticket.id === id ? { ...ticket, status: newStatus } : ticket
       )
     );
-    // Update selectedItemView if it's the current item being viewed
+    // Update selectedItemView 
     if (selectedItemView && selectedItemView.id === id) {
       setSelectedItemView((prev) => ({ ...prev, status: newStatus }));
     }
   };
 
-  // Email handler - FIXED: receives ticket as parameter
+  // Email handler 
   const handleEmail = (ticket) => {
     window.location.href = `mailto:${ticket.email}?subject=Re: ${ticket.title}`;
   };
 
-  // Call handler - FIXED: receives ticket as parameter
+  // Call handler 
   const handleCall = (ticket) => {
     window.location.href = `tel:${ticket.phone}`;
   };
@@ -166,195 +174,226 @@ const TicketsTable = () => {
   };
 
   return (
-    <>
-      <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
-        {/* Table Header */}
-        <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-6 border-b border-gray-100">
-          <div className="flex items-center justify-between flex-col md:flex-row gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                Tickets Overview
-                <span className="text-lg">🎫</span>
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">
-                Track your support tickets
-              </p>
-            </div>
-
-            {/* Bulk Delete Button */}
-            <BulkBtn
-              selectedCount={selectedRows.length}
-              onDelete={handleBulkDelete}
-              label="Ticket selected"
-            />
-          </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <StatsCard
+            icon={Ticket}
+            title="Total Tickets"
+            value={stats.total}
+            color="bg-gray-600"
+          />
+          <StatsCard
+            icon={AlertCircle}
+            title="Open"
+            value={stats.open}
+            color="bg-red-500"
+          />
+          <StatsCard
+            icon={Clock}
+            title="Pending"
+            value={stats.pending}
+            color="bg-amber-500"
+          />
+          <StatsCard
+            icon={CheckCircle}
+            title="Resolved"
+            value={stats.resolved}
+            color="bg-green-500"
+          />
         </div>
 
-        <div className="overflow-x-auto">
-          {/* Table */}
-          <table className="w-full">
-            {/* ______________HEAD TABLE_______________ */}
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left">
-                  <input
-                    type="checkbox"
-                    checked={
-                      selectedRows.length === ticketsData.length &&
-                      ticketsData.length > 0
-                    }
-                    onChange={toggleSelectAll}
-                    className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
-                  />
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Full Name
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Number
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Title
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Message
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                </th>
-              </tr>
-            </thead>
-            {/* ______________BODY TABLE_______________ */}
-            <tbody className="divide-y divide-gray-200">
-              {ticketsData.length > 0 ? (
-                ticketsData.map((ticket) => (
-                  <tr
-                    key={ticket.id}
-                    className={`transition-colors cursor-pointer ${
-                      selectedRows.includes(ticket.id)
-                        ? "bg-[#392b80]/10"
-                        : "hover:bg-gray-50"
-                    }`}
-                    onClick={() => toggleRowSelection(ticket.id)}
-                  >
-                    <td className="px-6 py-4">
-                      <input
-                        type="checkbox"
-                        checked={selectedRows.includes(ticket.id)}
-                        onChange={() => toggleRowSelection(ticket.id)}
-                        className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </td>
+        <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
+          {/* Table Header */}
+          <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
+            <div className="flex items-center justify-between flex-col md:flex-row gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                  Tickets Overview
+                  <span className="text-lg">🎫</span>
+                </h2>
+              </div>
 
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-sm font-semibold text-[#392b80]">
-                        {ticket.fullName}
-                      </p>
-                    </td>
+              {/* Bulk Delete Button */}
+              <BulkBtn
+                selectedCount={selectedRows.length}
+                onDelete={handleBulkDelete}
+                label="Ticket(s)"
+              />
+            </div>
+          </div>
 
-                    <td className="px-2 py-4 whitespace-nowrap">
-                      <p className="text-sm text-gray-600 hover:text-blue-500" onClick={(e) => { e.stopPropagation(); handleEmail(ticket); }}>{ticket.email}</p>
-                    </td>
+          <div className="overflow-x-auto">
+            {/* Table */}
+            <table className="w-full">
+              {/* ______________HEAD TABLE_______________ */}
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-4 text-left">
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedRows.length === ticketsData.length &&
+                        ticketsData.length > 0
+                      }
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
+                    />
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Full Name
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Number
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Title
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Message
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              {/* ______________BODY TABLE_______________ */}
+              <tbody className="divide-y divide-gray-100">
+                {ticketsData.length > 0 ? (
+                  ticketsData.map((ticket) => (
+                    <tr
+                      key={ticket.id}
+                      className={`transition-colors cursor-pointer ${
+                        selectedRows.includes(ticket.id)
+                          ? "bg-[#392b80]/10"
+                          : "hover:bg-gray-50"
+                      }`}
+                      onClick={() => toggleRowSelection(ticket.id)}
+                    >
+                      <td className="px-6 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(ticket.id)}
+                          onChange={() => toggleRowSelection(ticket.id)}
+                          className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </td>
 
-                    <td className="px-2 py-4 whitespace-nowrap">
-                      <p className="text-sm text-gray-600 hover:text-green-500" onClick={(e) => { e.stopPropagation(); handleCall(ticket); }}>{ticket.phone}</p>
-                    </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <p className="text-sm font-semibold text-[#392b80]">
+                          {ticket.fullName}
+                        </p>
+                      </td>
 
-                    <td className="px-2 py-4 whitespace-nowrap">
-                      <p className="text-sm font-semibold text-[#392b80]">
-                        {truncateText(ticket.title, 15)}
-                      </p>
-                    </td>
-
-                    <td className="px-2 py-4 whitespace-nowrap">
-                      <p className="text-sm text-gray-600">
-                        {truncateText(ticket.message, 12)}
-                      </p>
-                    </td>
-
-                    <td className="px-2 py-4">
-                      <div className="flex items-center gap-1">
-                        {/* Email Button - FIXED: passes ticket parameter */}
-                        <button
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <p
+                          className="text-sm text-gray-600 hover:text-blue-500 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEmail(ticket);
                           }}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group cursor-pointer"
-                          title="Send Email"
                         >
-                          <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        </button>
+                          {ticket.email}
+                        </p>
+                      </td>
 
-                        {/* Call Button - FIXED: passes ticket parameter */}
-                        <button
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <p
+                          className="text-sm text-gray-600 hover:text-green-500 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleCall(ticket);
                           }}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors group cursor-pointer"
-                          title="Call Customer"
                         >
-                          <Phone className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        </button>
+                          {ticket.phone}
+                        </p>
+                      </td>
 
-                        {/* View Button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewClick(ticket);
-                          }}
-                          className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors group cursor-pointer"
-                          title="View Ticket"
-                        >
-                          <Eye className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        </button>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <p className="text-sm font-medium text-gray-700">
+                          {truncateText(ticket.title, 10)}
+                        </p>
+                      </td>
 
-                        {/* Delete Button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteClick(ticket);
-                          }}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors group cursor-pointer"
-                          title="Delete Ticket"
-                        >
-                          <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                        </button>
+                      <td className="px-6 py-4">
+                        <p className="text-sm text-gray-600 max-w-xs">
+                          {truncateText(ticket.message, 20)}
+                        </p>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1">
+                          {/* Email Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEmail(ticket);
+                            }}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors group cursor-pointer"
+                            title="Send Email"
+                          >
+                            <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                          </button>
+
+                          {/* Call Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCall(ticket);
+                            }}
+                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors group cursor-pointer"
+                            title="Call Customer"
+                          >
+                            <Phone className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                          </button>
+
+                          {/* View Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewClick(ticket);
+                            }}
+                            className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors group cursor-pointer"
+                            title="View Ticket"
+                          >
+                            <Eye className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                          </button>
+
+                          {/* Delete Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteClick(ticket);
+                            }}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors group cursor-pointer"
+                            title="Delete Ticket"
+                          >
+                            <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center text-gray-500">
+                        <Ticket className="w-12 h-12 mb-3 text-gray-300" />
+                        <p>No Tickets found</p>
                       </div>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center text-gray-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-12 h-12 mb-3 text-gray-300"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <p>No Tickets found</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </div>
 
       {/* View Ticket Popup */}
       <ViewTicket
@@ -374,7 +413,7 @@ const TicketsTable = () => {
         isBulk={isBulkDelete}
         selectedCount={selectedRows.length}
       />
-    </>
+    </div>
   );
 };
 

@@ -91,25 +91,10 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                 Track your sent newsletters
               </p>
             </div>
-
-            {/* Bulk Delete Button */}
-            {/* {selectedRows.length > 0 && (
-              <div className="flex items-center gap-3 animate-in slide-in-from-right duration-300">
-                <span className="text-sm font-medium text-gray-700">
-                  {selectedRows.length} selected
-                </span>
-                <button
-                  onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2.5 cursor-pointer text-white rounded-xl font-semibold bg-red-500 hover:bg-red-600 transition-all hover:shadow-sm"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            )} */}
             <BulkBtn
-              selectedCount={selectedRows.length}
-              onDelete={handleBulkDelete}
-              label="newsletter selected"
+                selectedCount={selectedRows.length}
+                onDelete={handleBulkDelete}
+                label="newsletter selected"
             />
           </div>
         </div>

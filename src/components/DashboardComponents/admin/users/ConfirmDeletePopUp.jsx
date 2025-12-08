@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
-const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selectedCount }) => {
+const ConfirmDeletePopUp = ({ isOpen, onConfirm, onCancel, isBulk, selectedCount, userName }) => {
   if (!isOpen) return null;
 
   return (
@@ -13,6 +13,7 @@ const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selecte
         className="bg-white rounded-2xl w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
+
         {/* Header */}
         <div className="bg-gradient-to-r from-red-50 to-rose-50 p-6 border-b border-red-100 rounded-t-2xl">
           <div className="flex items-center justify-between">
@@ -29,6 +30,7 @@ const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selecte
                 </p>
               </div>
             </div>
+
             <button
               onClick={onCancel}
               className="p-2 hover:bg-red-100 rounded-lg transition-colors"
@@ -43,24 +45,26 @@ const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selecte
           {isBulk ? (
             <>
               <p className="text-gray-700 mb-2">
-                Are you sure you want to delete <span className="font-bold text-red-600">{selectedCount}</span> ticket{selectedCount > 1 ? 's' : ''}?
+                Are you sure you want to delete
+                <span className="font-bold text-red-600"> {selectedCount} users</span>?
               </p>
+
               <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
                 <p className="text-sm text-gray-600">
-                  {selectedCount} item{selectedCount > 1 ? 's' : ''} will be permanently deleted
+                  {selectedCount} user{selectedCount > 1 ? "s" : ""} will be permanently deleted.
                 </p>
               </div>
             </>
           ) : (
             <>
               <p className="text-gray-700 mb-2">
-                Are you sure you want to delete this ticket?
+                Are you sure you want to delete this user?
               </p>
+
               <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
                 <p className="text-sm font-semibold text-gray-900 mb-1">
-                  {item?.title}
+                  {userName}
                 </p>
-                <p className="text-xs text-gray-600">{item?.fullName || item?.studentName} - {item?.email || item?.id}</p>
               </div>
             </>
           )}
@@ -74,6 +78,7 @@ const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selecte
           >
             Cancel
           </button>
+
           <button
             onClick={onConfirm}
             className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-lg hover:shadow-xl"
@@ -87,4 +92,3 @@ const ConfirmDeletePopUp = ({ item, isOpen, onConfirm, onCancel, isBulk, selecte
 };
 
 export default ConfirmDeletePopUp;
-
