@@ -27,7 +27,11 @@
     "autoprefixer": "^10.4.22",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+<<<<<<< HEAD
     "format": "^0.2.2",
+=======
+    "dayjs": "^1.11.19",
+>>>>>>> feature/admin-dashboard
     "formik": "^2.4.9",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",

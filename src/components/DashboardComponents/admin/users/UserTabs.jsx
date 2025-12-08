@@ -32,7 +32,6 @@ const UsersTabs = () => {
       name: "Omar Salah", 
       email: "omar@gmail.com", 
       role: "student",
-      phone: "+20 123 456 7892",
       location: "Giza, Egypt",
       joinDate: "2024-01-20",
       status: "active"
@@ -62,7 +61,6 @@ const UsersTabs = () => {
       name: "Layla Mohamed", 
       email: "layla@gmail.com", 
       role: "student",
-      phone: "+20 123 456 7895",
       location: "Cairo, Egypt",
       joinDate: "2024-01-22",
       status: "active"
@@ -77,16 +75,20 @@ const UsersTabs = () => {
   const teachers = users.filter((u) => u.role === "teacher");
   const students = users.filter((u) => u.role === "student");
 
-  // Delete handler
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter((u) => u.id !== id));
+  // Delete handler - handles both single and bulk delete
+  const handleDelete = (idOrIds) => {
+    if (Array.isArray(idOrIds)) {
+      // Bulk delete:
+      setUsers(users.filter((u) => !idOrIds.includes(u.id)));
+    } else {
+      // Single delete: filter out the user with the matching ID
+      setUsers(users.filter((u) => u.id !== idOrIds));
     }
   };
 
   // Edit handler
-  const handleEdit = (user) => {
-    alert(`Edit user: ${user.name}\nThis would open an edit modal/form`);
+  const handleEdit = (updatedUser) => {
+    setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
   };
 
   // Filter users by search term
@@ -99,7 +101,7 @@ const UsersTabs = () => {
   };
 
   return (
-    <div className="space-y-6 p-6 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+    <div className="space-y-6 py-6 bg-gradient-to-br from-gray-50 to-white min-h-screen">
       {/* ________________________Stats Cards_______________________ */}
       <UserStateCards 
         users={users} 
@@ -109,8 +111,8 @@ const UsersTabs = () => {
       />
 
       {/* ________________________________Tabs______________________ */}
-      <Tabs defaultValue="all" onValueChange={setActiveTab}>
-        <TabsList className="flex items-center justify-around w-full bg-white border border-gray-200 py-7 px-1.5 rounded-xl">
+      <Tabs defaultValue="all" onValueChange={setActiveTab} >
+        <TabsList className="flex flex-wrap items-center justify-around w-full bg-white border border-gray-200 md:py-7 px-1.5 rounded-xl">
           <TabsTrigger 
             value="all" 
             className="rounded-lg py-2 px-6 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF0055] data-[state=active]:to-rose-600 data-[state=active]:text-white transition-all"
