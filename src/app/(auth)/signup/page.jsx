@@ -113,7 +113,7 @@ export default function CompleteProfileOrSignUp() {
         role: values.role,
       };
 
-      const res = await fetch(`${BASE_URL}/api/v1/auth/complete-profile`, {
+      const res = await fetch(`${BASE_URL}/auth/complete-profile`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
