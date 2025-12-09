@@ -13,9 +13,6 @@ import { useGetCoursesQuery, useDeleteCourseMutation } from "@/redux/api/endPoin
 import { toast } from "react-hot-toast";
 import CourseDetailsModal from "@/components/teacherCreateCourse/courseDetailsModal";
 
-// 1. استدعاء المكون الجديد
-
-// --- StatusBadge Component (Keep it here or move to shared) ---
 const StatusBadge = ({ status }) => {
   const styles = {
     published: "bg-green-100 text-green-700 border-green-200",
@@ -81,7 +78,6 @@ export default function MyCoursesPage() {
   return (
     <div className="p-6 min-h-screen bg-gray-50/50 space-y-6">
       
-      {/* 2. وضع المكون هنا وتمرير البيانات له */}
       <CourseDetailsModal 
         isOpen={!!selectedCourse} 
         onClose={() => setSelectedCourse(null)} 
@@ -100,7 +96,6 @@ export default function MyCoursesPage() {
         </Link>
       </div>
 
-      {/* Stats Cards (نفس الكود السابق...) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
            <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><BookOpen size={24}/></div>
@@ -127,9 +122,7 @@ export default function MyCoursesPage() {
         </div>
       </div>
 
-      {/* Table Section */}
       <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-        {/* Filters */}
         <div className="p-4 border-b flex flex-col sm:flex-row justify-between gap-4 items-center">
           <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
             {['all', 'published', 'in-review', 'draft', 'archived'].map((tab) => (
@@ -159,7 +152,6 @@ export default function MyCoursesPage() {
           </div>
         </div>
 
-        {/* Table Content */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-500">
@@ -219,7 +211,6 @@ export default function MyCoursesPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         
-                        {/* زر فتح المودال */}
                         <button 
                           onClick={() => setSelectedCourse(course)}
                           className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition" 

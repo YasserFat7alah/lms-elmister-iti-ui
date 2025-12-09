@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { 
   useGetMeQuery, 
   useUpdateMeMutation 
-} from "@/redux/api/endPoints/usersApiSlice"; // تأكد من المسار
+} from "@/redux/api/endPoints/usersApiSlice";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { Spinner } from "@/components/shared/Loader";
 import {
@@ -19,7 +19,6 @@ const TeacherProfile = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
 
-  // 1. جلب البيانات
   const { data: userData, isLoading: isFetching, refetch } = useGetMeQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
@@ -29,15 +28,11 @@ const TeacherProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const profileImageRef = useRef(null);
 
-  // State للبيانات القابلة للتعديل (حسب الباك إند المسموح به حالياً)
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    // bio, subjects, qualifications -> الباك إند الحالي لا يدعم تحديثهم
-    // سيتم عرضهم فقط للعرض (Read Only)
   });
 
-  // State لعرض البيانات الثابتة (للقراءة فقط حالياً)
   const [readOnlyData, setReadOnlyData] = useState({
     email: "",
     role: "",
@@ -50,19 +45,16 @@ const TeacherProfile = () => {
 
   const [profileImage, setProfileImage] = useState(null);
 
-  // 2. ملء البيانات عند التحميل
   useEffect(() => {
     if (userData) {
       const user = userData.data?.user || userData.data || userData;
       const teacherInfo = user.teacherData || {};
 
-      // بيانات مسموح بتعديلها
       setFormData({
         name: user.name || "",
         phone: user.phone || "",
       });
 
-      // بيانات للعرض فقط
       setReadOnlyData({
         email: user.email || "",
         role: user.role || "teacher",
@@ -81,7 +73,6 @@ const TeacherProfile = () => {
     }
   }, [userData]);
 
-  // 3. معالجة رفع الصورة
   const handleProfileImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -93,32 +84,24 @@ const TeacherProfile = () => {
     }
   };
 
-  // 4. معالجة تغيير المدخلات
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // 5. الحفظ (متوافق مع الباك إند الحالي)
   const handleSave = async () => {
     try {
       const submitData = new FormData();
       
-      // إرسال الحقول المسموح بها فقط في Joi Schema و allowedFields
       submitData.append("name", formData.name);
       submitData.append("phone", formData.phone);
       
-      // لو فيه صورة جديدة، نبعتها باسم 'avatar' عشان Multer يستلمها
       if (profileImage?.file) {
         submitData.append("avatar", profileImage.file);
       }
-
-      // ⚠️ ملحوظة هامة:
-      // تم إزالة teacherData لأن الباك إند يرفضه حالياً ويرجع Error 400
       
       const res = await updateMe(submitData).unwrap();
       const updatedUser = res.data?.user || res.data || res;
       
-      // تحديث الريدكس
       dispatch(setCredentials({ ...userInfo, user: { ...userInfo.user, ...updatedUser } }));
       
       setIsEditing(false);
@@ -133,7 +116,6 @@ const TeacherProfile = () => {
 
   const handleCancel = () => {
     setIsEditing(false);
-    // إعادة البيانات لما كانت عليه
     if (userData) {
         const user = userData.data?.user || userData.data;
         setFormData({
@@ -149,12 +131,10 @@ const TeacherProfile = () => {
   return (
     <div className="max-w-7xl space-y-6 pb-10">
 
-      {/* --- Header Card --- */}
       <Card className="border-none shadow-sm bg-white">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            
-            {/* Image Section */}
+          
             <div className="relative group shrink-0">
               <div className="w-28 h-28 rounded-full p-1 border-2 border-gray-100 shadow-sm bg-white">
                 <div className="w-full h-full bg-gray-50 rounded-full flex items-center justify-center overflow-hidden relative">
@@ -174,7 +154,6 @@ const TeacherProfile = () => {
               </div>
             </div>
 
-            {/* Basic Info (Read Only + Edit Button) */}
             <div className="flex-1 space-y-1">
                <h1 className="text-2xl font-bold text-gray-900">{formData.name}</h1>
                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">

@@ -8,11 +8,9 @@ import { Users, CheckCircle2, Lock, Trash2, Edit3, ArrowLeft, Loader2, Calendar,
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 
-// Shared Components
 import MediaUploader from "@/components/teacherCreateCourse/MediaUploader";
 import GroupModal from "@/components/teacherCreateCourse/GroupModal";
 
-// API Hooks
 import {
   useGetCourseByIdQuery,
   useUpdateCourseMutation,
@@ -42,11 +40,9 @@ export default function EditCoursePage() {
   const { id: courseId } = useParams();
   const router = useRouter();
 
-  // Data
   const { data: courseData, isLoading: isLoadingCourse } = useGetCourseByIdQuery(courseId);
   const { data: groupsData, isLoading: isLoadingGroups } = useGetGroupsByCourseQuery(courseId);
 
-  // Mutations
   const [updateCourse, { isLoading: isUpdating }] = useUpdateCourseMutation();
   const [deleteCourse, { isLoading: isDeletingCourse }] = useDeleteCourseMutation();
 
@@ -54,7 +50,6 @@ export default function EditCoursePage() {
   const [updateGroup] = useUpdateGroupMutation();
   const [deleteGroup] = useDeleteGroupMutation();
 
-  // Modal State
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [editingGroupId, setEditingGroupId] = useState(null);
 
@@ -107,7 +102,6 @@ export default function EditCoursePage() {
     setIsGroupModalOpen(true);
   };
 
-  // Update Course
   const handleFinalSubmit = async (values, actionType) => {
     if (actionType === "publish" && groups.length === 0) {
       toast.error("You must have at least one active group to publish.");
@@ -138,7 +132,6 @@ export default function EditCoursePage() {
     }
   };
 
-  // Group Actions
   const handleSaveGroup = async () => {
     if (tempGroup.title.length < 5) return toast.error("Group title > 5 chars");
     if (!tempGroup.price) return toast.error("Price required");
