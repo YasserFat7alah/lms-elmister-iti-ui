@@ -2,119 +2,146 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Formik, Form, FieldArray } from "formik";
+import { Formik, Form } from "formik";
 import { toast } from "react-hot-toast";
-import { Users, CheckCircle2, Trash2, Edit3, Lock, ArrowLeft } from "lucide-react";
+import { Users, CheckCircle2, Lock, Trash2, Edit3, ArrowLeft, Loader2, Calendar, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 
-import GroupForm from "@/components/teacherCreateCourse/GroupForm";
-import { CourseThumbnail } from "@/components/teacherCreateCourse/FormHelpers";
-import CourseBasicInfo from "@/components/teacherCreateCourse/CourseBasicInfo";
+// Shared Components
+import MediaUploader from "@/components/teacherCreateCourse/MediaUploader";
+import GroupModal from "@/components/teacherCreateCourse/GroupModal";
 
-import { useGetCourseByIdQuery, useUpdateCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
+// API Hooks
+import {
+  useGetCourseByIdQuery,
+  useUpdateCourseMutation,
+  useDeleteCourseMutation,
+} from "@/redux/api/endPoints/coursesApiSlice";
+
 import {
   useGetGroupsByCourseQuery,
   useCreateGroupMutation,
   useDeleteGroupMutation,
-  useUpdateGroupMutation
+  useUpdateGroupMutation,
 } from "@/redux/api/endPoints/groupsApiSlice";
+import CourseBasicInfo from "@/components/teacherCreateCourse/CourseBasicInfo";
 
-const DAY_MAP_TO_BACKEND = { "Saturday": "sat", "Sunday": "sun", "Monday": "mon", "Tuesday": "tue", "Wednesday": "wed", "Thursday": "thu", "Friday": "fri" };
-const DAY_MAP_FROM_BACKEND = { "sat": "Saturday", "sun": "Sunday", "mon": "Monday", "tue": "Tuesday", "wed": "Wednesday", "thu": "Thursday", "fri": "Friday" };
+const DAY_MAP_TO_BACKEND = {
+  Saturday: "sat",
+  Sunday: "sun",
+  Monday: "mon",
+  Tuesday: "tue",
+  Wednesday: "wed",
+  Thursday: "thu",
+  Friday: "fri",
+};
+const DAY_MAP_FROM_BACKEND = { sat: "Saturday", sun: "Sunday", mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday" };
 
 export default function EditCoursePage() {
   const { id: courseId } = useParams();
   const router = useRouter();
 
+  // Data
   const { data: courseData, isLoading: isLoadingCourse } = useGetCourseByIdQuery(courseId);
   const { data: groupsData, isLoading: isLoadingGroups } = useGetGroupsByCourseQuery(courseId);
 
+  // Mutations
   const [updateCourse, { isLoading: isUpdating }] = useUpdateCourseMutation();
-  const [createGroup, { isLoading: isAddingGroup }] = useCreateGroupMutation();
-  const [updateGroup, { isLoading: isUpdatingGroup }] = useUpdateGroupMutation();
-  const [deleteGroup, { isLoading: isDeletingGroup }] = useDeleteGroupMutation();
+  const [deleteCourse, { isLoading: isDeletingCourse }] = useDeleteCourseMutation();
 
+  const [createGroup] = useCreateGroupMutation();
+  const [updateGroup] = useUpdateGroupMutation();
+  const [deleteGroup] = useDeleteGroupMutation();
+
+  // Modal State
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [editingGroupId, setEditingGroupId] = useState(null);
+
   const [tempGroup, setTempGroup] = useState({
-    title: "", description: "", type: "online", price: "", capacity: "", startingDate: "",
-    link: "", location: "", schedule: [{ day: "Monday", time: "14:00" }]
+    title: "",
+    description: "",
+    type: "online",
+    price: "",
+    capacity: "",
+    startingDate: "",
+    link: "",
+    location: "",
+    schedule: [{ day: "Monday", time: "14:00" }],
   });
 
-  const handleFinalSubmit = async (values, actionType) => {
-    const currentGroups = groupsData?.data || [];
+  const course = courseData?.data || courseData;
+  const groups = groupsData?.data || groupsData || [];
 
-    if (actionType === "publish" && currentGroups.length === 0) {
+  const handleOpenGroupModal = (groupToEdit = null) => {
+    if (groupToEdit) {
+      setEditingGroupId(groupToEdit._id);
+      setTempGroup({
+        title: groupToEdit.title,
+        description: groupToEdit.description || "",
+        type: groupToEdit.type,
+        price: groupToEdit.price,
+        capacity: groupToEdit.capacity,
+        startingDate: groupToEdit.startingDate ? new Date(groupToEdit.startingDate).toISOString().split("T")[0] : "",
+        link: groupToEdit.link || "",
+        location: groupToEdit.location || "",
+        schedule: groupToEdit.schedule?.map((s) => ({
+          day: DAY_MAP_FROM_BACKEND[s.day] || "Monday",
+          time: s.time,
+        })) || [{ day: "Monday", time: "14:00" }],
+      });
+    } else {
+      setEditingGroupId(null);
+      setTempGroup({
+        title: "",
+        description: "",
+        type: "online",
+        price: "",
+        capacity: "",
+        startingDate: "",
+        link: "",
+        location: "",
+        schedule: [{ day: "Monday", time: "14:00" }],
+      });
+    }
+    setIsGroupModalOpen(true);
+  };
+
+  // Update Course
+  const handleFinalSubmit = async (values, actionType) => {
+    if (actionType === "publish" && groups.length === 0) {
       toast.error("You must have at least one active group to publish.");
       return;
     }
 
     try {
-      const formData = new FormData();
-      formData.append("title", values.title);
-      formData.append("subTitle", values.subTitle);
-      formData.append("description", values.description);
-      formData.append("subject", values.subject);
-      formData.append("gradeLevel", values.gradeLevel);
-      formData.append("courseLanguage", values.courseLanguage);
-      const status = actionType === "publish" ? "in-review" : "draft";
-      formData.append("status", status);
+      const payload = {
+        title: values.title,
+        subTitle: values.subTitle,
+        description: values.description,
+        subject: values.subject,
+        gradeLevel: values.gradeLevel,
+        courseLanguage: values.courseLanguage,
+        tags: values.tags,
+        status: actionType === "publish" ? "in-review" : "draft",
+        thumbnail: values.thumbnail || null,
+        video: values.video || null,
+      };
 
-      if (values.tags && values.tags.length > 0) {
-        values.tags.forEach(tag => formData.append("tags", tag));
-      }
+      await updateCourse({ courseId, data: payload }).unwrap();
 
-      if (values.thumbnailFile) {
-        formData.append("thumbnail", values.thumbnailFile);
-      }
-
-      await updateCourse({ courseId, data: formData }).unwrap();
-
-      toast.success(actionType === "publish" ? "Course updated and sent for review" : "Course updated as draft");
+      toast.success(actionType === "publish" ? "Course Updated & Sent for Review! 🚀" : "Course Updated to Draft! 💾");
       router.push("/dashboard/teacher/courses");
-
     } catch (err) {
       console.error(err);
       toast.error(err?.data?.message || "Failed to update course");
     }
   };
 
-  const handleEditClick = (group) => {
-    setEditingGroupId(group._id);
-    setTempGroup({
-      title: group.title,
-      description: group.description || "",
-      type: group.type,
-      price: group.price,
-      capacity: group.capacity,
-      startingDate: new Date(group.startingDate).toISOString().split('T')[0],
-      link: group.link || "",
-      location: group.location || "",
-      schedule: group.schedule.map(s => ({
-        day: DAY_MAP_FROM_BACKEND[s.day] || "Monday",
-        time: s.time
-      }))
-    });
-    document.getElementById("group-form-section")?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleCancelEdit = () => {
-    setEditingGroupId(null);
-    setTempGroup({
-      title: "", description: "", type: "online", price: "", capacity: "", startingDate: "",
-      link: "", location: "", schedule: [{ day: "Monday", time: "14:00" }]
-    });
-  };
-
+  // Group Actions
   const handleSaveGroup = async () => {
-    if (tempGroup.title.length < 5) {
-      toast.error("Group title must be at least 5 characters");
-      return;
-    }
-    if (!tempGroup.price || !tempGroup.capacity || !tempGroup.startingDate) {
-      toast.error("Required fields missing");
-      return;
-    }
+    if (tempGroup.title.length < 5) return toast.error("Group title > 5 chars");
+    if (!tempGroup.price) return toast.error("Price required");
 
     const payload = {
       courseId,
@@ -122,23 +149,23 @@ export default function EditCoursePage() {
       description: tempGroup.description,
       type: tempGroup.type,
       capacity: Number(tempGroup.capacity),
-      startingDate: tempGroup.startingDate,
-      startingTime: tempGroup.schedule[0]?.time || "12:00",
       price: Number(tempGroup.price),
-      ...(tempGroup.type !== 'online' && { location: tempGroup.location }),
-      ...(tempGroup.type !== 'offline' && { link: tempGroup.link }),
-      schedule: tempGroup.schedule.map(s => ({ day: DAY_MAP_TO_BACKEND[s.day], time: s.time }))
+      startingDate: tempGroup.startingDate,
+      startingTime: tempGroup.schedule[0]?.time || "00:00",
+      ...(tempGroup.type !== "online" && { location: tempGroup.location }),
+      ...(tempGroup.type !== "offline" && { link: tempGroup.link }),
+      schedule: tempGroup.schedule.map((s) => ({ day: DAY_MAP_TO_BACKEND[s.day], time: s.time })),
     };
 
     try {
       if (editingGroupId) {
         await updateGroup({ groupId: editingGroupId, data: payload }).unwrap();
-        toast.success("Group updated");
+        toast.success("Group Updated!");
       } else {
         await createGroup(payload).unwrap();
-        toast.success("Group added");
+        toast.success("Group Added!");
       }
-      handleCancelEdit();
+      setIsGroupModalOpen(false);
     } catch (err) {
       toast.error(err?.data?.message || "Failed to save group");
     }
@@ -146,147 +173,214 @@ export default function EditCoursePage() {
 
   const handleDeleteGroup = async (groupId) => {
     const isLastGroup = groups.length === 1;
-    const shouldWarn = isLastGroup && (course.status === 'in-review' || course.status === 'published');
+    const shouldWarn = isLastGroup && (course?.status === "in-review" || course?.status === "published");
 
-    const confirmMessage = shouldWarn
-      ? "Warning: This is the last group. The course will be reset to draft. Continue?"
-      : "Delete this group permanently?";
-
-    if (!confirm(confirmMessage)) return;
+    if (!confirm(shouldWarn ? "Warning: Removing the last group will reset course to DRAFT. Continue?" : "Delete this group?")) return;
 
     try {
       await deleteGroup(groupId).unwrap();
-
       if (shouldWarn) {
-        const formData = new FormData();
-        formData.append("title", course.title);
-        formData.append("status", "draft");
-        await updateCourse({ courseId, data: formData }).unwrap();
-        toast("Course reverted to draft");
+        await updateCourse({ courseId, data: { status: "draft" } }).unwrap();
+        toast("Course reverted to Draft", { icon: "⚠️" });
       } else {
-        toast.success("Group deleted");
+        toast.success("Group Deleted");
       }
-
-      if (editingGroupId === groupId) handleCancelEdit();
     } catch (err) {
       toast.error("Failed to delete group");
     }
   };
 
+  const handleDeleteCourse = async () => {
+    if (!confirm("Are you sure? This action cannot be undone.")) return;
+    try {
+      await deleteCourse(courseId).unwrap();
+      toast.success("Course Deleted");
+      router.push("/dashboard/teacher/courses");
+    } catch (err) {
+      toast.error("Failed to delete");
+    }
+  };
+
   if (isLoadingCourse || isLoadingGroups) return <div className="h-screen flex items-center justify-center"><Spinner /></div>;
 
-  const course = courseData?.data || courseData;
-  const groups = groupsData?.data || groupsData || [];
-
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-32">
-      <div className="bg-white border-b py-6 px-4 mb-8">
-        <div className="max-w-6xl mx-auto flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => router.back()}><ArrowLeft size={20} /></Button>
-          <h1 className="text-2xl font-bold text-gray-800">Edit Course: <span className="text-[#FF4667]">{course.title}</span></h1>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <header className=" ">
+        <div className="max-w-7xl  px-6 lg:px-8 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={() => router.back()}>
+              <ArrowLeft size={20} />
+            </Button>
+            <div className="flex flex-col">
+              <h1 className="text-2xl lg:text-3xl font-semibold text-gray-800">Edit Course</h1>
+              {course && <span className={`text-xs uppercase font-bold tracking-wider ${course.status === "published" ? "text-green-600" : "text-amber-500"}`}>{course.status}</span>}
+            </div>
+          </div>
 
-      <div className="max-w-6xl mx-auto px-4">
+          <Button variant="ghost" size="sm" onClick={handleDeleteCourse} className="text-red-500 hover:bg-red-50">
+            {isDeletingCourse ? <Loader2 className="animate-spin" /> : <Trash2 size={18} className="mr-2" />}
+            Delete Course
+          </Button>
+        </div>
+      </header>
+
+      <main className="max-w-7xl  px-4 sm:px-6 lg:px-8 py-4">
         <Formik
           initialValues={{
-            title: course.title || "", subTitle: course.subTitle || "",
-            description: course.description || "", subject: course.subject || "",
+            title: course.title || "",
+            subTitle: course.subTitle || "",
+            description: course.description || "",
+            subject: course.subject || "",
             gradeLevel: course.gradeLevel || "",
             courseLanguage: course.courseLanguage || course.language || "English",
             tags: course.tags || [],
-            thumbnailFile: null, previewUrl: course.thumbnail?.url || "",
+            thumbnail: course.thumbnail || null,
+            video: course.video || null,
           }}
-          onSubmit={() => { }}
+          onSubmit={() => {}}
         >
           {({ values, setFieldValue }) => (
-            <Form className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-              <div className="lg:col-span-2 space-y-8">
-                <CourseBasicInfo values={values} setFieldValue={setFieldValue} />
-
-                <div className="lg:hidden">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4">
-                    <h3 className="text-sm font-bold text-gray-800 mb-3">Thumbnail</h3>
-                    <CourseThumbnail previewUrl={values.previewUrl} setFieldValue={setFieldValue} className="h-36" />
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                  <div className="flex items-center gap-2 mb-6 border-b pb-4">
-                    <Users className="text-[#FF4667]" size={20} />
-                    <h2 className="text-lg font-bold text-gray-800">Manage Groups</h2>
+            <>
+              <Form className="space-y-8 pb-36">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2">
+                    <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6" style={{ minHeight: "calc(100vh - 360px)" }}>
+                      <CourseBasicInfo values={values} setFieldValue={setFieldValue} onAddGroup={() => handleOpenGroupModal()} />
+                    </div>
                   </div>
 
-                  <div className="space-y-3 mb-8">
-                    {groups.length === 0 && <p className="text-gray-400 text-sm italic">No active groups.</p>}
-                    {groups.map((group) => (
-                      <div key={group._id} className={`p-4 rounded-lg border flex flex-col sm:flex-row justify-between sm:items-center gap-3 transition-colors ${editingGroupId === group._id ? "bg-blue-50 border-blue-300 ring-1 ring-blue-300" : "bg-gray-50"}`}>
+                  <aside className="lg:col-span-1">
+                    <div className="sticky top-24">
+                      <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 space-y-6">
+                        <h2 className="text-lg font-semibold text-gray-800">Media Assets</h2>
+
                         <div>
-                          <h4 className="font-bold">{group.title} <span className="text-xs bg-blue-50 px-2 rounded text-blue-600 uppercase">{group.type}</span></h4>
-                          <div className="text-xs text-gray-500 mt-1">{group.capacity} Students • {group.price} EGP</div>
+                          <MediaUploader
+                            label="Course Thumbnail"
+                            accept="image/*"
+                            type="image"
+                            folderPath="courses/thumbnails"
+                            currentFileUrl={values.thumbnail?.url}
+                            onUploadComplete={(res) => setFieldValue("thumbnail", res)}
+                            onRemove={() => setFieldValue("thumbnail", null)}
+                          />
                         </div>
-                        <div className="flex gap-2">
-                          <Button type="button" variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-100" onClick={() => handleEditClick(group)}><Edit3 size={16} /></Button>
-                          <Button type="button" variant="ghost" size="sm" className="text-red-500 hover:bg-red-50" onClick={() => handleDeleteGroup(group._id)}><Trash2 size={16} /></Button>
+
+                        <div>
+                          <MediaUploader
+                            label="Promo Video"
+                            accept="video/*"
+                            type="video"
+                            folderPath="courses/videos"
+                            currentFileUrl={values.video?.url}
+                            onUploadComplete={(res) => setFieldValue("video", res)}
+                            onRemove={() => setFieldValue("video", null)}
+                          />
                         </div>
                       </div>
-                    ))}
+                    </div>
+                  </aside>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Users className="text-[#FF4667]" size={20} />
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Manage Batches <span className="text-xs bg-gray-100 px-2 py-1 rounded-full ml-2 text-gray-600">{groups.length}</span>
+                    </h2>
                   </div>
 
-                  <GroupForm
-                    tempGroup={tempGroup}
-                    setTempGroup={setTempGroup}
-                    isEditing={!!editingGroupId}
-                    isLoading={isAddingGroup || isUpdatingGroup}
-                    onSave={handleSaveGroup}
-                    onCancel={handleCancelEdit}
-                  />
-                </div>
-              </div>
+                  {groups.length === 0 ? (
+                    <div className="text-center py-8 text-gray-400 border border-dashed rounded-lg bg-gray-50">No active groups. Add one to publish.</div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {groups.map((group) => (
+                        <article key={group._id} className="bg-gray-50 p-5 rounded-xl border border-gray-200 hover:border-[#FF4667] hover:shadow-lg transition flex flex-col">
+                          <div className="flex justify-between items-start mb-3 gap-3">
+                            <h4 className="font-semibold text-gray-900 truncate max-w-[70%]">{group.title}</h4>
+                            <span className="text-[11px] px-2 py-1 rounded uppercase font-semibold {group.type === 'online' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}">
+                              {group.type}
+                            </span>
+                          </div>
 
-              <div className="space-y-6 hidden lg:block">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                  <CourseThumbnail previewUrl={values.previewUrl} setFieldValue={setFieldValue} className="h-64" />
-                </div>
-              </div>
+                          <div className="space-y-2 text-xs text-gray-500 mb-4">
+                            <div className="flex items-center gap-2">
+                              <Users size={14} /> <span className="truncate">{group.capacity} Students</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <DollarSign size={14} /> <span className="truncate">{group.price} EGP</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Calendar size={14} /> <span className="truncate">{new Date(group.startingDate).toLocaleDateString()}</span>
+                            </div>
+                          </div>
 
-              <div className="fixed bottom-0 left-0 w-full bg-white border-t p-4 z-50 shadow-lg">
-                <div className="max-w-6xl mx-auto flex justify-between items-center">
-                  <div className="hidden sm:block">
-                    {groups.length > 0
-                      ? <span className="text-green-600 font-medium flex items-center gap-2"><CheckCircle2 size={18} /> Groups Ready</span>
-                      : <span className="text-gray-400 text-sm flex items-center gap-2"><Lock size={16} /> Add group to unlock publish</span>
-                    }
+                          <div className="flex gap-3 border-t pt-3 mt-auto">
+                            <Button type="button" variant="outline" size="sm" onClick={() => handleOpenGroupModal(group)} className="flex-1 h-9 text-xs">
+                              <Edit3 size={14} className="mr-1" /> Edit
+                            </Button>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => handleDeleteGroup(group._id)} className="h-9 w-9 p-0 text-red-500 hover:text-red-700">
+                              <Trash2 size={16} />
+                            </Button>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <GroupModal
+                  isOpen={isGroupModalOpen}
+                  onClose={() => setIsGroupModalOpen(false)}
+                  tempGroup={tempGroup}
+                  setTempGroup={setTempGroup}
+                  isEditing={!!editingGroupId}
+                  onSave={handleSaveGroup}
+                />
+              </Form>
+
+              <div className="fixed bottom-0 left-0 w-full z-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="bg-white/95 backdrop-blur-sm border border-gray-100 rounded-2xl p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div className="hidden sm:flex items-center gap-3">
+                      {groups.length > 0 ? (
+                        <span className="inline-flex items-center gap-2 text-green-600 font-medium">
+                          <CheckCircle2 size={18} /> Groups Ready
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-2 text-gray-400 text-sm">
+                          <Lock size={16} /> Add group to Publish
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="w-full sm:w-auto flex gap-3">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        disabled={isUpdating}
+                        onClick={() => handleFinalSubmit(values, "draft")}
+                        className="flex-1 sm:flex-none px-6 py-2"
+                      >
+                        {isUpdating ? "Saving..." : "Save as Draft"}
+                      </Button>
+
+                      <Button
+                        type="button"
+                        disabled={groups.length === 0 || isUpdating}
+                        onClick={() => handleFinalSubmit(values, "publish")}
+                        className={`flex-1 sm:flex-none px-6 py-2 text-white ${groups.length === 0 ? "bg-gray-300" : "bg-[#FF4667] hover:bg-[#ff2e53]"}`}
+                      >
+                        {isUpdating ? "Publishing..." : "Update & Publish"}
+                      </Button>
+                    </div>
                   </div>
-
-                  <div className="flex gap-3 w-full sm:w-auto">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      disabled={isUpdating}
-                      onClick={() => handleFinalSubmit(values, "draft")}
-                      className="flex-1"
-                    >
-                      {isUpdating ? "Saving..." : "Save as Draft"}
-                    </Button>
-
-                    <Button
-                      type="button"
-                      disabled={groups.length === 0 || isUpdating}
-                      onClick={() => handleFinalSubmit(values, "publish")}
-                      className={`flex-1 text-white transition-all ${groups.length === 0 ? "bg-gray-300 cursor-not-allowed" : "bg-[#FF4667] hover:bg-[#ff2e53]"}`}
-                    >
-                      {isUpdating ? "Publishing..." : groups.length === 0 ? "Add Group First" : "Update & Publish"}
-                    </Button>
-                  </div>
                 </div>
               </div>
-
-            </Form>
+            </>
           )}
         </Formik>
-      </div>
+      </main>
     </div>
   );
 }

@@ -22,7 +22,7 @@ const authSlice = createSlice({
 
       state.userInfo = {
         ...state.userInfo, 
-        ...action.payload,
+        ...action.payload, 
         refreshToken: refreshToken || state.userInfo?.refreshToken,
         user: {
             ...state.userInfo?.user,

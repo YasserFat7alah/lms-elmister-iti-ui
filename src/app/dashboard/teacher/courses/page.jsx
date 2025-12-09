@@ -4,14 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { 
-  Plus, Search, Edit3, Trash2, BookOpen, Users, Calendar, Filter, CheckCircle2, Loader2 
+  Plus, Search, Edit3, Trash2, BookOpen, Users, Calendar, Filter, CheckCircle2, Loader2, Eye
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 import { useGetCoursesQuery, useDeleteCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
 import { toast } from "react-hot-toast";
+import CourseDetailsModal from "@/components/teacherCreateCourse/courseDetailsModal";
 
+// 1. استدعاء المكون الجديد
+
+// --- StatusBadge Component (Keep it here or move to shared) ---
 const StatusBadge = ({ status }) => {
   const styles = {
     published: "bg-green-100 text-green-700 border-green-200",
@@ -26,10 +30,12 @@ const StatusBadge = ({ status }) => {
     draft: "Draft",
     archived: "Archived",
   };
+  
+  const normalizedStatus = status === 'inReview' ? 'in-review' : status;
 
   return (
-    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${styles[status] || styles.draft}`}>
-      {labels[status] || status}
+    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${styles[normalizedStatus] || styles.draft}`}>
+      {labels[normalizedStatus] || status}
     </span>
   );
 };
@@ -39,6 +45,7 @@ export default function MyCoursesPage() {
   
   const [activeTab, setActiveTab] = useState("all"); 
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState(null); // State للمودال
 
   const queryParams = userInfo?._id ? { teacherId: userInfo._id } : {};
 
@@ -74,6 +81,13 @@ export default function MyCoursesPage() {
   return (
     <div className="p-6 min-h-screen bg-gray-50/50 space-y-6">
       
+      {/* 2. وضع المكون هنا وتمرير البيانات له */}
+      <CourseDetailsModal 
+        isOpen={!!selectedCourse} 
+        onClose={() => setSelectedCourse(null)} 
+        course={selectedCourse} 
+      />
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">My Courses</h1>
@@ -86,6 +100,7 @@ export default function MyCoursesPage() {
         </Link>
       </div>
 
+      {/* Stats Cards (نفس الكود السابق...) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
            <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><BookOpen size={24}/></div>
@@ -112,9 +127,10 @@ export default function MyCoursesPage() {
         </div>
       </div>
 
+      {/* Table Section */}
       <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+        {/* Filters */}
         <div className="p-4 border-b flex flex-col sm:flex-row justify-between gap-4 items-center">
-          
           <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
             {['all', 'published', 'in-review', 'draft', 'archived'].map((tab) => (
               <button
@@ -143,6 +159,7 @@ export default function MyCoursesPage() {
           </div>
         </div>
 
+        {/* Table Content */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-500">
@@ -162,7 +179,7 @@ export default function MyCoursesPage() {
                     
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-12 w-16 rounded-lg overflow-hidden bg-gray-200 shrink-0">
+                        <div className="h-12 w-16 rounded-lg overflow-hidden bg-gray-200 shrink-0 border border-gray-100">
                           {course.thumbnail?.url ? (
                             <img src={course.thumbnail.url} alt="" className="h-full w-full object-cover" />
                           ) : (
@@ -188,7 +205,7 @@ export default function MyCoursesPage() {
                     </td>
 
                     <td className="px-6 py-4">
-                        <p className="text-gray-900">{course.subject}</p>
+                        <p className="text-gray-900 font-medium">{course.subject}</p>
                         <p className="text-xs text-gray-500">{course.gradeLevel}</p>
                     </td>
 
@@ -201,6 +218,16 @@ export default function MyCoursesPage() {
 
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        
+                        {/* زر فتح المودال */}
+                        <button 
+                          onClick={() => setSelectedCourse(course)}
+                          className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition" 
+                          title="View Details"
+                        >
+                          <Eye size={18} />
+                        </button>
+
                         <Link href={`/dashboard/teacher/courses/${course._id}/edit`}>
                           <button className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit">
                             <Edit3 size={18} />
@@ -217,7 +244,7 @@ export default function MyCoursesPage() {
                             {isDeleting ? <Loader2 className="animate-spin" size={18}/> : <Trash2 size={18} />}
                           </button>
                         ) : (
-                           <button disabled className="p-2 text-gray-300 cursor-not-allowed" title="Cannot delete published course">
+                           <button disabled className="p-2 text-gray-200 cursor-not-allowed" title="Cannot delete published course">
                             <Trash2 size={18} />
                            </button>
                         )}
