@@ -138,7 +138,7 @@ const UserFilteritionTable = ({ filtered, title, searchTerm, setSearchTerm, onEd
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Role
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs whitespace-nowrap font-semibold text-gray-600 uppercase tracking-wider">
                   Join Date
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -190,7 +190,7 @@ const UserFilteritionTable = ({ filtered, title, searchTerm, setSearchTerm, onEd
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                      <div className="flex items-center gap-1.5 text-sm text-gray-600 whitespace-nowrap">
                         {user.phone ? (
                           <>
                             <Phone className="w-4 h-4 text-gray-400" />
@@ -202,7 +202,7 @@ const UserFilteritionTable = ({ filtered, title, searchTerm, setSearchTerm, onEd
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                      <div className="flex items-center gap-1.5 text-sm text-gray-600 whitespace-nowrap">
                         <MapPin className="w-4 h-4 text-gray-400" />
                         {user.location}
                       </div>
@@ -223,7 +223,7 @@ const UserFilteritionTable = ({ filtered, title, searchTerm, setSearchTerm, onEd
                         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.joinDate}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{user.joinDate}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button

@@ -80,17 +80,12 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
     <>
       <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
         {/* Table Header */}
-        <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-6 border-b border-gray-100">
+        <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 px-6 py-4 border-b border-gray-100">
           <div className="flex items-center justify-between flex-col md:flex-row gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                 Our Newsletter
                 <span className="text-lg">📊</span>
               </h2>
-              <p className="text-sm text-gray-600 mt-1">
-                Track your sent newsletters
-              </p>
-            </div>
             <BulkBtn
                 selectedCount={selectedRows.length}
                 onDelete={handleBulkDelete}

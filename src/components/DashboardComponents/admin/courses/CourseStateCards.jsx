@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { BookOpen, CheckCircle, Archive, Users } from "lucide-react";
 
 const CourseStateCards = ({ courses, activeCourses, archivedCourses }) => {
-  const totalStudents = courses.reduce((sum, course) => sum + course.students, 0);
+  const totalStudents = courses.reduce((sum, course) => sum + course.totalStudents, 0);
 
   return (
     <div className="grid md:grid-cols-4 gap-4">

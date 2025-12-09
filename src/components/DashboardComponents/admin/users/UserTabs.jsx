@@ -111,8 +111,8 @@ const UsersTabs = () => {
       />
 
       {/* ________________________________Tabs______________________ */}
-      <Tabs defaultValue="all" onValueChange={setActiveTab} >
-        <TabsList className="flex flex-wrap items-center justify-around w-full bg-white border border-gray-200 md:py-7 px-1.5 rounded-xl">
+      <Tabs defaultValue="all" onValueChange={setActiveTab}>
+        <TabsList className="flex items-center justify-around w-full bg-white border border-gray-200 py-7 px-1.5 rounded-xl">
           <TabsTrigger 
             value="all" 
             className="rounded-lg py-2 px-6 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF0055] data-[state=active]:to-rose-600 data-[state=active]:text-white transition-all"

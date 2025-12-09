@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import React, { useState } from "react";
 import BulkBtn from "../BulkBtn";
-import { Eye, Trash2, Users, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Eye, Trash2, Users, CheckCircle, Clock, XCircle, Search } from "lucide-react";
 import ConfirmDeletePopUp from "../newsletter/ConfirmDeletePopup";
 import RecietPopup from "./RecietPopup";
 import StatusDropdownSub from "./StatusDropdownSub";
@@ -10,7 +10,8 @@ import StatsCard from "../payouts/StatsCard";
 
 const SubscriptionsTable = () => {
   //_____________Data__________
-  const [data, setData] = useState([
+  const [data, setData] = useState(
+    [
     {
       id: "SUB-001",
       studentName: "Ahmed Mohamed",
@@ -66,7 +67,8 @@ const SubscriptionsTable = () => {
       endAt: "2025-05-01",
       invoice: "INV-1005",
     },
-  ]);
+  ]
+);
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [isOpenReceipt, setIsOpenReceipt] = useState(false);
@@ -188,75 +190,65 @@ const SubscriptionsTable = () => {
           />
         </div>
 
-        <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
+        <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden mt-4">
+  
           {/* Table Header */}
-          <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
-            <div className="flex items-center justify-between flex-col md:flex-row gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                  Subscription Management
-                  <span className="text-lg">📋</span>
-                </h2>
-              </div>
-
-              {/* Bulk Delete Button */}
+          <div className="bg-gradient-to-r from-[#FF0055]/5 to-indigo-500/5 px-4 py-2 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
+            <div className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                Subscription Management <span className="text-base">📋</span>
+              </h2>
+            </div>
+            {/* SEARCH */}
+            <div className="flex items-center gap-2 flex-wrap">
               <BulkBtn
                 selectedCount={selectedRows.length}
                 onDelete={handleBulkDelete}
                 label="subscription(s)"
               />
+
+              {/* Search */}
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search courses..."
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00ff3c]/20 focus:border-[#00ff3c] transition-all text-sm"
+                />
+              </div>
             </div>
           </div>
-
+          {/* TABLE */}
           <div className="overflow-x-auto">
-            <table className="w-full">
-              {/* HEAD TABLE */}
+            <table className="min-w-full table-auto">
+
+              {/* HEAD */}
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left">
+                  <th className="pl-2 py-2 text-left w-10">
                     <input
                       type="checkbox"
-                      checked={
-                        selectedRows.length === data.length && data.length > 0
-                      }
+                      checked={selectedRows.length === data.length && data.length > 0}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
+                      className={`text-[#392b80] w-4 h-4 border-gray-300 rounded cursor-pointer`}
                     />
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Student
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Course - Group
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Teacher
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Parent
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Paid At
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Ends At
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Invoice
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Actions
-                  </th>
+
+                  <th className="px-3 py-2 text-left text-sm font-bold text-gray-700 whitespace-nowrap">ID</th>
+                  <th className="px-2 py-2 text-left text-sm font-bold text-gray-700 whitespace-nowrap">Student</th>
+                  <th className="px-2 py-2 text-left text-sm font-bold text-gray-700 whitespace-nowrap">Course</th>
+                  <th className="px-2 py-2 text-center text-sm font-bold text-gray-700 whitespace-nowrap">Teacher</th>
+                  <th className="px-2 py-2 text-left text-sm font-bold text-gray-700 whitespace-nowrap">Parent</th>
+                  <th className="px-2 py-2 text-left text-sm font-bold text-gray-700 whitespace-nowrap">Paid At</th>
+                  <th className="px-2 py-2 text-left text-sm font-bold text-gray-700 whitespace-nowrap">Ends At</th>
+                  <th className="px-2 py-2 text-left text-sm font-bold text-gray-700 whitespace-nowrap">Invoice</th>
+                  <th className="px-2 py-2 w-16"></th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-gray-100">
+              {/* BODY */}
+              <tbody className="divide-y divide-gray-100 text-sm">
                 {data.length > 0 ? (
                   data.map((item) => (
                     <tr
@@ -268,8 +260,7 @@ const SubscriptionsTable = () => {
                       }`}
                       onClick={() => toggleRowSelection(item.id)}
                     >
-                      {/* Checkbox */}
-                      <td className="px-6 py-4">
+                      <td className="pl-2 py-2 w-10">
                         <input
                           type="checkbox"
                           checked={selectedRows.includes(item.id)}
@@ -279,66 +270,16 @@ const SubscriptionsTable = () => {
                         />
                       </td>
 
-                      {/* ID */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-semibold text-[#392b80]">
-                          {item.id}
-                        </span>
-                      </td>
+                      <td className="pl-3 px-2 py-2 text-sm text-gray-600 whitespace-nowrap">{item.id}</td>
+                      <td className="px-1 py-2 text-sm text-gray-600 whitespace-nowrap">{item.studentName}</td>
+                      <td className="px-1 py-2 text-sm text-gray-600 whitespace-nowrap">{item.courseGroup}</td>
+                      <td className="px-1 py-2 text-sm text-gray-600 whitespace-nowrap ">{item.teacher}</td>
+                      <td className="px-2 py-2 text-sm text-gray-600 whitespace-nowrap">{item.parent}</td>
 
-                      {/* Student */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-medium text-gray-700">
-                          {item.studentName}
-                        </span>
-                      </td>
+                      <td className="px-2 py-2 text-gray-600 text-xs whitespace-nowrap ">{item.paidAt}</td>
+                      <td className=" py-2 text-gray-600 text-xs whitespace-nowrap">{item.endAt}</td>
 
-                      {/* Course */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-700">
-                          {item.courseGroup}
-                        </span>
-                      </td>
-
-                      {/* Teacher */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-700">
-                          {item.teacher}
-                        </span>
-                      </td>
-
-                      {/* Parent */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-700">
-                          {item.parent}
-                        </span>
-                      </td>
-
-                      {/* Status - Editable Dropdown */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <StatusDropdownSub
-                          currentStatus={item.status}
-                          subscriptionId={item.id}
-                          onStatusChange={handleStatusChange}
-                        />
-                      </td>
-
-                      {/* Paid At */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">
-                          {item.paidAt}
-                        </span>
-                      </td>
-
-                      {/* End At */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">
-                          {item.endAt}
-                        </span>
-                      </td>
-
-                      {/* Invoice  */}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-2 py-2">
                         <button
                           onClick={(e) => handleViewClick(e, item)}
                           className="font-semibold text-[#392b80] hover:text-[#392b80]/80 hover:underline transition"
@@ -347,23 +288,24 @@ const SubscriptionsTable = () => {
                         </button>
                       </td>
 
-                      {/* ACTION BUTTONS */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          {/* View */}
+                      <td className="px-2 py-2">
+                        <div className="flex items-center gap-1">
+                          <StatusDropdownSub
+                            currentStatus={item.status}
+                            subscriptionId={item.id}
+                            onStatusChange={handleStatusChange}
+                          />
+
                           <button
                             onClick={(e) => handleViewClick(e, item)}
-                            className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition"
-                            title="View Receipt"
+                            className="p-1 text-yellow-600 hover:bg-yellow-50 rounded transition"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
 
-                          {/* Delete */}
                           <button
                             onClick={(e) => handleDeleteClick(e, item)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                            title="Delete"
+                            className="p-1 text-red-600 hover:bg-red-50 rounded transition"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -373,9 +315,9 @@ const SubscriptionsTable = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="11" className="px-6 py-12 text-center">
+                    <td colSpan="11" className="px-6 py-8 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-500">
-                        <Users className="w-12 h-12 mb-3 text-gray-300" />
+                        <Users className="w-10 h-10 mb-2 text-gray-300" />
                         <p>No Subscriptions Found</p>
                       </div>
                     </td>

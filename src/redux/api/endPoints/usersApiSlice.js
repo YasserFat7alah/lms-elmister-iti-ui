@@ -50,6 +50,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['User'], 
     }),
+
     changePassword: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/change-password`,
@@ -57,22 +58,25 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),    
-      forgotPassword: builder.mutation({
+
+    forgotPassword: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/forgot-password`, 
         method: 'POST',
         body: data, 
     }),
 
-  }),
-  resetPassword: builder.mutation({
-  query: (data) => ({
-    url: `${USERS_URL}/reset-password`, 
-    method: 'POST',
-    body: data, 
-  }),
-}),
-completeProfile: builder.mutation({
+    }),
+
+    resetPassword: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/reset-password`, 
+        method: 'POST',
+        body: data, 
+      }),
+    }),
+
+    completeProfile: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/complete-profile`, 
         method: 'POST',
@@ -80,8 +84,6 @@ completeProfile: builder.mutation({
       }),
       invalidatesTags: ['User'], 
     }),
-
-
   }),
 });
 

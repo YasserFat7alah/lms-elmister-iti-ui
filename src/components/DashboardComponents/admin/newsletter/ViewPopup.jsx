@@ -122,18 +122,12 @@ const ViewPopup = ({ item, isOpen, onClose, onEdit, onDelete, onSend }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 p-6 pt-4 border-t border-gray-100">
-          <button
-            onClick={handleSend}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all  hover:shadow-xl"
-          >
-            <Send className="w-4 h-4" />
-            Send
-          </button>
+        <div className=" flex justify-end gap-3 p-6 pt-4 border-t border-gray-100">
+          
 
           <button
             onClick={handleEdit}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all  hover:shadow-xl"
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all  hover:shadow-xl"
           >
             <Edit className="w-4 h-4" />
             Edit
@@ -141,10 +135,18 @@ const ViewPopup = ({ item, isOpen, onClose, onEdit, onDelete, onSend }) => {
 
           <button
             onClick={handleDelete}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all hover:shadow-xl"
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all hover:shadow-xl"
           >
             <Trash2 className="w-4 h-4" />
             Delete
+          </button>
+
+          <button
+            onClick={handleSend}
+            className="w-1/3 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all  hover:shadow-xl"
+          >
+            <Send className="w-4 h-4" />
+            Send
           </button>
         </div>
       </div>
