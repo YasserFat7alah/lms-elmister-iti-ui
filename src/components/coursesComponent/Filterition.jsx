@@ -10,24 +10,23 @@ const Filterition = ({
   priceFilter, onPriceChange,
   gradeFilter, onGradeChange,
   languageFilter, onLanguageChange,
-  availableSubjects = [], availableGradeLevels = [], availableLanguages = []
+  availableSubjects = [], availableGradeLevels = [], availableLanguages = [],
+  onReset
 }) => {
 
-  //RESET ALL FILTERS
-  const handleReset = () => {
-    onFilter([]);
-    onPriceChange([]);
-    onGradeChange([]);
-    onLanguageChange([]);
-  };
-
   return (
-    <FilterContainer onClear={handleReset}>
+    <FilterContainer onClear={onReset}>
 
       <FilterCategory
         onFilter={onFilter}
         selectedSubjects={selectedSubjects}
         availableSubjects={availableSubjects}
+      />
+
+      <FilterLevel
+        gradeFilter={gradeFilter}
+        onGradeChange={onGradeChange}
+        availableGradeLevels={availableGradeLevels}
       />
 
       <FilterLanguage
@@ -39,12 +38,6 @@ const Filterition = ({
       <FilterPrice
         priceFilter={priceFilter}
         onPriceChange={onPriceChange}
-      />
-
-      <FilterLevel
-        gradeFilter={gradeFilter}
-        onGradeChange={onGradeChange}
-        availableGradeLevels={availableGradeLevels}
       />
 
     </FilterContainer>

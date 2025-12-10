@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { FaCheck } from "react-icons/fa"; 
-import InstructorRulesImage  from "@/assets/images/InstructorRulesImage.jpg";
+import { FaCheck } from "react-icons/fa";
+import InstructorRulesImage from "@/assets/images/InstructorRulesImage.jpg";
 
 export default function InstructorRules({
-  title = "Instructor rules & regulations",
+  title = "Teacher rules & regulations",
   subtitle = "Sed auctor, nisi non elementum ornare, turpis orci consequat eros, et accumsan quam leo nec libero. Aenean mollis turpis velit, id tempor quam tempor a. Etiam et imperdiet quam.",
   rules = [
     "Sed elementum libero quis condimentum pellentesque",
@@ -14,7 +14,7 @@ export default function InstructorRules({
     "Vestibulum ultricies commodo luctus. Etiam eu luctus elit amet turpis.",
   ],
   imageSrc = InstructorRulesImage,
-  imageAlt = "Female instructor teaching online",
+  imageAlt = "Female teacher teaching online",
 }) {
   return (
     <section className="py-16 lg:py-24 bg-white">

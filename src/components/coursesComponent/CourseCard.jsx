@@ -110,7 +110,7 @@ const CourseCard = ({ course }) => {
                     </h3>
 
                     {/* Subtitle */}
-                    <p className="text-sm text-gray-500 line-clamp-2 mb-3 min-h-[2.5rem]">
+                    <p className="text-sm text-gray-500 line-clamp-2 mb-3 min-h-10">
                         {subTitle || "No subtitle available"}
                     </p>
 
@@ -127,7 +127,7 @@ const CourseCard = ({ course }) => {
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
-                                <span className="text-xs text-gray-400 font-medium whitespace-nowrap">Instructor</span>
+                                <span className="text-xs text-gray-400 font-medium whitespace-nowrap">Teacher</span>
                                 <span className="text-sm font-semibold text-gray-700 leading-none group-hover/teacher:text-[#392b80] transition-colors">
                                     {instructor?.name || "Unknown Teacher"}
                                 </span>

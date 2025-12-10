@@ -6,13 +6,20 @@ import { Input } from '@/components/ui/input';
 const CourseSearch = ({ onSearch, className = "" }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Use ref to keep latest onSearch without triggering effect
+  const onSearchRef = React.useRef(onSearch);
+
+  useEffect(() => {
+    onSearchRef.current = onSearch;
+  }, [onSearch]);
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      onSearch(searchTerm);
+      onSearchRef.current(searchTerm);
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, onSearch]);
+  }, [searchTerm]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);

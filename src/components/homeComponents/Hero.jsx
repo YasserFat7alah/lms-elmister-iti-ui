@@ -14,7 +14,7 @@ export function Hero() {
   const [searchQuery, setSearchQuery] = useState("")
 
   return (
-<section className="relative h-auto md:h-[calc(100vh-64px)] w-full overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-white">
+    <section className="relative h-auto md:h-[calc(100vh-64px)] w-full overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-white">
       <div className="h-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-center px-6 lg:px-8">
         {/* LEFT SECTION */}
         <div className="space-y-4 md:space-y-5 py-5 md:py-0">
@@ -30,7 +30,7 @@ export function Hero() {
             <div className="pl-4 md:pl-5 text-gray-400"><FaSearch size={20} /></div>
             <input
               type="text"
-              placeholder="Search Courses, Instructors"
+              placeholder="Search Courses, Teachers"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 px-4 py-3 md:py-4 outline-none"
@@ -50,13 +50,13 @@ export function Hero() {
 
         {/* RIGHT SECTION */}
         <div className="relative hidden md:block">
-          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623477/yellow-1_jvovzi.png" width={400} height={800} alt="" className="absolute -top-[230px] -right-20 md:-right-28 z-10 pointer-events-none"/>
-          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623478/yellow-2_odtows.png" width={450} height={800} alt="" className="absolute -top-[150px] -right-20 z-9 pointer-events-none"/>
-          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764632411/purple_sbdqrp.png" width={400} height={400} alt="" className="absolute top-12 right-6 z-1 pointer-events-none"/>
-          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623475/girlForHomePage_lhl1ge.png" width={400} height={800} alt="hero student"  className="absolute -top-[300px] -right-14 z-10 drop-shadow-2xl" />
+          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623477/yellow-1_jvovzi.png" width={400} height={800} alt="" className="absolute -top-[230px] -right-20 md:-right-28 z-10 pointer-events-none" />
+          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623478/yellow-2_odtows.png" width={450} height={800} alt="" className="absolute -top-[150px] -right-20 z-9 pointer-events-none" />
+          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764632411/purple_sbdqrp.png" width={400} height={400} alt="" className="absolute top-12 right-6 z-1 pointer-events-none" />
+          <img src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623475/girlForHomePage_lhl1ge.png" width={400} height={800} alt="hero student" className="absolute -top-[300px] -right-14 z-10 drop-shadow-2xl" />
 
           <div className="absolute bottom-2 right-75 z-20">
-            <Image src={Container} alt="students" width={240} height={80} className="drop-shadow-lg"/>
+            <Image src={Container} alt="students" width={240} height={80} className="drop-shadow-lg" />
           </div>
 
           <div className="absolute bottom-4 -right-32 z-20">

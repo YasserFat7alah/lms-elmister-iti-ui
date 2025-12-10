@@ -1,5 +1,6 @@
 'use client'
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation';
 import CourseSearch from '@/components/coursesComponent/CourseSearch'
 import CoursesList from '@/components/coursesComponent/CoursesList'
 import Filterition from '@/components/coursesComponent/Filterition'
@@ -7,17 +8,18 @@ import SectionHeader from '@/components/shared/SectionHeader'
 import { useGetPublicCoursesQuery } from '@/redux/api/endPoints/publicApiSlice'
 
 const Page = () => {
-  const [page, setPage] = useState(1);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Filter States
-  const [selectedSubjects, setSelectedSubjects] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  // const [searchInstructor, setSearchInstructor] = useState([]) // Removed
-  const [languageFilter, setLanguageFilter] = useState([]);
-  const [priceFilter, setPriceFilter] = useState([]); // Array of ranges
-  const [gradeFilter, setGradeFilter] = useState([]); // Array of levels
+  // 1. Derive State from URL
+  const page = Number(searchParams.get('page')) || 1;
+  const searchQuery = searchParams.get('search') || "";
+  const selectedSubjects = useMemo(() => searchParams.getAll('selectedSubjects'), [searchParams]);
+  const languageFilter = useMemo(() => searchParams.getAll('languageFilter'), [searchParams]);
+  const priceFilter = useMemo(() => searchParams.getAll('priceFilter'), [searchParams]);
+  const gradeFilter = useMemo(() => searchParams.getAll('gradeFilter'), [searchParams]);
 
-  // Calculate Min/Max from selected ranges
+  // 2. Calculate Derived Values (Min/Max Price)
   const { minPrice, maxPrice } = useMemo(() => {
     if (priceFilter.length === 0) return { minPrice: undefined, maxPrice: undefined };
 
@@ -47,29 +49,101 @@ const Page = () => {
     };
   }, [priceFilter]);
 
-  // ACTIONS
-  const scrollToTop = () => {
+  // 3. URL Update Handler
+  const updateFilter = React.useCallback((key, value) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (key === 'page') {
+      params.set('page', value);
+    } else {
+      // For arrays (subjects, grades, etc)
+      if (Array.isArray(value)) {
+        params.delete(key);
+        if (value.length > 0) {
+          value.forEach(v => params.append(key, v));
+        }
+      } else {
+        // For strings (search)
+        if (value && value !== 'all') {
+          params.set(key, value);
+        } else {
+          params.delete(key);
+        }
+      }
+      // Reset page on filter change
+      params.set('page', '1');
+    }
+
+    // Scrol to top
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
 
-  const handleFilterUpdate = (setter, value) => {
-    setter(value);
-    setPage(1);
-    scrollToTop();
-  };
+    router.push(`?${params.toString()}`, { scroll: false });
+  }, [searchParams, router]);
+
+  // 5. Reset Handler (Atomic)
+  const handleReset = React.useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('search');
+    params.delete('selectedSubjects');
+    params.delete('priceFilter');
+    params.delete('gradeFilter');
+    params.delete('languageFilter');
+    params.set('page', '1');
+    router.push(`?${params.toString()}`, { scroll: false });
+  }, [searchParams, router]);
+
+  const handlePageChange = React.useCallback((newPage) => {
+    if (newPage !== page) updateFilter('page', newPage);
+  }, [updateFilter, page]);
+
+  const handleSearch = React.useCallback((val) => {
+    if (val !== searchQuery) updateFilter('search', val);
+  }, [updateFilter, searchQuery]);
+
+  const handleSubjectChange = React.useCallback((val) => {
+    const valArr = Array.isArray(val) ? [...val] : [];
+    const currArr = [...selectedSubjects];
+    const isSame = JSON.stringify(valArr.sort()) === JSON.stringify(currArr.sort());
+    if (!isSame) updateFilter('selectedSubjects', val);
+  }, [updateFilter, selectedSubjects]);
+
+  const handlePriceChange = React.useCallback((val) => {
+    const valArr = Array.isArray(val) ? [...val] : [];
+    const currArr = [...priceFilter];
+    const isSame = JSON.stringify(valArr.sort()) === JSON.stringify(currArr.sort());
+    if (!isSame) updateFilter('priceFilter', val);
+  }, [updateFilter, priceFilter]);
+
+  const handleGradeChange = React.useCallback((val) => {
+    // FilterLevel passes "all" string when empty
+    const valArr = Array.isArray(val) ? [...val] : [];
+    const currArr = [...gradeFilter];
+    const isSame = JSON.stringify(valArr.sort()) === JSON.stringify(currArr.sort());
+    if (!isSame) updateFilter('gradeFilter', val);
+  }, [updateFilter, gradeFilter]);
+
+  const handleLanguageChange = React.useCallback((val) => {
+    const valArr = Array.isArray(val) ? [...val] : [];
+    const currArr = [...languageFilter];
+    const isSame = JSON.stringify(valArr.sort()) === JSON.stringify(currArr.sort());
+    if (!isSame) updateFilter('languageFilter', val);
+  }, [updateFilter, languageFilter]);
 
   const queryParams = {
     page,
     limit: 12,
     search: searchQuery,
-    selectedSubjects,
+    selectedSubjects: selectedSubjects.length > 0 ? selectedSubjects : undefined,
     // searchInstructor,
-    languageFilter,
+    languageFilter: languageFilter.length > 0 ? languageFilter : undefined,
     minPrice,
     maxPrice,
-    gradeLevel: gradeFilter.length > 0 ? gradeFilter : undefined,
+    gradeLevel: (() => {
+      const activeGrades = gradeFilter.filter(g => g.toLowerCase() !== 'all');
+      return activeGrades.length > 0 ? activeGrades : undefined;
+    })(),
   };
 
   const { data: coursesData, isLoading, isError, error } = useGetPublicCoursesQuery(queryParams);
@@ -87,7 +161,7 @@ const Page = () => {
         {/* Desktop/Tablet Sidebar (Sticky) */}
         <aside className="hidden xl:block w-64 xl:w-72 flex-none">
           <Filterition
-            onFilter={(val) => handleFilterUpdate(setSelectedSubjects, val)}
+            onFilter={handleSubjectChange}
             selectedSubjects={selectedSubjects}
 
             // Removed Instructor Props
@@ -95,36 +169,37 @@ const Page = () => {
             // searchInstructor={searchInstructor}
 
             priceFilter={priceFilter}
-            onPriceChange={(val) => handleFilterUpdate(setPriceFilter, val)}
+            onPriceChange={handlePriceChange}
 
             gradeFilter={gradeFilter}
-            onGradeChange={(val) => handleFilterUpdate(setGradeFilter, val)}
+            onGradeChange={handleGradeChange}
 
             languageFilter={languageFilter}
-            onLanguageChange={(val) => handleFilterUpdate(setLanguageFilter, val)}
+            onLanguageChange={handleLanguageChange}
 
             availableSubjects={availableFilters.subjects}
             availableGradeLevels={availableFilters.gradeLevels}
             availableLanguages={availableFilters.languages}
-          // availableInstructors={availableFilters.instructors} //
+            onReset={handleReset}
           />
         </aside>
 
         {/* Mobile Floating Filters */}
         <div className="xl:hidden">
           <Filterition
-            onFilter={(val) => handleFilterUpdate(setSelectedSubjects, val)}
+            onFilter={handleSubjectChange}
             selectedSubjects={selectedSubjects}
             priceFilter={priceFilter}
-            onPriceChange={(val) => handleFilterUpdate(setPriceFilter, val)}
+            onPriceChange={handlePriceChange}
             gradeFilter={gradeFilter}
-            onGradeChange={(val) => handleFilterUpdate(setGradeFilter, val)}
+            onGradeChange={handleGradeChange}
             languageFilter={languageFilter}
-            onLanguageChange={(val) => handleFilterUpdate(setLanguageFilter, val)}
+            onLanguageChange={handleLanguageChange}
 
             availableSubjects={availableFilters.subjects}
             availableGradeLevels={availableFilters.gradeLevels}
             availableLanguages={availableFilters.languages}
+            onReset={handleReset}
           />
         </div>
 
@@ -133,7 +208,7 @@ const Page = () => {
           <SectionHeader
             title="Browse our courses"
           >
-            <CourseSearch onSearch={(val) => handleFilterUpdate(setSearchQuery, val)} />
+            <CourseSearch onSearch={handleSearch} />
           </SectionHeader>
 
 
@@ -144,7 +219,7 @@ const Page = () => {
               courses={coursesList}
               currentPage={page}
               totalPages={coursesData?.pages || 1}
-              onPageChange={setPage}
+              onPageChange={handlePageChange}
             />
           ) : (
             <div className="text-center text-gray-500 mt-10">No courses found matching your criteria.</div>

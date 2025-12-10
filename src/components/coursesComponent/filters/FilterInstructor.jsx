@@ -20,7 +20,7 @@ const FilterInstructor = ({ onSearchInstructor, searchInstructor = [], available
       <AccordionItem value="instructor">
 
         <AccordionTrigger className="text-gray-800 data-[state=open]:bg-gray-100/50 lg:data-[state=open]:bg-white px-2 mb-3 lg:mb-1">
-          Instructors
+          Teachers
         </AccordionTrigger>
 
         <AccordionContent className="px-3">

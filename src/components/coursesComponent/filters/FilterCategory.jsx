@@ -34,12 +34,12 @@ const FilterCategory = ({ onFilter, selectedSubjects: externalSelectedSubjects =
 
 
     return (
-        <Accordion type="single" collapsible defaultValue="course-categories" className='lg:border lg:px-2 lg:py-1 lg:rounded-lg'>
-            <AccordionItem value="course-categories">
+        <Accordion type="single" collapsible defaultValue="course-subjects" className='lg:border lg:px-2 lg:py-1 lg:rounded-lg'>
+            <AccordionItem value="course-subjects">
 
                 {/* ACCORDION TITLE */}
                 <AccordionTrigger className="text-gray-800 data-[state=open]:bg-gray-100/50 lg:data-[state=open]:bg-white px-2 mb-3 lg:mb-1 rounded-none">
-                    Categories
+                    Subjects
                 </AccordionTrigger>
 
                 {/* ACCORDION BODY */}

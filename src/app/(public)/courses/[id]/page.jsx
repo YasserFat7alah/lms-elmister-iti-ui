@@ -3,69 +3,183 @@
 import { useParams } from 'next/navigation';
 import AboutInstractor from '@/components/coursesComponent/courseDetails/AboutInstractor';
 import CommentForm from '@/components/coursesComponent/courseDetails/CommentForm';
-import CommentsList from '@/components/coursesComponent/courseDetails/CommentsList';
-import CourseFeature from '@/components/coursesComponent/courseDetails/CourseFeature';
+
 import CourseGroup from '@/components/coursesComponent/courseDetails/CourseGroup';
 import DetailsSidebar from '@/components/coursesComponent/courseDetails/DetailsSidebar';
 import OverView from '@/components/coursesComponent/courseDetails/OverView';
-import PriceAndBtnsCourse from '@/components/coursesComponent/courseDetails/PriceAndBtnsCourse';
-import { useGetCourseByIdQuery } from '@/redux/api/endPoints/coursesApiSlice';
+import CourseInquiries from '@/components/coursesComponent/courseDetails/CourseInquiries';
+import ReviewsSection from '@/components/coursesComponent/courseDetails/ReviewsSection';
+import Rating from '@/components/shared/Rating';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { IoMdShare } from "react-icons/io";
+import { useGetPublicCourseByIdQuery } from '@/redux/api/endPoints/publicApiSlice';
 
 export default function Page() {
     const { id } = useParams();
 
-    // 1. جلب البيانات من الـ API
-    const { data: courseData, isLoading, isError, error } = useGetCourseByIdQuery(id);
-
-    // 2. استخراج الكورس من الـ ResponseWrapper
+    // 1. Fetch Data
+    const { data: courseData, isLoading, isError, error } = useGetPublicCourseByIdQuery(id);
     const course = courseData?.data;
+    const teacher = course?.teacherId;
 
-    // 3. استخراج المدرس (موجود جاهز جوه الكورس)
-    const teacher = course?.teacherId; 
+    // Handle loading & error
+    if (isLoading) return <div className="min-h-screen flex items-center justify-center p-10"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div></div>;
 
-
-    // handling loading & error states
-    if (isLoading) return <div className="p-10 text-center">Loading Course Details...</div>;
-    
     if (isError || !course) {
-        return <div className="p-10 text-center text-red-600">
-            Course not found or Server Error. 
-            <br/> <small>{error?.data?.message}</small>
+        return <div className="min-h-[50vh] flex flex-col items-center justify-center p-10 text-center space-y-4">
+            <h2 className="text-2xl font-bold text-gray-800">Course Not Found</h2>
+            <p className="text-gray-600">{error?.data?.message || "Something went wrong"}</p>
         </div>;
     }
 
+    const instructorAvatar = teacher?.avatar?.url || teacher?.avatar;
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 md:gap-0 overflow-x-hidden md:mr-5">
-            {/* LEFT SIDE */}
+        <div className="bg-gray-50 min-h-screen pb-20">
+            {/* HERO SECTION */}
+            <div className="bg-[#392b80] text-white pt-12 pb-16 px-4 md:px-8">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-4">
+                        <div className="flex gap-2 mb-4">
+                            <Badge variant="secondary" className="bg-pink-500 hover:bg-pink-600 text-white border-none">{course.subject}</Badge>
+                            <Badge variant="outline" className="text-pink-200 border-pink-200/30">Grade {course.gradeLevel}</Badge>
+                        </div>
 
-            <div className="pb-1 md:pb-0">
-                <div className='md:hidden'>
-                    <PriceAndBtnsCourse course={course}/>
+                        <h1 className="text-3xl md:text-4xl font-extrabold leading-tight">{course.title}</h1>
+                        <p className="text-lg text-gray-200 leading-relaxed max-w-2xl">{course.subTitle}</p>
+
+                        {/* Meta: Ratings & Instructor */}
+                        <div className="flex flex-wrap items-center gap-6 text-sm pt-2">
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-yellow-400">{course.averageRating || 0}</span>
+                                <Rating defaultRating={course.averageRating || 0} readOnly size="sm" />
+                                <span className="text-gray-300 underline">({course.ratingsCount || 0} ratings)</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-gray-300">
+                                <span>👥 {course.totalStudents || 0} students</span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <span className="text-gray-300">Created by</span>
+                                <Link href={`/teachers/${teacher?._id}`} className="flex items-center gap-2 hover:text-pink-300 transition-colors font-semibold">
+                                    <Avatar className="w-6 h-6 border border-white/20">
+                                        <AvatarImage src={instructorAvatar} />
+                                        <AvatarFallback className="text-[10px] text-black">
+                                            {teacher?.name?.charAt(0) || "T"}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    {teacher?.name}
+                                </Link>
+                            </div>
+
+                            <div className="flex items-center gap-1 text-gray-300">
+                                <span>📅 Last updated {new Date(course.updatedAt).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* RIGHT COLUMN (Header): Thumbnail & Share */}
+                    <div className="lg:col-span-1">
+                        <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden border border-white/10 aspect-video relative group">
+                            {/* Share Button (Overlaid) */}
+                            <div className="absolute top-2 right-2 z-20">
+                                <Button variant="secondary" size="icon" className="bg-white/80 hover:bg-white text-gray-800 backdrop-blur-sm shadow-sm h-8 w-8 rounded-full">
+                                    <IoMdShare size={16} />
+                                </Button>
+                            </div>
+
+                            {course.video?.url ? (
+                                <video controls className="w-full h-full object-cover" poster={course.thumbnail?.url}>
+                                    <source src={course.video.url} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            ) : (
+                                <img src={course.thumbnail?.url || "/placeholder-course.jpg"} alt={course.title} className="w-full h-full object-cover" />
+                            )}
+                        </div>
+                    </div>
                 </div>
-                
-                <OverView course={course} />
-                
-                <CourseGroup groups={course.groups || []} />
-
-                <div className='md:hidden'>
-                    <CourseFeature course={course}/>
-                </div>
-
-                {/* بنبعت المدرس اللي استخرجناه من الكورس مباشرة */}
-                <AboutInstractor course={course} teacher={teacher} />
-
-                <CommentForm />
-
-                <div className='md:hidden'>
-                    <CommentsList  />
-                </div>
-
             </div>
-            
-            {/* MOBILE SIDEBAR  */}
-            <div>
-                {/* السايدبار غالباً بيحتاج الكورس والمدرس */}
-                <DetailsSidebar course={course} teacher={teacher} />
+
+            {/* CONTENT GRID */}
+            <div className="max-w-7xl mx-auto px-4 md:px-8 -mt-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    {/* LEFT COLUMN (Main Content) */}
+                    <div className="lg:col-span-2 space-y-8">
+
+
+
+                        {/* Overview */}
+                        <section id="overview" className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+                            <OverView course={course} />
+                        </section>
+
+                        {/* Course Introduction (Video) */}
+                        {course.video?.url && (
+                            <section id="introduction" className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+                                <h3 className="text-xl font-bold text-gray-900 mb-6">Course Introduction</h3>
+                                <div className="rounded-xl overflow-hidden shadow-sm aspect-video bg-black relative">
+                                    <video controls className="w-full h-full object-cover" poster={course.thumbnail?.url}>
+                                        <source src={course.video.url} type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Curriculum / Groups */}
+                        <section id="curriculum">
+                            <CourseGroup groups={course.groups || []} />
+                        </section>
+
+                        {/* Course Inquiries (Q&A) - Formerly Comments */}
+                        <section id="inquiries" className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+                            <h3 className="text-xl font-bold text-gray-900 mb-6">Course Inquiries</h3>
+                            <CourseInquiries comments={course.comments || []} teacherId={teacher?._id} />
+                            <div className="mt-8 pt-6 border-t border-gray-100">
+                                <h4 className="font-semibold text-gray-900 mb-4">Ask a Question</h4>
+                                <CommentForm targetId={course._id} targetModel="Course" />
+                            </div>
+                        </section>
+
+                        {/* Instructor */}
+                        <section id="instructor" className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+                            <h3 className="text-xl font-bold text-gray-900 mb-6">About the Teacher</h3>
+                            <AboutInstractor course={course} teacher={teacher} />
+                        </section>
+
+                    </div>
+
+                    {/* Right Column: Sidebar & Actions */}
+                    <div className="lg:col-span-1">
+
+                        {/* Action Card (Sticky) */}
+                        <div className="sticky top-24 h-[calc(100vh-7rem)] flex flex-col">
+                            <div className="shrink-0 relative z-20">
+                                <DetailsSidebar
+                                    course={course}
+                                // ... props
+                                />
+                            </div>
+
+                            {/* ReviewsSection: Pass COURSE reviews and stats, not teacher stats */}
+                            <div className="flex-1 min-h-0 overflow-y-auto relative z-10">
+                                <ReviewsSection
+                                    reviews={course.reviews || []}
+                                    totalReviews={course.ratingsCount || 0}
+                                    averageRating={course.averageRating || 0}
+                                />
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
         </div>
     );

@@ -13,11 +13,11 @@ export function Footer() {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
 
-            <Image 
-               src={logo} 
-               alt="El-Mister Logo" 
-               className="h-12 w-auto"
-            />              
+              <Image
+                src={logo}
+                alt="El-Mister Logo"
+                className="h-12 w-auto"
+              />
             </div>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
               Platform designed to help organizations, educators, and learners manage, deliver, and track learning and training activities.
@@ -45,7 +45,7 @@ export function Footer() {
               <li><Link href="#" className="hover:text-white transition">Chat</Link></li>
               <li><Link href="#" className="hover:text-white transition">Login</Link></li>
               <li><Link href="#" className="hover:text-white transition">Register</Link></li>
-              <li><Link href="#" className="hover:text-white transition">Instructor Dashboard</Link></li>
+              <li><Link href="#" className="hover:text-white transition">Teacher Dashboard</Link></li>
             </ul>
           </div>
 
@@ -59,9 +59,9 @@ export function Footer() {
                   placeholder="Enter your email address"
                   className="flex-1 bg-white/10 border border-white/20 rounded-full px-5 py-3 text-sm placeholder-gray-400 focus:outline-none focus:border-purple-500 transition"
                 />
-             <button className="bg-[#392C7D] hover:bg-[#4a3a9e] text-white font-medium px-6 py-3 rounded-full transition whitespace-nowrap">
+                <button className="bg-[#392C7D] hover:bg-[#4a3a9e] text-white font-medium px-6 py-3 rounded-full transition whitespace-nowrap">
                   Subscribe
-             </button>
+                </button>
               </form>
             </div>
 

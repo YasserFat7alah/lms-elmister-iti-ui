@@ -1,6 +1,6 @@
 "use client";
 
-import CustomizeCard from "../shared/CustomizeCard";    
+import CustomizeCard from "../shared/CustomizeCard";
 import Rating from "../shared/Rating";
 
 import { FaHeart, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
@@ -46,11 +46,11 @@ export default function Instructors() {
       <div className="max-w-7xl mx-auto px-4 text-center">
         {/* Trending Badge */}
         <span className="inline-block bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold px-5 py-2 rounded-full mb-4">
-          Trending Instructors
+          Trending Teachers
         </span>
 
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-          Top Class & Professional Instructors
+          Top Class & Professional Teachers
         </h2>
         <p className="text-gray-600 text-lg max-w-3xl mx-auto mb-12">
           Empowering Change: Stories from Those Who Took the Leap

@@ -52,7 +52,14 @@ export const publicApiSlice = apiSlice.injectEndpoints({
             },
             providesTags: ["Courses"],
         }),
+        getPublicCourseById: builder.query({
+            query: (id) => ({
+                url: `${PUBLIC_COURSES_URL}/${id}`,
+                method: "GET",
+            }),
+            providesTags: (result, error, id) => [{ type: "Courses", id }],
+        }),
     }),
 });
 
-export const { useGetPublicCoursesQuery } = publicApiSlice;
+export const { useGetPublicCoursesQuery, useGetPublicCourseByIdQuery } = publicApiSlice;
