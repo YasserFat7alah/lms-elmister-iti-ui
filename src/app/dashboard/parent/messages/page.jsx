@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import Chat from '../../../../components/dashboardComponents/chat/Chat'
+import Chat from '@/components/DashboardComponents/chat/Chat'
 import { useSearchParams } from 'next/navigation';
 import { mockTeachers } from '@/data/mockTeacher';
 

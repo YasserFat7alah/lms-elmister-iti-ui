@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-import StoreProvider from "@/redux/StoreProvider"; 
+import StoreProvider from "@/redux/StoreProvider";
 import { Toaster } from 'react-hot-toast';
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -15,11 +15,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased" suppressHydrationWarning={true}>
         <StoreProvider>
 
           {children}
-                  <Toaster position="top-center" />
+          <Toaster position="top-center" />
 
         </StoreProvider>
       </body>

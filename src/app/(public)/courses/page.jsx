@@ -1,130 +1,158 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import CourseSearch from '@/components/coursesComponent/CourseSearch'
 import CoursesList from '@/components/coursesComponent/CoursesList'
 import Filterition from '@/components/coursesComponent/Filterition'
-import CourseBreadcrumb from '@/components/shared/courses/CourseBreadcrumb'
-import { useGetCoursesQuery } from '@/redux/api/endPoints/coursesApiSlice'
+import SectionHeader from '@/components/shared/SectionHeader'
+import { useGetPublicCoursesQuery } from '@/redux/api/endPoints/publicApiSlice'
 
-const Page = () => { 
+const Page = () => {
+  const [page, setPage] = useState(1);
 
-  const { data: coursesData, isLoading, isError, error } = useGetCoursesQuery();
-  
-  const coursesList = coursesData?.data || []; 
+  // Filter States
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  // const [searchInstructor, setSearchInstructor] = useState([]) // Removed
+  const [languageFilter, setLanguageFilter] = useState([]);
+  const [priceFilter, setPriceFilter] = useState([]); // Array of ranges
+  const [gradeFilter, setGradeFilter] = useState([]); // Array of levels
 
-  const [selectedSubjects , setSelectedSubjects] = useState([]);
-  const [searchQuery , setSearchQuery] = useState("");
-  const [searchInstructor , setSearchInstructor] = useState([])
-  const [priceFilter , setPriceFilter] = useState("all")
-  const [gradeFilter , setGradeFilter] = useState("all")
-  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  // Calculate Min/Max from selected ranges
+  const { minPrice, maxPrice } = useMemo(() => {
+    if (priceFilter.length === 0) return { minPrice: undefined, maxPrice: undefined };
 
-  //__________________________FILTER LOGIC_________________________
-  
-  let filteredCourses = coursesList
+    let min = Infinity;
+    let max = -Infinity;
 
-  //FILTER BY SUBJECT
-  if(selectedSubjects.length > 0){
-    filteredCourses= filteredCourses.filter(course => 
-      selectedSubjects.includes(course.subject)
-    );
-  }
-
-  if (Array.isArray(searchInstructor) && searchInstructor.length > 0) {
-    filteredCourses = filteredCourses.filter(course =>
-      searchInstructor.includes(course.teacherId?._id) 
-    );
-  }
-  
-  if(searchQuery.trim() !== ""){
-    filteredCourses = filteredCourses.filter(course=>
-      course.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.teacherId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      course.subject?.toLowerCase().includes(searchQuery.toLowerCase()) 
-    )
-  }
-  if(priceFilter !== "all" && Array.isArray(priceFilter) && priceFilter.length > 0){
-    filteredCourses = filteredCourses.filter((course) => {
-      const isPaid = course.pricing?.isPaid === true;
-      const isFree = !course.pricing || course.pricing?.isPaid === false;
-      
-      if(priceFilter.includes('paid') && priceFilter.includes('free')){
-        return true; 
-      } else if(priceFilter.includes('paid')){
-        return isPaid;
-      } else if(priceFilter.includes('free')){
-        return isFree;
+    priceFilter.forEach(range => {
+      if (range.toLowerCase() === 'free') {
+        min = Math.min(min, 0);
+        max = Math.max(max, 0);
+      } else if (range.includes('+')) {
+        const val = parseFloat(range);
+        min = Math.min(min, val);
+        max = Infinity;
+      } else {
+        const parts = range.split('-');
+        if (parts.length === 2) {
+          min = Math.min(min, parseFloat(parts[0]));
+          max = Math.max(max, parseFloat(parts[1]));
+        }
       }
-      return true;
     });
-  }
 
-  //FILTER BY GRADE LEVEL
-  if(gradeFilter !== "all" && Array.isArray(gradeFilter) && gradeFilter.length > 0){
-    filteredCourses = filteredCourses.filter(course => 
-      gradeFilter.includes(String(course.gradeLevel))
-    )
-  }
+    return {
+      minPrice: min === Infinity ? undefined : min,
+      maxPrice: max === Infinity ? undefined : max
+    };
+  }, [priceFilter]);
 
-  //FILTER PRICE RANGE
-  if(priceRange.min !== "" && priceRange.min != null) {
-    filteredCourses = filteredCourses.filter(course =>
-      (course.pricing?.price || 0) >= parseFloat(priceRange.min)
-    );
-  }
-  
-  if(priceRange.max !== "" && priceRange.max != null) {
-    filteredCourses = filteredCourses.filter(course =>
-      (course.pricing?.price || 0) <= parseFloat(priceRange.max)
-    );
-  }
-  
-  // Loading & Error States Handling
+  // ACTIONS
+  const scrollToTop = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleFilterUpdate = (setter, value) => {
+    setter(value);
+    setPage(1);
+    scrollToTop();
+  };
+
+  const queryParams = {
+    page,
+    limit: 12,
+    search: searchQuery,
+    selectedSubjects,
+    // searchInstructor,
+    languageFilter,
+    minPrice,
+    maxPrice,
+    gradeLevel: gradeFilter.length > 0 ? gradeFilter : undefined,
+  };
+
+  const { data: coursesData, isLoading, isError, error } = useGetPublicCoursesQuery(queryParams);
+
+  const coursesList = coursesData?.data || [];
+  const availableFilters = coursesData?.filters || { subjects: [], gradeLevels: [], languages: [] };
+
   if (isLoading) return <div className="text-center py-10">Loading Courses...</div>;
   if (isError) return <div className="text-center py-10 text-red-500">Error: {error?.data?.message || 'Something went wrong'}</div>;
 
-
-  
   return (
     <>
-      <CourseBreadcrumb/>
-      <div className="my-5 mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[auto_1fr] justify-center lg:justify-between items-start gap-4">
-  
-      <Filterition 
-        onFilter={setSelectedSubjects}
-        selectedSubjects={selectedSubjects}
-        onInstructorSearch={setSearchInstructor}
-        searchInstructor={searchInstructor}
-        priceFilter={priceFilter}
-        onPriceChange={setPriceFilter}
-        gradeFilter={gradeFilter}
-        onGradeChange={setGradeFilter}
-        priceRange={priceRange}
-        onPriceRangeChange={setPriceRange}
-      />
+      <div className="my-2 mx-auto px-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32 flex flex-col xl:flex-row gap-6">
 
-      <div className=" w-full">
+        {/* Desktop/Tablet Sidebar (Sticky) */}
+        <aside className="hidden xl:block w-64 xl:w-72 flex-none">
+          <Filterition
+            onFilter={(val) => handleFilterUpdate(setSelectedSubjects, val)}
+            selectedSubjects={selectedSubjects}
 
-        {/* Search + Showing Results */}
-        <div className="flex items-center justify-between flex-col lg:flex-row gap-5 mb-5 lg:pt-4 ">
-          <CourseSearch onSearch={setSearchQuery} />
-          <p className="text-gray-500 font-semibold">
-            Showing {filteredCourses.length} of {coursesList.length} results
-          </p>
+            // Removed Instructor Props
+            // onInstructorSearch={setSearchInstructor}
+            // searchInstructor={searchInstructor}
+
+            priceFilter={priceFilter}
+            onPriceChange={(val) => handleFilterUpdate(setPriceFilter, val)}
+
+            gradeFilter={gradeFilter}
+            onGradeChange={(val) => handleFilterUpdate(setGradeFilter, val)}
+
+            languageFilter={languageFilter}
+            onLanguageChange={(val) => handleFilterUpdate(setLanguageFilter, val)}
+
+            availableSubjects={availableFilters.subjects}
+            availableGradeLevels={availableFilters.gradeLevels}
+            availableLanguages={availableFilters.languages}
+          // availableInstructors={availableFilters.instructors} //
+          />
+        </aside>
+
+        {/* Mobile Floating Filters */}
+        <div className="xl:hidden">
+          <Filterition
+            onFilter={(val) => handleFilterUpdate(setSelectedSubjects, val)}
+            selectedSubjects={selectedSubjects}
+            priceFilter={priceFilter}
+            onPriceChange={(val) => handleFilterUpdate(setPriceFilter, val)}
+            gradeFilter={gradeFilter}
+            onGradeChange={(val) => handleFilterUpdate(setGradeFilter, val)}
+            languageFilter={languageFilter}
+            onLanguageChange={(val) => handleFilterUpdate(setLanguageFilter, val)}
+
+            availableSubjects={availableFilters.subjects}
+            availableGradeLevels={availableFilters.gradeLevels}
+            availableLanguages={availableFilters.languages}
+          />
         </div>
 
-        {/* Courses List */}
-        {filteredCourses.length > 0 ? (
-           <CoursesList courses={filteredCourses} />
-        ) : (
-           <div className="text-center text-gray-500 mt-10">No courses found matching your criteria.</div>
-        )}
-      
+        <div className="flex-1 w-full min-w-0">
+
+          <SectionHeader
+            title="Browse our courses"
+          >
+            <CourseSearch onSearch={(val) => handleFilterUpdate(setSearchQuery, val)} />
+          </SectionHeader>
+
+
+
+          {/* Courses List */}
+          {coursesList.length > 0 ? (
+            <CoursesList
+              courses={coursesList}
+              currentPage={page}
+              totalPages={coursesData?.pages || 1}
+              onPageChange={setPage}
+            />
+          ) : (
+            <div className="text-center text-gray-500 mt-10">No courses found matching your criteria.</div>
+          )}
+
+        </div>
+
       </div>
-
-    </div>
-
     </>
   )
 }
