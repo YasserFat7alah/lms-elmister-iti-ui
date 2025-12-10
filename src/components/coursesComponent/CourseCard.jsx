@@ -30,7 +30,11 @@ const CourseCard = ({ course }) => {
         totalRatings,
         activeGroups,
         tags,
+        teacher,
     } = course;
+
+    const instructor = teacher || teacherId;
+    const instructorAvatar = instructor?.avatar?.url || instructor?.avatar;
 
     const isFree = minCost === 0 || course.isFree;
     const priceDisplay = isFree ? "Free" : `${minCost} ${currencyMap[currency] || "$"}`;
@@ -113,19 +117,19 @@ const CourseCard = ({ course }) => {
                     {/* Teacher Info - pointer-events-auto and z-20 to sit ABOVE the main link */}
                     <div className="flex items-center gap-3 mb-4 mt-auto pt-2 pointer-events-auto relative z-20 w-fit">
                         <Link
-                            href={`/teachers/${teacherId?._id || teacherId}`} // Adjust depending on if teacherId is populated object or string
+                            href={`/teachers/${instructor?._id || instructor}`} // Adjust depending on if teacherId is populated object or string
                             className="flex items-center gap-2 -ml-2 p-2 rounded-lg transition-colors duration-200 hover:bg-gray-100/80 group/teacher"
                         >
                             <Avatar className="w-8 h-8 border border-gray-100">
-                                <AvatarImage src={teacherId?.avatar} />
+                                <AvatarImage src={instructorAvatar} />
                                 <AvatarFallback className="text-xs bg-gray-100 text-gray-500">
-                                    {teacherId?.name?.charAt(0) || "T"}
+                                    {instructor?.name?.charAt(0) || "T"}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
                                 <span className="text-xs text-gray-400 font-medium whitespace-nowrap">Instructor</span>
                                 <span className="text-sm font-semibold text-gray-700 leading-none group-hover/teacher:text-[#392b80] transition-colors">
-                                    {teacherId?.name || "Unknown Teacher"}
+                                    {instructor?.name || "Unknown Teacher"}
                                 </span>
                             </div>
                         </Link>

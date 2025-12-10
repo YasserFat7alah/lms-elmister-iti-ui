@@ -1,12 +1,21 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 const CourseSearch = ({ onSearch, className = "" }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      onSearch(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, onSearch]);
 
   const handleSearch = (e) => {
-    onSearch(e.target.value);
+    setSearchTerm(e.target.value);
   }
 
   return (
