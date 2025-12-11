@@ -1,4 +1,5 @@
-
+import ActiveSubscriptions from '@/components/DashboardComponents/parent/mychildComponent/ActiveSubscriptions';
+import BackBtn from '@/components/DashboardComponents/parent/mychildComponent/BackBtn';
 import { mockCourses } from '@/data/mockCourses';
 import { children } from '@/data/parentData';
 import Link from 'next/link';

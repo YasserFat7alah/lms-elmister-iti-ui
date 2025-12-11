@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import DashboardBanner from "@/components/shared/dashboard/DashboardBanner";
 import { MdWavingHand } from "react-icons/md";
 import { children } from "@/data/parentData";
-
+import ChildCard from "@/components/DashboardComponents/parent/ChildCard";
+import UpcomingSessionsCard from "@/components/DashboardComponents/parent/UpcomingSessions";
+import RecentlyAlerts from "@/components/DashboardComponents/parent/RecentlyAlerts";
 
 const page = () => {
 

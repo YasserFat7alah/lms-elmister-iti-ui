@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import logo from "./../../../../public/logo.svg"
 
 import {
   LayoutDashboard, User, BookOpen, Award, Heart,
@@ -106,8 +105,16 @@ const Sidebar = ({ open, setOpen }) => {
   const validRoles = ['admin', 'student', 'teacher', 'parent'];
 
   // Determine if we need to wait (Loading OR Mismatch)
+  // Determine if we need to wait (Loading OR Mismatch)
   const isMismatch = urlRole && validRoles.includes(urlRole) && role && role !== urlRole;
   const isLoading = !isMounted || !userInfo || !role || isMismatch;
+
+  const { links, isAdmin } = useMemo(() => {
+    return {
+      links: ROLE_LINKS[role] || [],
+      isAdmin: role === "admin"
+    };
+  }, [role]);
 
   if (isLoading) {
     return (
@@ -129,13 +136,6 @@ const Sidebar = ({ open, setOpen }) => {
       </aside>
     );
   }
-
-  const { links, isAdmin } = useMemo(() => {
-    return {
-      links: ROLE_LINKS[role] || [],
-      isAdmin: role === "admin"
-    };
-  }, [role]);
 
   const handleLogout = async () => {
     try { await logoutApi().unwrap(); } catch (err) { }
@@ -185,11 +185,12 @@ const Sidebar = ({ open, setOpen }) => {
         <div className="flex h-20 items-center justify-between px-6 border-b border-gray-100 shrink-0">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src={logo}
+              src="/logo.svg"
               alt="El-Mister Logo"
               width={40}
               height={40}
               className="h-10 w-auto"
+              priority
             />
           </Link>
           <button
