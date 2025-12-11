@@ -34,7 +34,7 @@ const ROLE_LINKS = {
       { label: "Courses", href: "/dashboard/teacher/courses", icon: BookOpen },
       { label: "create Course", href: "/dashboard/teacher/createCourse", icon: Wallet },
       { label: "student Schedule", href: "/dashboard/teacher/schedule", icon: Megaphone },
-      { label: "Assignments", href: "/dashboard/teacher/assignments", icon: FileText },
+      { label: "Groups", href: "/dashboard/teacher/groups", icon: FileText },
       { label: "Students", href: "/dashboard/teacher/students", icon: Users },
       { label: "Quiz", href: "/dashboard/teacher/quizzes", icon: FileQuestion },
       { label: "Quiz Results", href: "/dashboard/teacher/quiz-results", icon: ClipboardCheck },
@@ -126,7 +126,7 @@ const Sidebar = ({ open, setOpen }) => {
         `}
       >
         <Icon size={19} className={isActive ? "text-[#FF0055]" : "text-gray-400 group-hover:text-gray-600"} />
-        <span>{link.label}</span>
+        <p>{link.label}</p>
       </Link>
     );
   };

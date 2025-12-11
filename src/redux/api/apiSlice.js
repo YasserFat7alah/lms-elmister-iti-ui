@@ -1,10 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { Mutex } from 'async-mutex';
 import { BASE_URL, USERS_URL } from '@/constants';
 import { setCredentials, logout } from '../slices/authSlice';
 
+const mutex = new Mutex();
+
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
-  credentials: "include",
+  credentials: "include", 
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.userInfo?.accessToken;
     if (token) {
@@ -15,6 +18,8 @@ const baseQuery = fetchBaseQuery({
 });
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
+  await mutex.waitForUnlock();
+  
   let result = await baseQuery(args, api, extraOptions);
 
   const url = typeof args === 'string' ? args : args.url;
@@ -25,35 +30,42 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     !url.includes("/register") &&
     !url.includes("/refresh-token") 
   ) {
-    console.warn(" Token expired. Attempting refresh...");
-    const refreshResult = await baseQuery(
-      { url: `${USERS_URL}/refresh-token`, method: "POST" }, 
-      api,
-      extraOptions
-    );
-
-    console.log(" Refresh Result Full Object:", refreshResult);
-
-    if (refreshResult?.data) {
-      console.log(" Token refreshed successfully!");
+    if (!mutex.isLocked()) {
+      const release = await mutex.acquire(); 
       
-      const responseData = refreshResult.data.data || refreshResult.data;
-      
-      const { user, accessToken } = responseData;
+      try {
+        console.warn("Token expired. Refreshing logic started...");
 
-      if (accessToken) {
-        api.dispatch(setCredentials({ user, accessToken }));
-        result = await baseQuery(args, api, extraOptions);
-      } else {
-        console.error("Refresh succeeded but AccessToken is missing in response!", responseData);
-        api.dispatch(logout());
+        const refreshResult = await baseQuery(
+          { url: `${USERS_URL}/refresh-token`, method: "POST" }, 
+          api,
+          extraOptions
+        );
+
+        if (refreshResult?.data) {
+          console.log("Token refreshed successfully inside Mutex!");
+          
+          const responseData = refreshResult.data.data || refreshResult.data;
+          const { user, accessToken } = responseData;
+
+          if (accessToken) {
+            api.dispatch(setCredentials({ user, accessToken }));
+            
+            result = await baseQuery(args, api, extraOptions);
+          } else {
+             api.dispatch(logout());
+          }
+        } else {
+          console.error("Refresh failed. Logging out.");
+          api.dispatch(logout());
+        }
+
+      } finally {
+        release();
       }
-
     } else {
-      console.error("Status:", refreshResult?.error?.status);
-      console.error("Error Data:", refreshResult?.error?.data);
-      
-      api.dispatch(logout());
+      await mutex.waitForUnlock();
+      result = await baseQuery(args, api, extraOptions);
     }
   }
 
@@ -62,6 +74,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["User", "Courses","Groups"],
+  tagTypes: ["User", "Courses", "Groups","Lessons"],
   endpoints: (builder) => ({}),
 });
