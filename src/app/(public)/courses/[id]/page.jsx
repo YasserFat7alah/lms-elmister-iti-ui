@@ -1,4 +1,5 @@
 "use client";
+import React from 'react';
 
 import { useParams } from 'next/navigation';
 import AboutInstractor from '@/components/coursesComponent/courseDetails/AboutInstractor';
@@ -25,6 +26,9 @@ export default function Page() {
     const course = courseData?.data;
     const teacher = course?.teacherId;
 
+    // State for selected group
+    const [selectedGroup, setSelectedGroup] = React.useState(null);
+
     // Handle loading & error
     if (isLoading) return <div className="min-h-screen flex items-center justify-center p-10"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div></div>;
 
@@ -40,8 +44,8 @@ export default function Page() {
     return (
         <div className="bg-gray-50 min-h-screen pb-20">
             {/* HERO SECTION */}
-            <div className="bg-[#392b80] text-white pt-12 pb-16 px-4 md:px-8">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="bg-[#392b80] text-white pt-12 pb-16">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-4">
                         <div className="flex gap-2 mb-4">
                             <Badge variant="secondary" className="bg-pink-500 hover:bg-pink-600 text-white border-none">{course.subject}</Badge>
@@ -87,26 +91,19 @@ export default function Page() {
                         <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden border border-white/10 aspect-video relative group">
                             {/* Share Button (Overlaid) */}
                             <div className="absolute top-2 right-2 z-20">
-                                <Button variant="secondary" size="icon" className="bg-white/80 hover:bg-white text-gray-800 backdrop-blur-sm shadow-sm h-8 w-8 rounded-full">
+                                <Button variant="secondary" size="icon" className="bg-white/80 hover:bg-white text-gray-800 backdrop-blur-sm shadow-sm h-8 w-8 rounded-full cursor-pointer transition-transform hover:scale-110">
                                     <IoMdShare size={16} />
                                 </Button>
                             </div>
 
-                            {course.video?.url ? (
-                                <video controls className="w-full h-full object-cover" poster={course.thumbnail?.url}>
-                                    <source src={course.video.url} type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
-                            ) : (
-                                <img src={course.thumbnail?.url || "/placeholder-course.jpg"} alt={course.title} className="w-full h-full object-cover" />
-                            )}
+                            <img src={course.thumbnail?.url || "/placeholder-course.jpg"} alt={course.title} className="w-full h-full object-cover" />
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* CONTENT GRID */}
-            <div className="max-w-7xl mx-auto px-4 md:px-8 -mt-8">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {/* LEFT COLUMN (Main Content) */}
@@ -134,7 +131,12 @@ export default function Page() {
 
                         {/* Curriculum / Groups */}
                         <section id="curriculum">
-                            <CourseGroup groups={course.groups || []} />
+                            <CourseGroup
+                                courseId={course._id}
+                                groups={course.groups}
+                                selectedGroup={selectedGroup}
+                                setSelectedGroup={setSelectedGroup}
+                            />
                         </section>
 
                         {/* Course Inquiries (Q&A) - Formerly Comments */}
@@ -163,6 +165,7 @@ export default function Page() {
                             <div className="shrink-0 relative z-20">
                                 <DetailsSidebar
                                     course={course}
+                                    selectedGroup={selectedGroup}
                                 // ... props
                                 />
                             </div>

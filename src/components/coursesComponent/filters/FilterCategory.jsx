@@ -58,7 +58,7 @@ const FilterCategory = ({ onFilter, selectedSubjects: externalSelectedSubjects =
                                             checked={selectedSubjects.includes(subject)}
                                             onCheckedChange={() => handleSubjectToggle(subject)}
                                         />
-                                        <Label className='text-gray-800' htmlFor={`mobile-${subject}`}>{subject}</Label>
+                                        <Label className='text-gray-800 cursor-pointer' htmlFor={`mobile-${subject}`}>{subject}</Label>
                                     </div>
                                 ))}
                             </div>
@@ -73,7 +73,7 @@ const FilterCategory = ({ onFilter, selectedSubjects: externalSelectedSubjects =
                                             checked={selectedSubjects.includes(subject)}
                                             onCheckedChange={() => handleSubjectToggle(subject)}
                                         />
-                                        <Label className='text-gray-800' htmlFor={`desktop-${subject}`}>{subject}</Label>
+                                        <Label className='text-gray-800 cursor-pointer' htmlFor={`desktop-${subject}`}>{subject}</Label>
                                     </div>
                                 ))}
                                 {hasMoreSubjects && (

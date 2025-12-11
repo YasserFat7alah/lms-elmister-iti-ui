@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export function InstructorHero() {
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-purple-50 via-pink-50 to-white">
+    <section className="bg-linear-to-br from-indigo-900 to-purple-900 text-white py-16 lg:py-24 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div className="space-y-6">

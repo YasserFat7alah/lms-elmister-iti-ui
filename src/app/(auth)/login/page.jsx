@@ -103,7 +103,7 @@ export default function LoginPage() {
         student: "/dashboard/student/my-learning",
         parent: "/dashboard/parent/overview",
       };
-      const targetPath = dashboardPaths[role] || "/";
+      const targetPath = searchParams.get("redirect") || dashboardPaths[role] || "/";
       toast.success("Logged in", { id: toastId });
       router.push(targetPath);
     } catch (err) {

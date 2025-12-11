@@ -25,9 +25,9 @@ export function TeacherCard({ teacher }) {
         />
 
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 -translate-x-full group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-<Link href={`/teachers/${teacher._id}`}>
-  <Button>View Profile</Button>
-</Link>
+          <Link href={`/teachers/${teacher._id}`}>
+            <Button>View Profile</Button>
+          </Link>
         </div>
       </div>
 
@@ -54,7 +54,7 @@ export function TeacherCard({ teacher }) {
 
         {/* Stats */}
         <div className="flex flex-col gap-1 text-sm text-muted-foreground border-t border-border pt-3">
-          
+
           {/* Subjects Names */}
           <div>
             <span className="font-semibold">Subjects: </span>

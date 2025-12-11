@@ -118,7 +118,7 @@ const CourseCard = ({ course }) => {
                     <div className="flex items-center gap-3 mb-4 mt-auto pt-2 pointer-events-auto relative z-20 w-fit">
                         <Link
                             href={`/teachers/${instructor?._id || instructor}`} // Adjust depending on if teacherId is populated object or string
-                            className="flex items-center gap-2 -ml-2 p-2 rounded-lg transition-colors duration-200 hover:bg-gray-100/80 group/teacher"
+                            className="flex items-center gap-2 -ml-2 p-2 rounded-lg transition-colors duration-200 hover:bg-gray-100/80 group/teacher cursor-pointer"
                         >
                             <Avatar className="w-8 h-8 border border-gray-100">
                                 <AvatarImage src={instructorAvatar} />

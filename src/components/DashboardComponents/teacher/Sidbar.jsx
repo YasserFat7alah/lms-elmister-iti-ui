@@ -99,7 +99,7 @@ const TeacherSidebar = ({ open, setOpen }) => {
                       }
                     `}
                   >
-                    <Icon size={18} className="flex-shrink-0" />
+                    <Icon size={18} className="shrink-0" />
                     <span className="truncate">{link.label}</span>
                   </Link>
                 );
@@ -123,7 +123,7 @@ const TeacherSidebar = ({ open, setOpen }) => {
                   }
                 `}
               >
-                <Settings size={18} className="flex-shrink-0" />
+                <Settings size={18} className="shrink-0" />
                 <span>Settings</span>
               </Link>
 
@@ -131,7 +131,7 @@ const TeacherSidebar = ({ open, setOpen }) => {
                 onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
               >
-                <LogOut size={18} className="flex-shrink-0" />
+                <LogOut size={18} className="shrink-0" />
                 <span>Logout</span>
               </button>
             </nav>

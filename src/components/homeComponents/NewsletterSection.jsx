@@ -13,7 +13,7 @@ export default function NewsletterSection() {
         </svg>
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-6">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8">
 
           <div className="space-y-6 text-center lg:text-left">

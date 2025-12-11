@@ -3,17 +3,11 @@ import { FaBookOpen } from "react-icons/fa";
 import Image from 'next/image'
 import React from 'react'
 
-// صورة افتراضية (Placeholder) عشان لو المدرس ملوش صورة
 const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
 const AboutInstractor = ({ course, teacher }) => {
-
-    // تأمين: لو بيانات المدرس مش موجودة خالص
     if (!teacher) return null;
 
-    // ملاحظة: بما إننا معندناش كل الكورسات في الفرونت، مش هنقدر نحسب العدد بدقة
-    // المفروض الباك إند يبعت (coursesCount) جوه بيانات المدرس
-    // حالياً هنعرض 1 كقيمة افتراضية (الكورس الحالي) أو نخفيها
     const teacherProfile = teacher.teacherData || {};
     const qualifications = teacherProfile.qualifications || [];
 

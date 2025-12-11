@@ -58,7 +58,7 @@ const FilterLanguage = ({ languageFilter, onLanguageChange, availableLanguages =
                                         checked={selectedLanguages.includes(lang)}
                                         onCheckedChange={() => handleLanguageToggle(lang)}
                                     />
-                                    <Label className='text-gray-700' htmlFor={`lang-${lang}`}>
+                                    <Label className='text-gray-700 cursor-pointer' htmlFor={`lang-${lang}`}>
                                         {lang}
                                     </Label>
                                 </div>

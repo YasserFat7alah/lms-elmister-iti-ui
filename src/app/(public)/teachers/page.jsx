@@ -357,16 +357,16 @@ const teachers = [
 ];
 export default function TeachersPage() {
   const [currentPage, setCurrentPage] = useState(1)
-const [filters, setFilters] = useState({
-  subjects: [],
-  gender: "",
-  totalRatings: null,
-  degree: [],
-  university: []
-})
+  const [filters, setFilters] = useState({
+    subjects: [],
+    gender: "",
+    totalRatings: null,
+    degree: [],
+    university: []
+  })
   const itemsPerPage = 6
 
-// ========== FILTER LOGIC ==========
+  // ========== FILTER LOGIC ==========
   const filteredTeachers = useMemo(() => {
     return teachers.filter((teacher) => {
       const td = teacher.teacherData
@@ -391,7 +391,7 @@ const [filters, setFilters] = useState({
     })
   }, [filters])
 
-const totalPages = Math.ceil(filteredTeachers.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredTeachers.length / itemsPerPage)
 
   const startIdx = (currentPage - 1) * itemsPerPage
   const displayedTeachers = filteredTeachers.slice(startIdx, startIdx + itemsPerPage)
@@ -399,7 +399,7 @@ const totalPages = Math.ceil(filteredTeachers.length / itemsPerPage)
   return (
     <main className="bg-background">
 
-<CourseBreadcrumb title="teachers" currentPage="teachers" />
+      <CourseBreadcrumb title="teachers" currentPage="teachers" />
 
       <div className="container mx-auto px-4 py-12">
         <div className="flex gap-8">

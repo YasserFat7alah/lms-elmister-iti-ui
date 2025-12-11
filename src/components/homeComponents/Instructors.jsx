@@ -42,10 +42,10 @@ const instructorsData = [
 
 export default function Instructors() {
   return (
-    <section className="py-10 bg-gradient-to-br from-purple-50 via-white to-pink-50">
-      <div className="max-w-7xl mx-auto px-4 text-center">
+    <section className="py-10 bg-linear-to-br from-purple-50 via-white to-pink-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Trending Badge */}
-        <span className="inline-block bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold px-5 py-2 rounded-full mb-4">
+        <span className="inline-block bg-linear-to-r from-pink-400 to-rose-400 text-white text-xs font-bold px-5 py-2 rounded-full mb-4">
           Trending Teachers
         </span>
 
@@ -63,7 +63,7 @@ export default function Instructors() {
               {/* Trending Badge للكارت الفردي */}
               {instructor.trending && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                  <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+                  <span className="bg-linear-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
                     Trending
                   </span>
                 </div>

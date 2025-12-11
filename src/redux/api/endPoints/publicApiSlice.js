@@ -1,5 +1,5 @@
 import { apiSlice } from "../apiSlice";
-import { PUBLIC_COURSES_URL } from "../../../constants";
+import { PUBLIC_COURSES_URL, GROUPS_URL } from "../../../constants";
 
 export const publicApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -59,7 +59,19 @@ export const publicApiSlice = apiSlice.injectEndpoints({
             }),
             providesTags: (result, error, id) => [{ type: "Courses", id }],
         }),
+        getPublicGroups: builder.query({
+            query: (params) => {
+                const queryParams = new URLSearchParams();
+                if (params.courseId) queryParams.append("courseId", params.courseId);
+                // Add other filters if needed
+                return {
+                    url: `${GROUPS_URL}?${queryParams.toString()}`,
+                    method: "GET",
+                };
+            },
+            providesTags: ["Groups"],
+        }),
     }),
 });
 
-export const { useGetPublicCoursesQuery, useGetPublicCourseByIdQuery } = publicApiSlice;
+export const { useGetPublicCoursesQuery, useGetPublicCourseByIdQuery, useGetPublicGroupsQuery } = publicApiSlice;

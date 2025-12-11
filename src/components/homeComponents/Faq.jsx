@@ -42,23 +42,23 @@ export function FAQ() {
 
   return (
     <section className="w-full bg-white py-10 md:py-10">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           <div className="hidden lg:block order-1">
-          <div className="order-2 lg:order-1">
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl blur-3xl opacity-60 -z-10"></div>
-              <img
-                src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623480/ImageContainer_xysdoi.png"      
-                alt="El-Mister Team"
-                width={600}
-                height={600}
-                className="rounded-3xl shadow-2xl object-cover w-full"
-              />
-             
+            <div className="order-2 lg:order-1">
+              <div className="relative">
+                <div className="absolute -inset-4 bg-linear-to-br from-purple-100 to-pink-100 rounded-3xl blur-3xl opacity-60 -z-10"></div>
+                <img
+                  src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623480/ImageContainer_xysdoi.png"
+                  alt="El-Mister Team"
+                  width={600}
+                  height={600}
+                  className="rounded-3xl shadow-2xl object-cover w-full"
+                />
+
+              </div>
             </div>
-          </div>
           </div>
 
           <div className="order-1 lg:order-2">

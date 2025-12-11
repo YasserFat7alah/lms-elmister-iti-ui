@@ -33,7 +33,7 @@ export default function InstructorRules({
             <ul className="space-y-5">
               {rules.map((rule, index) => (
                 <li key={index} className="flex items-start gap-4">
-                  <div className="mt-1 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center shrink-0 mt-1">
                     <FaCheck className="w-5 h-5 text-purple-600" />
                   </div>
                   <span className="text-gray-700 text-base lg:text-lg leading-relaxed">
@@ -46,7 +46,7 @@ export default function InstructorRules({
 
           <div className="order-1 lg:order-2">
             <div className="relative">
-              <div className="absolute -inset-8 bg-gradient-to-br from-purple-300/20 to-pink-300/20 blur-3xl -z-10"></div>
+              <div className="bg-linear-to-br from-purple-600 to-indigo-700 rounded-2xl p-8 text-white text-center"></div>
               <Image
                 src={imageSrc}
                 alt={imageAlt}

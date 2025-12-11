@@ -62,7 +62,7 @@ const FilterPrice = ({ priceFilter, onPriceChange }) => {
                     checked={selectedRanges.includes(range.value)}
                     onCheckedChange={() => handleRangeToggle(range.value)}
                   />
-                  <Label className='text-gray-700' htmlFor={`price-${range.value}`}>
+                  <Label className='text-gray-700 cursor-pointer' htmlFor={`price-${range.value}`}>
                     {range.label}
                   </Label>
                 </div>

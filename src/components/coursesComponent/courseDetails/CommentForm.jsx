@@ -65,7 +65,7 @@ const CommentForm = ({ targetId, targetModel }) => {
                         <Button
                             type="submit"
                             disabled={isLoading || !values.comment?.trim()}
-                            className="bg-blue-800 w-fit text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="bg-blue-800 w-fit text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                         >
                             {isLoading ? 'Posting...' : 'Comment'}
                         </Button>

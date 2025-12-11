@@ -1,126 +1,149 @@
 'use client';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import React from 'react';
+import { useGetPublicGroupsQuery } from '@/redux/api/endPoints/publicApiSlice';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Users, Clock, Info } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
-const CourseGroupAccordion = ({ groups }) => {
+const CourseGroup = ({ courseId, groups, selectedGroup, setSelectedGroup }) => {
 
-  const safeGroups = Array.isArray(groups) ? groups : [];
+  const { data: groupsData, isLoading, isError } = useGetPublicGroupsQuery({ courseId }, {
+    skip: !courseId || (groups && groups.length > 0)
+  });
+
+  const safeGroups = (groups && groups.length > 0) ? groups : (groupsData?.data || []);
+
+  if (isLoading && (!groups || groups.length === 0)) {
+    return <div className="p-8 text-center text-gray-500">Loading schedules...</div>;
+  }
 
   if (safeGroups.length === 0) {
     return (
-      <div className="p-4 my-5 mx-4 border rounded-md text-gray-500">
-        No groups available for this course yet.
+      <div className="p-8 text-center border border-dashed border-gray-200 rounded-xl bg-gray-50 text-gray-500">
+        <p>No active groups available currently.</p>
       </div>
     );
   }
 
-  // 1. تصنيف المجموعات بناءً على السعة القصوى
-  const privateGroups = safeGroups.filter(group => group.capacity === 1);
-  const sharedGroups = safeGroups.filter(group => group.capacity > 1);
-
-  // دالة صغيرة لحساب الحالة بناءً على العدد والسعة (الشرط الجديد)
   const getStatusBadge = (current, max) => {
-    // الشرط: لو العدد الحالي أكبر من أو يساوي السعة القصوى
     const isFull = (current || 0) >= max;
-
     if (isFull) {
-      return <span className="text-red-600 font-bold bg-red-100 px-2 py-1 rounded text-sm">Full (Complete)</span>;
+      return <Badge variant="destructive" className="font-bold">Full</Badge>;
     }
-    return <span className="text-green-600 font-bold bg-green-100 px-2 py-1 rounded text-sm">Available</span>;
+    return <Badge className="bg-emerald-500 hover:bg-emerald-600 font-bold">Open</Badge>;
+  };
+
+  const getTypeBadge = (capacity) => {
+    if (capacity === 1) return <Badge variant="outline" className="border-pink-200 text-pink-700 bg-pink-50">Private</Badge>;
+    return <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">Shared</Badge>;
+  }
+
+  const formatTime = (time24) => {
+    if (!time24) return "TBA";
+    const [hours, minutes] = time24.split(':');
+    const h = parseInt(hours, 10);
+    const suffix = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${minutes} ${suffix}`;
   };
 
   return (
-    <div className="">
-      <h3 className="font-bold text-gray-800 mb-4 text-xl">Course Groups</h3>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="font-bold text-gray-900 text-2xl">Available Groups</h3>
+        <span className="text-sm text-gray-500">{safeGroups.length} options available</span>
+      </div>
 
-      <Accordion type="single" collapsible className="w-full">
-
-        {/* __________________ Private Groups (Capacity = 1) __________________ */}
-        {privateGroups.length > 0 && (
-          <AccordionItem value="private">
-            <AccordionTrigger className='text-pink-600 font-bold'>
-              Private Sessions (1-on-1)
-            </AccordionTrigger>
-            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              {privateGroups.map((group) => (
-                <div key={group._id} className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow relative">
-                  <h5 className="font-bold text-lg mb-2 text-pink-900">{group.title}</h5>
-                  <p className='mb-1'><span className="font-semibold mr-1">Start Date:</span> <span className='text-gray-600'> {new Date(group.startingDate).toLocaleDateString()} </span></p>
-                  <p className='mb-1'><span className="font-semibold mr-1">Time:</span> <span className='text-gray-600'>{group.time || "Check schedule"}</span></p>
-
-                  {/* تطبيق الشرط هنا */}
-                  <div className="mt-3 flex justify-between items-center">
-                    {getStatusBadge(group.studentsCount, group.capacity)}
-                  </div>
-
-                  {/* Lessons List */}
-                  {group.lessons && group.lessons.length > 0 && (
-                    <div className="mt-4 pt-3 border-t border-gray-100">
-                      <h6 className="font-bold text-sm mb-2 text-gray-800">Curriculum:</h6>
-                      <ul className="space-y-1.5">
-                        {group.lessons.slice().sort((a, b) => a.order - b.order).map(lesson => (
-                          <li key={lesson._id} className="text-sm text-gray-600 flex items-center gap-2">
-                            <span className="w-5 h-5 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center text-xs font-bold shrink-0">{lesson.order}</span>
-                            <span className="line-clamp-1">{lesson.title}</span>
-                            <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded capitalize ml-auto shrink-0">{lesson.type}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {safeGroups.map((group) => {
+          const isSelected = selectedGroup?._id === group._id;
+          return (
+            <Card
+              key={group._id}
+              onClick={() => setSelectedGroup && setSelectedGroup(group)}
+              className={`border shadow-sm transition-all duration-300 relative overflow-hidden group cursor-pointer
+                      ${isSelected ? 'border-pink-500 ring-2 ring-pink-500 shadow-md bg-pink-50/10' : 'border-gray-200 hover:border-pink-300 hover:shadow-md'}
+                  `}
+            >
+              <CardHeader className="pb-3 pl-5">
+                <div className="flex justify-between items-start mb-2">
+                  {getTypeBadge(group.capacity)}
+                  {getStatusBadge(group.studentsCount, group.capacity)}
                 </div>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        )}
+                <CardTitle className="text-xl font-bold text-gray-900 line-clamp-1" title={group.title}>
+                  {group.title}
+                </CardTitle>
+              </CardHeader>
 
-        {/* __________________ Shared Groups (Capacity > 1) __________________ */}
-        {sharedGroups.length > 0 && (
-          <AccordionItem value="shared">
-            <AccordionTrigger className="text-blue-800 font-bold">
-              Shared Groups
-            </AccordionTrigger>
-            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              {sharedGroups.map((group) => (
-                <div key={group._id} className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow">
-                  <h5 className="font-bold text-lg mb-2 text-indigo-900">{group.title}</h5>
-                  <p className='mb-1'><span className="font-semibold mr-1">Start Date:</span> <span className='text-gray-600'> {new Date(group.startingDate).toLocaleDateString()} </span></p>
-                  <p className='mb-1'><span className="font-semibold mr-1">Time:</span> <span className='text-gray-600'>{group.time || "Check schedule"}</span></p>
+              <CardContent className="pl-5 space-y-4">
 
-                  <p className="mb-2">
-                    <span className="font-semibold mr-1">Students:</span>
-                    <span className='text-gray-600'> {group.studentsCount || 0} / {group.capacity} </span>
+                {group.description && (
+                  <p className="text-sm text-gray-600 line-clamp-2" title={group.description}>
+                    {group.description}
                   </p>
+                )}
 
-                  {/* تطبيق الشرط هنا */}
-                  <div className="mt-2">
-                    {getStatusBadge(group.studentsCount, group.capacity)}
-                  </div>
-
-                  {/* Lessons List */}
-                  {group.lessons && group.lessons.length > 0 && (
-                    <div className="mt-4 pt-3 border-t border-gray-100">
-                      <h6 className="font-bold text-sm mb-2 text-gray-800">Curriculum:</h6>
-                      <ul className="space-y-1.5">
-                        {group.lessons.slice().sort((a, b) => a.order - b.order).map(lesson => (
-                          <li key={lesson._id} className="text-sm text-gray-600 flex items-center gap-2">
-                            <span className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">{lesson.order}</span>
-                            <span className="line-clamp-1">{lesson.title}</span>
-                            <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded capitalize ml-auto shrink-0">{lesson.type}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                {/* Price Display */}
+                <div className="flex items-baseline gap-1">
+                  <span className="font-extrabold text-2xl text-pink-600">{group.price || 0}$</span>
+                  <span className="text-xs font-medium text-gray-500">/month</span>
                 </div>
-              ))}
-            </AccordionContent>
-          </AccordionItem>
-        )}
 
-      </Accordion>
+                <div className="grid grid-cols-2 gap-y-3 text-sm">
+                  <div className="flex items-center text-gray-700 gap-2">
+                    <Calendar size={16} className="text-gray-400" />
+                    <span>{new Date(group.startingDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center text-gray-700 gap-2">
+                    <Users size={16} className="text-gray-400" />
+                    <span>{group.studentsCount || 0} / {group.capacity} slots</span>
+                  </div>
+                </div>
+
+                {/* Working Days / Schedule */}
+                {group.schedule && group.schedule.length > 0 && (
+                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 mt-2">
+                    <p className="text-xs font-semibold text-gray-500 uppercase mb-2 flex items-center gap-1">
+                      <Calendar size={12} /> Weekly Schedule
+                    </p>
+                    <div className="space-y-1">
+                      {group.schedule.map((slot, index) => (
+                        <div key={index} className="flex justify-between text-sm">
+                          <span className="capitalize font-medium text-gray-700">{slot.day}</span>
+                          <span className="text-gray-600 font-mono text-xs bg-white px-1.5 py-0.5 rounded border border-gray-100">{formatTime(slot.time)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {group.lessons && group.lessons.length > 0 && (
+                  <>
+                    <Separator className="my-2" />
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Curriculum Preview</p>
+                      <div className="flex flex-wrap gap-1">
+                        {group.lessons.slice(0, 3).sort((a, b) => a.order - b.order).map(lesson => (
+                          <Badge key={lesson._id} variant="secondary" className="text-[10px] bg-gray-100 text-gray-600 border-gray-100 font-normal">
+                            {lesson.order}. {lesson.title.slice(0, 15)}{lesson.title.length > 15 ? '...' : ''}
+                          </Badge>
+                        ))}
+                        {group.lessons.length > 3 && (
+                          <span className="text-[10px] text-gray-400 self-center">+{group.lessons.length - 3} more</span>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };
 
-export default CourseGroupAccordion;
+export default CourseGroup;

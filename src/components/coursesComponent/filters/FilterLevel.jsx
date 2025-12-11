@@ -80,7 +80,7 @@ const FilterLevel = ({ gradeFilter, onGradeChange, availableGradeLevels = [] }) 
                     checked={selectedGrades.includes(level)}
                     onCheckedChange={() => handleGradeToggle(level)}
                   />
-                  <Label className='text-gray-700' htmlFor={`grade-${level}`}>
+                  <Label className='text-gray-700 cursor-pointer' htmlFor={`grade-${level}`}>
                     Grade {level}
                   </Label>
                 </div>
