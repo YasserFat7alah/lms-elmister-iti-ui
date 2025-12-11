@@ -42,7 +42,7 @@ export default function MyCoursesPage() {
   
   const [activeTab, setActiveTab] = useState("all"); 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState(null); // State للمودال
+  const [selectedCourse, setSelectedCourse] = useState(null); 
 
   const queryParams = userInfo?._id ? { teacherId: userInfo._id } : {};
 

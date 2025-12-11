@@ -80,7 +80,6 @@ export default function CourseBasicInfo({ values, setFieldValue, onAddGroup }) {
           </div>
         </div>
 
-        {/* Tags + Add Group (fixed alignment, no duplicate chips) */}
         <div className="pt-4 border-t">
           <label className="text-sm font-medium text-gray-700">Tags (Keywords)</label>
 

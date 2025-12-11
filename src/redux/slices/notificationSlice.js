@@ -32,7 +32,6 @@ const notificationSlice = createSlice({
     },
 });
 
-// const notificationReducer = notificationSlice.reducer
 
 export const { markAllAsRead, addNotification, setLoading, setNotifications } = notificationSlice.actions;
 export default notificationSlice.reducer;

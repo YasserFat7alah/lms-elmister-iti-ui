@@ -1,48 +1,3 @@
-// "use client";
-// import { useEffect, useState } from "react";
-// import GroupForm from "./GroupForm";
-
-// export default function GroupModal({ isOpen, onClose, initialGroup, onSave, isEditing = false, isLoading = false }) {
-//   const [tempGroup, setTempGroup] = useState(initialGroup || {
-//     title: "", description: "", type: "online", price: "", capacity: "", startingDate: "",
-//     link: "", location: "", schedule: [{ day: "Monday", time: "14:00" }]
-//   });
-
-//   useEffect(() => {
-//     if (isOpen) {
-//       setTempGroup(initialGroup ? { ...initialGroup } : {
-//         title: "", description: "", type: "online", price: "", capacity: "", startingDate: "",
-//         link: "", location: "", schedule: [{ day: "Monday", time: "14:00" }]
-//       });
-//     }
-//   }, [isOpen, initialGroup]);
-
-//   if (!isOpen) return null;
-
-//   return (
-//     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40">
-//       <div className="bg-white rounded-lg w-full max-w-2xl p-6">
-//         <div className="flex items-center justify-between mb-4">
-//           <h3 className="text-lg font-bold">{isEditing ? "Edit Group" : "Add Group"}</h3>
-//           <button type="button" onClick={onClose} className="text-sm text-gray-500">Close</button>
-//         </div>
-
-//         <GroupForm
-//           tempGroup={tempGroup}
-//           setTempGroup={setTempGroup}
-//           isEditing={isEditing}
-//           isLoading={isLoading}
-//           onCancel={onClose}
-//           onSave={() => {
-//             // when GroupForm calls onSave, pass current tempGroup back to parent
-//             if (typeof onSave === "function") onSave({ ...tempGroup });
-//           }}
-//         />
-
-//       </div>
-//     </div>
-//   );
-// }
 
 
 "use client";
@@ -61,7 +16,6 @@ export default function GroupModal({
   onSave, 
   isEditing 
 }) {
-  // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "auto";
@@ -82,7 +36,6 @@ export default function GroupModal({
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         
-        {/* Modal Header */}
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center z-10">
            <h3 className="text-lg font-bold text-gray-800">
              {isEditing ? "Edit Group Details" : "Create New Batch"}
@@ -90,7 +43,6 @@ export default function GroupModal({
            <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 transition"><X size={20}/></button>
         </div>
 
-        {/* Modal Body */}
         <div className="p-6 space-y-5">
            
            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -135,7 +87,6 @@ export default function GroupModal({
            </div>
         </div>
 
-        {/* Modal Footer */}
         <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex justify-end gap-3 z-10">
            <Button variant="ghost" onClick={onClose}>Cancel</Button>
            <Button onClick={onSave} className="bg-[#FF4667] hover:bg-[#ff2e53] text-white">

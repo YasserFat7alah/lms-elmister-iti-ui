@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 const CourseDetailsModal = ({ isOpen, onClose, course }) => {
   if (!isOpen || !course) return null;
 
-  // --- Logic Helpers ---
   const getPriceDisplay = () => {
     if (!course.groups || course.groups.length === 0) return "No Groups";
     const prices = course.groups.map(g => g.price || 0);
@@ -23,7 +22,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
 
   const videoUrl = course.video?.url;
 
-  // --- UI Components ---
   const Badge = ({ children, colorClass }) => (
     <span className={`px-2.5 py-0.5 rounded-md text-[11px] uppercase font-bold tracking-wide border ${colorClass}`}>
       {children}
@@ -33,13 +31,11 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 transition-all duration-300">
       
-      {/* Modal Container */}
       <div 
         className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 border border-gray-100"
         onClick={(e) => e.stopPropagation()} 
       >
         
-        {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-white">
           <div className="flex items-center gap-3">
              <div className="bg-[#FF4667]/10 p-2 rounded-lg text-[#FF4667]">
@@ -60,13 +56,10 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
           </button>
         </div>
 
-        {/* Scrollable Content */}
         <div className="overflow-y-auto custom-scrollbar bg-gray-50/50">
           
-          {/* Section 1: Hero (Dark Theme for Cinematic Feel) */}
           <div className="grid grid-cols-1 lg:grid-cols-5 bg-slate-900 text-white">
             
-            {/* Video Player */}
             <div className="lg:col-span-3 bg-black flex items-center justify-center min-h-[320px] relative group overflow-hidden">
               {videoUrl ? (
                 <video 
@@ -99,7 +92,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
               )}
             </div>
 
-            {/* Right Sidebar Stats */}
             <div className="lg:col-span-2 p-6 flex flex-col justify-center bg-slate-800 border-l border-slate-700">
                <div>
                  <div className="flex gap-2 mb-4">
@@ -111,7 +103,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
                  <h1 className="text-2xl font-bold leading-tight mb-2 text-white">{course.title}</h1>
                  <p className="text-slate-400 text-sm line-clamp-2">{course.subTitle || "No subtitle added"}</p>
                  
-                 {/* Price Box */}
                  <div className="flex items-center gap-3 mt-6 bg-slate-700/50 p-4 rounded-xl border border-slate-600/50">
                     <div className="bg-[#FF4667] p-2 rounded-lg text-white shadow-lg shadow-[#FF4667]/20">
                       <DollarSign size={20} />
@@ -146,7 +137,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
 
           <div className="p-6 lg:p-8 space-y-8 bg-white">
             
-            {/* Section 2: Description */}
             <div className="flex gap-4">
                <div className="hidden sm:block p-3 h-fit bg-gray-50 rounded-xl text-gray-400">
                   <AlertCircle size={24} />
@@ -157,7 +147,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
                    {course.description || <span className="text-gray-400 italic">No description provided for this course yet.</span>}
                  </p>
                  
-                 {/* Tags */}
                  {course.tags && course.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-4">
                        {course.tags.map((tag, i) => (
@@ -170,7 +159,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
                </div>
             </div>
 
-            {/* Section 3: Groups Table */}
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
@@ -193,7 +181,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
                       course.groups.map((group, index) => (
                         <tr key={index} className="hover:bg-red-50/30 transition-colors group">
                           
-                          {/* Title & Location */}
                           <td className="px-5 py-4 align-top">
                             <div className="font-bold text-gray-900 mb-1">{group.title}</div>
                             <div className="text-xs text-gray-500 flex items-center gap-1.5">
@@ -205,7 +192,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
                             </div>
                           </td>
 
-                          {/* Type Badge & Capacity */}
                           <td className="px-5 py-4 align-top">
                              <div className="flex flex-col gap-2">
                                 <span className={`w-fit text-[10px] px-2 py-0.5 rounded uppercase font-bold border ${
@@ -222,7 +208,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
                              </div>
                           </td>
 
-                          {/* Schedule */}
                           <td className="px-5 py-4 align-top">
                             {group.schedule && group.schedule.length > 0 ? (
                               <div className="space-y-1.5">
@@ -239,7 +224,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
                             )}
                           </td>
 
-                          {/* Price */}
                           <td className="px-5 py-4 align-top text-right">
                              <span className="font-bold text-gray-900 text-base block">{group.price} <span className="text-xs font-normal text-gray-500">EGP</span></span>
                              {group.startingDate && (
@@ -272,7 +256,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
 
         </div>
 
-        {/* Footer */}
         <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
           <div className="text-xs text-gray-400 hidden sm:block">
             Last updated: {course.updatedAt ? new Date(course.updatedAt).toLocaleDateString() : "Just now"}
@@ -283,9 +266,12 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
             </Button>
             <Link href={`/dashboard/teacher/courses/${course._id}/edit`} className="flex-1 sm:flex-none">
               <Button className="w-full bg-[#FF4667] hover:bg-[#ff2e53] text-white shadow-md shadow-[#FF4667]/20 border-none">
-                 Edit Course & Groups
-              </Button>
+                 Edit Course 
+              </Button> 
             </Link>
+
+
+            
           </div>
         </div>
 

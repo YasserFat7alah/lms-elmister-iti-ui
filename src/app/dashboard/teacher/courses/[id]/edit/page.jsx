@@ -219,6 +219,7 @@ export default function EditCoursePage() {
 
       <main className="max-w-7xl  px-4 sm:px-6 lg:px-8 py-4">
         <Formik
+        enableReinitialize={true}
           initialValues={{
             title: course.title || "",
             subTitle: course.subTitle || "",

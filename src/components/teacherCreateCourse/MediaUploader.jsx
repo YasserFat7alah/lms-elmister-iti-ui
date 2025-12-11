@@ -28,12 +28,9 @@ const handleFileChange = async (e) => {
     try {
       const res = await uploadOne(formData).unwrap();
 
-      // 🔍🔍🔍 التصحيح هنا 🔍🔍🔍
-      // الكنترولر بتاعك بيرجع الداتا جوه خاصية اسمها file
-      // لو بعت res بس، الـ Formik هيتوه
       const actualData = res.file; 
 
-      console.log("Uploaded Data to Save:", actualData); // للتأكد في الكونسول
+      console.log("Uploaded Data to Save:", actualData); 
 
       if (actualData && actualData.url) {
         onUploadComplete(actualData); 
@@ -47,7 +44,7 @@ const handleFileChange = async (e) => {
       toast.error(err?.data?.message || "Upload failed");
     }
   };
-  
+
   return (
     <div className="w-full">
       <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
