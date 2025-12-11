@@ -1,5 +1,4 @@
-import ActiveSubscriptions from '@/components/dashboardComponents/parent/mychildComponent/ActiveSubscriptions';
-import BackBtn from '@/components/dashboardComponents/parent/mychildComponent/BackBtn';
+
 import { mockCourses } from '@/data/mockCourses';
 import { children } from '@/data/parentData';
 import Link from 'next/link';
@@ -11,17 +10,17 @@ const page = () => {
   // Calculate total monthly fee
   const totalMonthlyFee = children.reduce((sum, child) => {
     const childTotal = child.enrolledCourses.reduce((childSum, enrolled) => {
-    const course = mockCourses.find((c) => c.id === enrolled.courseId);
-    return childSum + (course?.pricing?.price ?? 0);
+      const course = mockCourses.find((c) => c.id === enrolled.courseId);
+      return childSum + (course?.pricing?.price ?? 0);
     }, 0);
     return sum + childTotal;
   }, 0);
 
-const totalSubscriptions = children.reduce((sum, child) => sum + child.enrolledCourses.length, 0);
+  const totalSubscriptions = children.reduce((sum, child) => sum + child.enrolledCourses.length, 0);
 
   return (
     <div className="space-y-4">
-      <BackBtn/>
+      <BackBtn />
       {/* ____________BANNER___________ */}
       <div className="bg-white border  rounded-2xl p-8  shadow-lg">
         <p className="font-medium opacity-90">Total Monthly Fee</p>
@@ -29,7 +28,7 @@ const totalSubscriptions = children.reduce((sum, child) => sum + child.enrolledC
         <p className="mt-3 opacity-90 text-gray-600">{totalSubscriptions} active subscriptions</p>
       </div>
       {/* ______________________________ */}
-      <ActiveSubscriptions/>
+      <ActiveSubscriptions />
     </div>
   )
 }
