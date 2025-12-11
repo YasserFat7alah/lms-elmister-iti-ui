@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import { 
-  Plus, Search, Edit3, Trash2, BookOpen, Users, Calendar, Filter, CheckCircle2, Loader2, Eye
+import {
+  Plus, Search, Edit3, Trash2, BookOpen, Users, Calendar, Filter, CheckCircle2, Eye
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ const StatusBadge = ({ status }) => {
     draft: "Draft",
     archived: "Archived",
   };
-  
+
   const normalizedStatus = status === 'inReview' ? 'in-review' : status;
 
   return (
@@ -39,17 +39,17 @@ const StatusBadge = ({ status }) => {
 
 export default function MyCoursesPage() {
   const { userInfo } = useSelector((state) => state.auth);
-  
-  const [activeTab, setActiveTab] = useState("all"); 
+
+  const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState(null); 
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   const queryParams = userInfo?._id ? { teacherId: userInfo._id } : {};
 
   const { data: coursesResponse, isLoading, refetch } = useGetCoursesQuery(queryParams, {
-    refetchOnMountOrArgChange: true 
+    refetchOnMountOrArgChange: true
   });
-  
+
   const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
 
   const courses = coursesResponse?.data || coursesResponse?.courses || [];
@@ -66,7 +66,7 @@ export default function MyCoursesPage() {
       try {
         await deleteCourse(id).unwrap();
         toast.success("Course processed successfully");
-        refetch(); 
+        refetch();
       } catch (err) {
         toast.error("Failed to process request");
       }
@@ -77,11 +77,11 @@ export default function MyCoursesPage() {
 
   return (
     <div className="p-6 min-h-screen bg-gray-50/50 space-y-6">
-      
-      <CourseDetailsModal 
-        isOpen={!!selectedCourse} 
-        onClose={() => setSelectedCourse(null)} 
-        course={selectedCourse} 
+
+      <CourseDetailsModal
+        isOpen={!!selectedCourse}
+        onClose={() => setSelectedCourse(null)}
+        course={selectedCourse}
       />
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -98,27 +98,27 @@ export default function MyCoursesPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
-           <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><BookOpen size={24}/></div>
-           <div>
-             <p className="text-gray-500 text-xs font-bold uppercase">Total Courses</p>
-             <h3 className="text-2xl font-bold">{courses.length}</h3>
-           </div>
+          <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><BookOpen size={24} /></div>
+          <div>
+            <p className="text-gray-500 text-xs font-bold uppercase">Total Courses</p>
+            <h3 className="text-2xl font-bold">{courses.length}</h3>
+          </div>
         </div>
         <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
-           <div className="p-3 bg-green-50 text-green-600 rounded-lg"><CheckCircle2 size={24}/></div>
-           <div>
-             <p className="text-gray-500 text-xs font-bold uppercase">Published</p>
-             <h3 className="text-2xl font-bold">{courses.filter(c => c.status === 'published').length}</h3>
-           </div>
+          <div className="p-3 bg-green-50 text-green-600 rounded-lg"><CheckCircle2 size={24} /></div>
+          <div>
+            <p className="text-gray-500 text-xs font-bold uppercase">Published</p>
+            <h3 className="text-2xl font-bold">{courses.filter(c => c.status === 'published').length}</h3>
+          </div>
         </div>
         <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
-           <div className="p-3 bg-purple-50 text-purple-600 rounded-lg"><Users size={24}/></div>
-           <div>
-             <p className="text-gray-500 text-xs font-bold uppercase">Total Students</p>
-             <h3 className="text-2xl font-bold">
-               {courses.reduce((acc, curr) => acc + (curr.totalStudents || 0), 0)}
-             </h3>
-           </div>
+          <div className="p-3 bg-purple-50 text-purple-600 rounded-lg"><Users size={24} /></div>
+          <div>
+            <p className="text-gray-500 text-xs font-bold uppercase">Total Students</p>
+            <h3 className="text-2xl font-bold">
+              {courses.reduce((acc, curr) => acc + (curr.totalStudents || 0), 0)}
+            </h3>
+          </div>
         </div>
       </div>
 
@@ -129,11 +129,10 @@ export default function MyCoursesPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
-                  activeTab === tab 
-                  ? "bg-white text-gray-900 shadow-sm" 
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === tab
+                  ? "bg-white text-gray-900 shadow-sm"
                   : "text-gray-500 hover:text-gray-700"
-                }`}
+                  }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
               </button>
@@ -142,9 +141,9 @@ export default function MyCoursesPage() {
 
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-            <input 
-              type="text" 
-              placeholder="Search courses..." 
+            <input
+              type="text"
+              placeholder="Search courses..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF4667]"
@@ -168,14 +167,14 @@ export default function MyCoursesPage() {
               {filteredCourses.length > 0 ? (
                 filteredCourses.map((course) => (
                   <tr key={course._id} className="hover:bg-gray-50/80 transition">
-                    
+
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="h-12 w-16 rounded-lg overflow-hidden bg-gray-200 shrink-0 border border-gray-100">
                           {course.thumbnail?.url ? (
                             <img src={course.thumbnail.url} alt="" className="h-full w-full object-cover" />
                           ) : (
-                            <div className="h-full w-full flex items-center justify-center text-gray-400"><BookOpen size={16}/></div>
+                            <div className="h-full w-full flex items-center justify-center text-gray-400"><BookOpen size={16} /></div>
                           )}
                         </div>
                         <div>
@@ -197,8 +196,8 @@ export default function MyCoursesPage() {
                     </td>
 
                     <td className="px-6 py-4">
-                        <p className="text-gray-900 font-medium">{course.subject}</p>
-                        <p className="text-xs text-gray-500">{course.gradeLevel}</p>
+                      <p className="text-gray-900 font-medium">{course.subject}</p>
+                      <p className="text-xs text-gray-500">{course.gradeLevel}</p>
                     </td>
 
                     <td className="px-6 py-4 text-xs text-gray-500">
@@ -210,10 +209,10 @@ export default function MyCoursesPage() {
 
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        
-                        <button 
+
+                        <button
                           onClick={() => setSelectedCourse(course)}
-                          className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition" 
+                          className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition"
                           title="View Details"
                         >
                           <Eye size={18} />
@@ -226,18 +225,18 @@ export default function MyCoursesPage() {
                         </Link>
 
                         {(course.status === 'draft' || course.status === 'archived' || course.status === 'in-review' || course.status === 'inReview') ? (
-                          <button 
+                          <button
                             onClick={() => handleDelete(course._id)}
-                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition" 
+                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
                             title="Archive / Delete"
                             disabled={isDeleting}
                           >
-                            {isDeleting ? <Loader2 className="animate-spin" size={18}/> : <Trash2 size={18} />}
+                            {isDeleting ? <Spinner size={18} /> : <Trash2 size={18} />}
                           </button>
                         ) : (
-                           <button disabled className="p-2 text-gray-200 cursor-not-allowed" title="Cannot delete published course">
+                          <button disabled className="p-2 text-gray-200 cursor-not-allowed" title="Cannot delete published course">
                             <Trash2 size={18} />
-                           </button>
+                          </button>
                         )}
                       </div>
                     </td>

@@ -1,8 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Clock, Video, Calendar as CalendarIcon, MapPin, Plus, MoreHorizontal, ChevronDown, Loader2 } from 'lucide-react';
+import { Clock, Video, Calendar as CalendarIcon, MapPin, Plus, MoreHorizontal, ChevronDown } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/shared/Loader";
 import AddEventModal from '@/components/shared/AddEventModal';
 import { useGetLessonsByGroupQuery } from "@/redux/api/endPoints/lessonsApiSlice";
 import { useGetMyGroupsQuery } from "@/redux/api/endPoints/groupsApiSlice";
@@ -46,17 +47,17 @@ export default function WeeklySchedule() {
     }
   }, [myGroups, selectedGroupId]);
 
-  const { 
-    data: lessonsData, 
-    isLoading: lessonsLoading, 
-    error: lessonsError 
+  const {
+    data: lessonsData,
+    isLoading: lessonsLoading,
+    error: lessonsError
   } = useGetLessonsByGroupQuery(
-    { groupId: selectedGroupId }, 
-    { skip: !selectedGroupId, refetchOnMountOrArgChange: true } 
+    { groupId: selectedGroupId },
+    { skip: !selectedGroupId, refetchOnMountOrArgChange: true }
   );
 
   const rawLessons = lessonsData?.data?.data || [];
-  
+
   const scheduleData = rawLessons.map(lesson => {
     const lessonDate = new Date(lesson.date);
     let isLive = false;
@@ -87,7 +88,7 @@ export default function WeeklySchedule() {
 
   return (
     <div className="p-4 md:p-6 max-w-6xl mx-auto">
-      
+
       {/* Header بسيط */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -100,7 +101,7 @@ export default function WeeklySchedule() {
             </h1>
             <p className="text-gray-600 mt-2">View and manage your class sessions</p>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -114,8 +115,8 @@ export default function WeeklySchedule() {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 {myGroups.map(group => (
-                  <DropdownMenuItem 
-                    key={group._id} 
+                  <DropdownMenuItem
+                    key={group._id}
                     onClick={() => setSelectedGroupId(group._id)}
                     className="flex items-center gap-2"
                   >
@@ -125,9 +126,9 @@ export default function WeeklySchedule() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             {canAddEvent && (
-              <Button 
+              <Button
                 onClick={() => setIsAddEventOpen(true)}
                 className="bg-gradient-to-r from-[#FF0055] to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white shadow-md"
               >
@@ -169,7 +170,7 @@ export default function WeeklySchedule() {
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
         {lessonsLoading ? (
           <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-            <Loader2 className="animate-spin mb-4" size={32} />
+            <Spinner size={32} className="mb-4" />
             <p>Loading schedule...</p>
           </div>
         ) : scheduleData.length === 0 ? (
@@ -178,7 +179,7 @@ export default function WeeklySchedule() {
             <h3 className="text-lg font-semibold text-gray-700 mb-2">No sessions scheduled</h3>
             <p className="text-gray-500 mb-6">No sessions found for this group yet.</p>
             {canAddEvent && (
-              <Button 
+              <Button
                 onClick={() => setIsAddEventOpen(true)}
                 className="bg-[#FF0055] hover:bg-pink-700"
               >
@@ -214,8 +215,8 @@ export default function WeeklySchedule() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {scheduleData.map((session) => (
-                  <tr 
-                    key={session.id} 
+                  <tr
+                    key={session.id}
                     className={`hover:bg-gray-50 transition-colors ${session.isLive ? 'bg-red-50' : ''}`}
                   >
                     <td className="py-5 px-6">
@@ -258,13 +259,13 @@ export default function WeeklySchedule() {
                     <td className="py-5 px-6">
                       <div className="space-y-2">
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium
-                          ${session.type === 'online' 
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                          ${session.type === 'online'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
                             : 'bg-pink-50 text-pink-700 border border-pink-200'}`}>
                           {session.type === 'online' ? <Video size={14} /> : <MapPin size={14} />}
                           <span className="capitalize">{session.type}</span>
                         </span>
-                        
+
                         {session.isLive && (
                           <div className="flex items-center gap-1.5 animate-pulse">
                             <div className="w-2 h-2 rounded-full bg-red-500" />
@@ -276,15 +277,15 @@ export default function WeeklySchedule() {
 
                     <td className="py-5 px-6">
                       {session.isLive && session.type === 'online' ? (
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow"
                         >
                           Join Now
                         </Button>
                       ) : (
-                        <Button 
-                          variant="ghost" 
+                        <Button
+                          variant="ghost"
                           size="icon"
                           className="text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                         >
@@ -300,10 +301,10 @@ export default function WeeklySchedule() {
         )}
       </div>
 
-      <AddEventModal 
-        isOpen={isAddEventOpen} 
+      <AddEventModal
+        isOpen={isAddEventOpen}
         onClose={() => setIsAddEventOpen(false)}
-        defaultGroupId={selectedGroupId} 
+        defaultGroupId={selectedGroupId}
       />
     </div>
   );

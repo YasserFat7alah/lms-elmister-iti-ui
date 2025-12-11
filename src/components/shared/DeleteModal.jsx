@@ -1,5 +1,6 @@
 import React from 'react';
-import { AlertTriangle, X, Loader2 } from 'lucide-react';
+import { AlertTriangle, X } from 'lucide-react';
+import { Spinner } from "@/components/shared/Loader";
 import { Button } from '@/components/ui/button';
 
 const DeleteModal = ({
@@ -73,7 +74,7 @@ const DeleteModal = ({
                     >
                         {isLoading ? (
                             <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <Spinner size={16} />
                                 Deleting...
                             </>
                         ) : "Delete"}

@@ -18,6 +18,10 @@ import { Button } from "@/components/ui/button";
 import { IoMdShare } from "react-icons/io";
 import { useGetPublicCourseByIdQuery } from '@/redux/api/endPoints/publicApiSlice';
 
+import { Spinner } from "@/components/shared/Loader";
+
+// ... existing imports
+
 export default function Page() {
     const { id } = useParams();
 
@@ -30,7 +34,7 @@ export default function Page() {
     const [selectedGroup, setSelectedGroup] = React.useState(null);
 
     // Handle loading & error
-    if (isLoading) return <div className="min-h-screen flex items-center justify-center p-10"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600"></div></div>;
+    if (isLoading) return <div className="min-h-screen flex items-center justify-center p-10"><Spinner /></div>;
 
     if (isError || !course) {
         return <div className="min-h-[50vh] flex flex-col items-center justify-center p-10 text-center space-y-4">

@@ -4,7 +4,10 @@ import Chat from '@/components/DashboardComponents/chat/Chat'
 import { useSearchParams } from 'next/navigation';
 import { mockTeachers } from '@/data/mockTeacher';
 
-const page = () => {
+import { Suspense } from "react";
+import { Spinner } from "@/components/shared/Loader";
+
+const MessagesContent = () => {
 
   const searchParams = useSearchParams();
   const teacherId = searchParams.get("teacherId");
@@ -38,4 +41,12 @@ const page = () => {
   );
 };
 
-export default page
+const Page = () => {
+  return (
+    <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><Spinner /></div>}>
+      <MessagesContent />
+    </Suspense>
+  )
+}
+
+export default Page

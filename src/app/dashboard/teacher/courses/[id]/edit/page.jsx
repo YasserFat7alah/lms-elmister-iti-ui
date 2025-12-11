@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Formik, Form } from "formik";
 import { toast } from "react-hot-toast";
-import { Users, CheckCircle2, Lock, Trash2, Edit3, ArrowLeft, Loader2, Calendar, DollarSign } from "lucide-react";
+import { Users, CheckCircle2, Lock, Trash2, Edit3, ArrowLeft, Calendar, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 
@@ -211,7 +211,7 @@ export default function EditCoursePage() {
           </div>
 
           <Button variant="ghost" size="sm" onClick={handleDeleteCourse} className="text-red-500 hover:bg-red-50">
-            {isDeletingCourse ? <Loader2 className="animate-spin" /> : <Trash2 size={18} className="mr-2" />}
+            {isDeletingCourse ? <Spinner size={20} /> : <Trash2 size={18} className="mr-2" />}
             Delete Course
           </Button>
         </div>
@@ -219,7 +219,7 @@ export default function EditCoursePage() {
 
       <main className="max-w-7xl  px-4 sm:px-6 lg:px-8 py-4">
         <Formik
-        enableReinitialize={true}
+          enableReinitialize={true}
           initialValues={{
             title: course.title || "",
             subTitle: course.subTitle || "",
@@ -231,7 +231,7 @@ export default function EditCoursePage() {
             thumbnail: course.thumbnail || null,
             video: course.video || null,
           }}
-          onSubmit={() => {}}
+          onSubmit={() => { }}
         >
           {({ values, setFieldValue }) => (
             <>

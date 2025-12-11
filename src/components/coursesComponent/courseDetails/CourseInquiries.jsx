@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSelector } from 'react-redux';
 import { useDeleteCommentMutation } from '@/redux/api/endPoints/commentsApiSlice';
-import { Trash2, Loader2, MessageSquareReply } from 'lucide-react';
+import { Trash2, MessageSquareReply } from 'lucide-react';
 import DeleteModal from '@/components/shared/DeleteModal';
 
 const CourseInquiries = ({ comments = [], teacherId }) => {

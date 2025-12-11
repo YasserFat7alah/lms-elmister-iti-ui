@@ -7,7 +7,10 @@ import Filterition from '@/components/coursesComponent/Filterition'
 import SectionHeader from '@/components/shared/SectionHeader'
 import { useGetPublicCoursesQuery } from '@/redux/api/endPoints/publicApiSlice'
 
-const Page = () => {
+import { Suspense } from "react";
+import { Spinner } from "@/components/shared/Loader";
+
+const CoursesContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -229,6 +232,14 @@ const Page = () => {
 
       </div>
     </>
+  )
+}
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><Spinner /></div>}>
+      <CoursesContent />
+    </Suspense>
   )
 }
 

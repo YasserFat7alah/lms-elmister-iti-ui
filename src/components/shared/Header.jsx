@@ -62,12 +62,7 @@ export function Header() {
     { label: "About us", href: "/about" },
   ];
 
-  const btnCommon =
-    "inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium transition-transform transform will-change-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#FFB0C0]";
 
-  const btnPrimary = `${btnCommon} bg-gradient-to-r from-[#FF4667] to-[#FF0055] text-white shadow-md hover:scale-[1.02]`;
-  const btnSecondary = `${btnCommon} bg-[#E7E7E7] text-gray-800 hover:brightness-95`;
-  const btnGhost = `${btnCommon} bg-white text-gray-700 border border-transparent hover:bg-gray-50`;
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-200" style={{ ["--header-height"]: "4.5rem" }}>

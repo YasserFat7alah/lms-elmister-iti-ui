@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import FormikInput from "@/components/authComponents/FormikInput"; 
+import FormikInput from "@/components/authComponents/FormikInput";
 import { Spinner } from "@/components/shared/Loader";
 import { LockKeyhole } from "lucide-react";
 import Image from "next/image";
@@ -22,30 +22,32 @@ const resetPasswordSchema = Yup.object().shape({
     .required("Confirm Password is required"),
 });
 
-export default function ResetPasswordPage() {
+import { Suspense } from "react";
+
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const emailFromUrl = searchParams.get('email') || "";
 
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
 
   const handleFormikSubmit = async (values, { resetForm }) => {
     try {
-        console.log("Values from Formik:", values);
-const dataToSend = {
+      console.log("Values from Formik:", values);
+      const dataToSend = {
         email: values.email,
         otp: values.otp,
-        newPassword: values.password 
+        newPassword: values.password
       };
-      
-      console.log("Data being sent to Backend:", dataToSend); 
+
+      console.log("Data being sent to Backend:", dataToSend);
       const res = await resetPassword(dataToSend).unwrap();
-      
+
       toast.success("Password reset successfully! You can login now.");
-      
+
       router.push("/login");
-      
+
     } catch (err) {
       toast.error(err?.data?.message || err.error || "Failed to reset password");
     }
@@ -53,7 +55,7 @@ const dataToSend = {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-[800px] bg-gray-50">
-      
+
       <div className="hidden bg-muted lg:block relative h-full">
         <img
           src="https://images.unsplash.com/photo-1555421689-491a97ff2040?q=80&w=2070&auto=format&fit=crop"
@@ -66,11 +68,11 @@ const dataToSend = {
       {/* Right Side Form */}
       <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="mx-auto grid w-full max-w-[400px] gap-6">
-          
+
           {/* Header & Logo */}
           <div className="mb-4 flex items-center justify-between">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]"
             >
               Back Home
@@ -88,22 +90,22 @@ const dataToSend = {
               Enter the OTP sent to your email and your new password.
             </p>
           </div>
-          
+
           {/* Formik Integration */}
           <Formik
-            initialValues={{ 
-                email: emailFromUrl,
-                otp: "", 
-                password: "", 
-                confirmPassword: "" 
+            initialValues={{
+              email: emailFromUrl,
+              otp: "",
+              password: "",
+              confirmPassword: ""
             }}
             validationSchema={resetPasswordSchema}
-            enableReinitialize 
+            enableReinitialize
             onSubmit={handleFormikSubmit}
           >
             {({ isSubmitting }) => (
               <Form className="space-y-4">
-                
+
                 {/* Email Field */}
                 <FormikInput label="Email Address" name="email" type="email" placeholder="name@example.com" />
 
@@ -114,26 +116,34 @@ const dataToSend = {
                 <FormikInput label="New Password" name="password" type="password" placeholder="******" />
                 <FormikInput label="Confirm Password" name="confirmPassword" type="password" placeholder="******" />
 
-                <Button 
-                  type="submit" 
-                  className="w-full bg-[#FF4667] hover:bg-[#ff274f] mt-4" 
+                <Button
+                  type="submit"
+                  className="w-full bg-[#FF4667] hover:bg-[#ff274f] mt-4"
                   disabled={isLoading || isSubmitting}
                 >
                   {isLoading ? <Spinner /> : "Reset Password"}
                 </Button>
-                
+
               </Form>
             )}
           </Formik>
-          
+
           <div className="mt-4 text-center text-sm">
-             <Link href="/login" className="font-semibold text-indigo-600 hover:text-indigo-500">
+            <Link href="/login" className="font-semibold text-indigo-600 hover:text-indigo-500">
               Back to Login
             </Link>
           </div>
 
         </div>
       </div>
-    </div>  
+    </div>
   );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><Spinner /></div>}>
+      <ResetPasswordContent />
+    </Suspense>
+  )
 }

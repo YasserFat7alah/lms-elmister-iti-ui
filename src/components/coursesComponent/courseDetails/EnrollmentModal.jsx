@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from 'react';
 import { useCheckoutMutation } from "@/redux/api/endPoints/enrollmentApiSlice";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Spinner } from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { useGetMyChildrenQuery } from '@/redux/api/endPoints/usersApiSlice';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -76,7 +77,7 @@ const EnrollmentModal = ({ isOpen, onClose, course, selectedGroup }) => {
 
                     {isLoadingChildren ? (
                         <div className="flex justify-center py-6">
-                            <Loader2 className="h-8 w-8 animate-spin text-[#FF4667]" />
+                            <Spinner size={32} />
                         </div>
                     ) : children.length === 0 ? (
                         <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
@@ -170,7 +171,7 @@ const EnrollmentModal = ({ isOpen, onClose, course, selectedGroup }) => {
                     >
                         {isCheckingOut ? (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Spinner size={16} className="mr-2" />
                                 Processing...
                             </>
                         ) : (

@@ -17,7 +17,9 @@ import logo from "@/assets/images/logo.png";
 import { BASE_URL, USERS_URL_DATA } from "@/constants";
 import { toast } from "react-hot-toast";
 
-export default function LoginPage() {
+import { Suspense } from "react";
+
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useDispatch();
@@ -86,7 +88,7 @@ export default function LoginPage() {
         oauthToastId.current = null;
       }
     })();
-  }, [searchParams?.toString(), dispatch, router]);
+  }, [searchParams, dispatch, router]); // Optimized dependencies
 
   const handleLoginSubmit = async (values, { setSubmitting }) => {
     setServerError("");
@@ -188,4 +190,12 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><Spinner /></div>}>
+      <LoginContent />
+    </Suspense>
+  )
 }
