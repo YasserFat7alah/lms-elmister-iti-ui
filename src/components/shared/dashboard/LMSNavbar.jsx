@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { 
-  Menu, LogOut, LayoutDashboard, Search, User, Bell, Settings 
+import {
+  Menu, LogOut, LayoutDashboard, Search, User, Bell, Settings
 } from "lucide-react";
 import { logout } from "@/redux/slices/authSlice";
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; 
+import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -26,7 +26,7 @@ const LMSNavbar = ({ setSidebarOpen }) => {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
-  
+
   const { userInfo } = useSelector((state) => state.auth);
   const [logoutApiCall] = useLogoutApiMutation();
 
@@ -43,21 +43,21 @@ const LMSNavbar = ({ setSidebarOpen }) => {
       console.warn("Logout failed", err);
     } finally {
       dispatch(logout());
-      router.replace('/login'); 
+      router.replace('/login');
     }
-  }; 
+  };
 
   const getInitials = (name) => name ? name.substring(0, 2).toUpperCase() : "U";
 
-  if (!isMounted) return <div className="h-16 bg-white border-b border-gray-200"></div>;
+  if (!isMounted || !user) return <div className="h-16 bg-white border-b border-gray-200 animate-pulse"></div>;
 
   return (
     <header className="sticky top-0 z-30 w-full bg-white border-b border-gray-200 h-16">
       <div className="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
-        
+
         <div className="flex items-center gap-4 flex-1">
           {setSidebarOpen && (
-            <button 
+            <button
               onClick={() => setSidebarOpen(prev => !prev)}
               className="lg:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-md transition-colors"
             >
@@ -67,15 +67,15 @@ const LMSNavbar = ({ setSidebarOpen }) => {
 
           <div className="hidden md:flex items-center w-full max-w-md relative">
             <Search className="absolute left-3 text-gray-400" size={18} />
-            <Input 
-              placeholder="Search courses, students..." 
+            <Input
+              placeholder="Search courses, students..."
               className="pl-10 bg-gray-50 border-gray-200 focus:bg-white transition-all rounded-full h-10"
             />
           </div>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          
+
           <button className="md:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-full">
             <Search size={20} />
           </button>
@@ -96,21 +96,21 @@ const LMSNavbar = ({ setSidebarOpen }) => {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            
+
             <DropdownMenuContent className="w-60 mt-2" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none truncate">{user?.name}</p>
                   <p className="text-xs leading-none text-muted-foreground truncate">{user?.email}</p>
                   <div className="pt-1">
-                     <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold">
-                        {user?.role || 'Student'}
-                     </Badge>
+                    <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold">
+                      {user?.role || ''}
+                    </Badge>
                   </div>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/dashboard/teacher/analytics' : '/dashboard/student/my-learning')} className="cursor-pointer">
+              <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/dashboard/teacher/analytics' : '/dashboard/student/my-learning')} className="cursor-pointer">
                 <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/dashboard/teacher/profile' : '/dashboard/student/profile')} className="cursor-pointer">
