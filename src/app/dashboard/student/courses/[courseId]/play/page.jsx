@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { courseCurriculum } from "@/data/courseContent";
 import { 
   PlayCircle, CheckCircle, FileText, HelpCircle, 
   ChevronLeft, ChevronRight, Lock, Unlock 
@@ -12,7 +11,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export default function CoursePlayerPage() {
-  const [activeLesson, setActiveLesson] = useState(courseCurriculum[0].lessons[0]);
   const [completedLessons, setCompletedLessons] = useState([101, 102]);
 
   const handleLessonChange = (lesson) => {

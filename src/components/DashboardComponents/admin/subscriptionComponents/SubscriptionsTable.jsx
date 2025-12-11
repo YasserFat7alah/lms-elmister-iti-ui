@@ -428,7 +428,7 @@ const SubscriptionsTable = () => {
                         </td>
 
                         <td className="pl-2 py-3  ">
-                          <div className="flex items-center gap-2">
+                          <div className="flex justify-around">
                             <StatusDropdownSub
                               currentStatus={item.status}
                               subscriptionId={item.id}
