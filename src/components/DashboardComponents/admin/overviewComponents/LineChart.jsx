@@ -17,16 +17,7 @@ import {
 } from "recharts";
 import { TrendingDown, TrendingUp, Users, UserPlus } from "lucide-react";
 
-const Linechart = () => {
-  const data = [
-    { day: "Mon", newEnrollments: 20, activeUsers: 150 },
-    { day: "Tue", newEnrollments: 25, activeUsers: 160 },
-    { day: "Wed", newEnrollments: 18, activeUsers: 155 },
-    { day: "Thu", newEnrollments: 30, activeUsers: 170 },
-    { day: "Fri", newEnrollments: 22, activeUsers: 165 },
-    { day: "Sat", newEnrollments: 15, activeUsers: 140 },
-    { day: "Sun", newEnrollments: 10, activeUsers: 130 },
-  ];
+const Linechart = ({ data = [] }) => {
 
   const totalEnrollments = data.reduce((acc, item) => acc + item.newEnrollments, 0);
   const avgActiveUsers = Math.round(data.reduce((acc, item) => acc + item.activeUsers, 0) / data.length);
@@ -38,8 +29,8 @@ const Linechart = () => {
           <p className="text-sm font-semibold text-gray-800 mb-2">{payload[0].payload.day}</p>
           {payload.map((entry, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
-              <div 
-                className="w-3 h-3 rounded-full" 
+              <div
+                className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
               <span className="text-gray-600">{entry.name}:</span>
@@ -53,8 +44,8 @@ const Linechart = () => {
   };
 
   return (
-    <Card className="shadow-xl rounded-2xl bg-gradient-to-br from-white to-gray-50/50 border border-gray-100/50 overflow-hidden">
-      <CardHeader className="pb-4 bg-gradient-to-r from-[#FF0055]/5 to-indigo-500/5 border-b border-gray-100">
+    <Card className="shadow-xl rounded-2xl bg-linear-to-br from-white to-gray-50/50 border border-gray-100/50 overflow-hidden">
+      <CardHeader className="pb-4 bg-linear-to-r from-[#FF0055]/5 to-indigo-500/5 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -71,7 +62,7 @@ const Linechart = () => {
       <CardContent className="p-6">
         {/* Stats Row */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-gradient-to-br from-[#FF0055]/10 to-[#FF0055]/5 p-4 rounded-xl border border-[#FF0055]/20">
+          <div className="bg-linear-to-br from-[#FF0055]/10 to-[#FF0055]/5 p-4 rounded-xl border border-[#FF0055]/20">
             <div className="flex items-center gap-2 mb-2">
               <div className="p-2 bg-[#FF0055]/20 rounded-lg">
                 <UserPlus className="w-4 h-4 text-[#FF0055]" />
@@ -85,7 +76,7 @@ const Linechart = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 p-4 rounded-xl border border-indigo-500/20">
+          <div className="bg-linear-to-br from-indigo-500/10 to-indigo-500/5 p-4 rounded-xl border border-indigo-500/20">
             <div className="flex items-center gap-2 mb-2">
               <div className="p-2 bg-indigo-500/20 rounded-lg">
                 <Users className="w-4 h-4 text-indigo-600" />
@@ -106,17 +97,17 @@ const Linechart = () => {
             <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <defs>
                 <linearGradient id="colorEnrollments" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#FF0055" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="#FF0055" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#FF0055" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#FF0055" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorActiveUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="#e5e7eb" 
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#e5e7eb"
                 vertical={false}
               />
               <XAxis
@@ -133,7 +124,7 @@ const Linechart = () => {
                 style={{ fontSize: "12px", fontWeight: "500" }}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Legend 
+              <Legend
                 wrapperStyle={{ paddingTop: "20px" }}
                 iconType="circle"
                 formatter={(value) => <span className="text-sm font-medium text-gray-700">{value}</span>}
@@ -144,14 +135,14 @@ const Linechart = () => {
                 name="New Enrollments"
                 stroke="#FF0055"
                 strokeWidth={3}
-                dot={{ 
-                  r: 5, 
-                  fill: "#FF0055", 
-                  strokeWidth: 2, 
-                  stroke: "#fff" 
+                dot={{
+                  r: 5,
+                  fill: "#FF0055",
+                  strokeWidth: 2,
+                  stroke: "#fff"
                 }}
-                activeDot={{ 
-                  r: 7, 
+                activeDot={{
+                  r: 7,
                   fill: "#FF0055",
                   strokeWidth: 3,
                   stroke: "#fff"
@@ -164,14 +155,14 @@ const Linechart = () => {
                 name="Active Users"
                 stroke="#6366f1"
                 strokeWidth={3}
-                dot={{ 
-                  r: 5, 
-                  fill: "#6366f1", 
-                  strokeWidth: 2, 
-                  stroke: "#fff" 
+                dot={{
+                  r: 5,
+                  fill: "#6366f1",
+                  strokeWidth: 2,
+                  stroke: "#fff"
                 }}
-                activeDot={{ 
-                  r: 7, 
+                activeDot={{
+                  r: 7,
                   fill: "#6366f1",
                   strokeWidth: 3,
                   stroke: "#fff"
