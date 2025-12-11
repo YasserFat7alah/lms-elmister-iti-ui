@@ -1,5 +1,5 @@
 import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin'
-import TicketsTable from '@/components/dashboardComponents/admin/ticketsComponent/TicketsTable'
+import TicketsTable from '@/components/DashboardComponents/admin/ticketsComponent/TicketsTable'
 import React from 'react'
 
 const page = () => {

@@ -1,5 +1,5 @@
 import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin'
-import InvoiceTable from '@/components/dashboardComponents/admin/invoices/InvoiceTable'
+import InvoiceTable from '@/components/DashboardComponents/admin/invoices/InvoiceTable'
 import React from 'react'
 
 const page = () => {

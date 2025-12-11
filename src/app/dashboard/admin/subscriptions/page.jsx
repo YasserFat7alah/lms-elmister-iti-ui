@@ -1,6 +1,6 @@
 import React from 'react'
 import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin'
-import SubscriptionsTable from './../../../../components/dashboardComponents/admin/subscriptionComponents/SubscriptionsTable';
+import SubscriptionsTable from './../../../../components/DashboardComponents/admin/subscriptionComponents/SubscriptionsTable';
 
 const page = () => {
   return (

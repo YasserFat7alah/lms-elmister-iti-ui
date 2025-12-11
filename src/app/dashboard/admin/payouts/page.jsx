@@ -1,5 +1,5 @@
 import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin'
-import PayoutsTable from '@/components/dashboardComponents/admin/payouts/PayoutsTable'
+import PayoutsTable from '@/components/DashboardComponents/admin/payouts/PayoutsTable'
 import React from 'react'
 
 const page = () => {

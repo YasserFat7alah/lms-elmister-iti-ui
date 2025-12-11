@@ -1,5 +1,5 @@
 import { apiSlice } from '../apiSlice';
-import { USERS_URL, USERS_URL_DATA } from '@/constants'; 
+import { USERS_LIST_URL, USERS_URL, USERS_URL_DATA } from '@/constants'; 
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -84,7 +84,19 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['User'], 
     }),
+
+    getAllUsers : builder.query({
+      query: (params)=>({
+        url : USERS_LIST_URL , 
+        method : 'GET' ,
+        params : params ,
+      }),
+      providesTags: ["User"]
+    })
+
+
   }),
+
 });
 
 export const { 
@@ -97,5 +109,6 @@ export const {
   useUploadAvatarMutation ,
   useForgotPasswordMutation,
   useResetPasswordMutation,
-  useCompleteProfileMutation
+  useCompleteProfileMutation ,
+  useGetAllUsersQuery,
 } = usersApiSlice;

@@ -169,7 +169,7 @@ const Sidebar = ({ open, setOpen }) => {
           {isAdmin ? (
             <div className="space-y-6">
               {links.map((group, index) => (
-                <div key={group.group}>
+                <div key={index}>
                   <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-3">
                     {group.group}
                   </h3>

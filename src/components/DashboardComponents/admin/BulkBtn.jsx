@@ -7,7 +7,7 @@ const BulkBtn = ({ selectedCount = 0, onDelete = () => {}, deleteIcon = <Trash2 
     if (selectedCount === 0) return null;
 
   return (
-    <div className="flex items-center gap-3 animate-in slide-in-from-right duration-300">
+    <div className="flex items-center gap-2 animate-in slide-in-from-right duration-300">
       <span className="text-sm font-medium text-gray-700">
         {selectedCount} {label}
       </span>

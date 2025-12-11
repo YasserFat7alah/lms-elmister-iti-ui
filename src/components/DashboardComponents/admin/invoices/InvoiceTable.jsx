@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import BulkBtn from "../BulkBtn";
-import { Eye, DollarSign, FileText, Clock, CheckCircle } from "lucide-react";
+import { Eye, DollarSign, FileText, Clock, CheckCircle, Search, ChevronUp, ChevronDown } from "lucide-react";
 import ConfirmDeletePopUp from "../newsletter/ConfirmDeletePopup";
-import StatsCard from "../payouts/StatsCard";
+import InvoiceState from "./InvoiceState";
 
 const InvoiceTable = () => {
   const [data, setData] = useState([
@@ -61,15 +61,75 @@ const InvoiceTable = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [isBulkDelete, setIsBulkDelete] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Calculate statistics
+  // Filter data based on search term
+  const filteredData = React.useMemo(() => {
+    if (!searchTerm) return data;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return data.filter(item =>
+      item.stripeInvoiceId.toLowerCase().includes(searchLower) ||
+      item.stripeSubscriptionId.toLowerCase().includes(searchLower) ||
+      item.currency.toLowerCase().includes(searchLower) ||
+      item.status.toLowerCase().includes(searchLower) ||
+      item.amountPaid.toString().includes(searchTerm) ||
+      item.amountDue.toString().includes(searchTerm)
+    );
+  }, [data, searchTerm]);
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Sort data if sortConfig is set
+  const sortedData = React.useMemo(() => {
+    const dataToSort = filteredData;
+    if (!sortConfig.key) return dataToSort;
+
+    return [...dataToSort].sort((a, b) => {
+      let aValue, bValue;
+      
+      if (sortConfig.key === 'paidAt' || sortConfig.key === 'periodStart' || sortConfig.key === 'periodEnd') {
+        aValue = new Date(a[sortConfig.key]).getTime();
+        bValue = new Date(b[sortConfig.key]).getTime();
+      } else {
+        aValue = a[sortConfig.key];
+        bValue = b[sortConfig.key];
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [filteredData, sortConfig]);
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return <ChevronUp className="w-3 h-3 opacity-30" />;
+    }
+    return sortConfig.direction === 'asc' 
+      ? <ChevronUp className="w-3 h-3" /> 
+      : <ChevronDown className="w-3 h-3" />;
+  };
+
+  // Calculate statistics based on filtered data
   const stats = {
-    total: data.length,
-    paid: data.filter((item) => item.status === "paid").length,
-    pending: data.filter((item) => item.status === "pending").length,
-    totalAmountPaid: data.reduce((acc, item) => acc + item.amountPaid, 0),
-    totalAmountDue: data.reduce((acc, item) => acc + item.amountDue, 0),
-    totalPlatformFee: data.reduce((acc, item) => acc + item.platformFee, 0),
+    total: filteredData.length,
+    paid: filteredData.filter((item) => item.status === "paid").length,
+    pending: filteredData.filter((item) => item.status === "pending").length,
+    totalAmountPaid: filteredData.reduce((acc, item) => acc + item.amountPaid, 0),
+    totalAmountDue: filteredData.reduce((acc, item) => acc + item.amountDue, 0),
+    totalPlatformFee: filteredData.reduce((acc, item) => acc + item.platformFee, 0),
   };
 
   // Toggle single row selection
@@ -81,10 +141,10 @@ const InvoiceTable = () => {
 
   // Select all rows
   const toggleSelectAll = () => {
-    if (selectedRows.length === data.length) {
+    if (selectedRows.length === filteredData.length && filteredData.length > 0) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(data.map((item) => item.id));
+      setSelectedRows(filteredData.map((item) => item.id));
     }
   };
 
@@ -98,7 +158,7 @@ const InvoiceTable = () => {
   const handleBulkDelete = () => {
     if (selectedRows.length === 0) return;
     setIsBulkDelete(true);
-    setDeleteConfirm(true);
+    setDeleteConfirm({ type: 'bulk' });
   };
 
   // Open delete confirmation for single item
@@ -128,217 +188,344 @@ const InvoiceTable = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-          <StatsCard
-            icon={FileText}
-            title="Total Invoices"
-            value={stats.total}
-            color="bg-gray-600"
-          />
-          <StatsCard
-            icon={CheckCircle}
-            title="Paid"
-            value={stats.paid}
-            color="bg-green-500"
-          />
-          <StatsCard
-            icon={Clock}
-            title="Pending"
-            value={stats.pending}
-            color="bg-amber-500"
-          />
-          <StatsCard
-            icon={DollarSign}
-            title="Total Paid"
-            value={`$${stats.totalAmountPaid.toLocaleString()}`}
-            color="bg-emerald-600"
-          />
-          <StatsCard
-            icon={DollarSign}
-            title="Total Due"
-            value={`$${stats.totalAmountDue.toLocaleString()}`}
-            color="bg-blue-500"
-          />
-          <StatsCard
-            icon={DollarSign}
-            title="Platform Fees"
-            value={`$${stats.totalPlatformFee.toLocaleString()}`}
-            color="bg-purple-500"
-          />
-        </div>
-
+      <div className="max-w-7xl mx-auto">    
+        <InvoiceState stats={stats}/>
         <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
-          {/* Table Header */}
+          {/* Table Header - Search and Bulk Button */}
           <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
-            <div className="flex items-center justify-between flex-col md:flex-row gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                  Invoices Overview
-                  <span className="text-lg">📄</span>
-                </h2>
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-end gap-3 w-full">
+              {/* Bulk Button */}
+              <div className="flex-shrink-0">
+                <BulkBtn
+                  selectedCount={selectedRows.length}
+                  onDelete={handleBulkDelete}
+                  label="Invoice(s)"
+                />
+              </div>
+              {/* Search */}
+              <div className="relative lg:w-64 xl:w-72">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search invoices..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2.5 border bg-white border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392b80]/20 focus:border-[#392b80] transition-all text-sm"
+                />
               </div>
 
-              {/* Bulk Delete Button */}
-              <BulkBtn
-                selectedCount={selectedRows.length}
-                onDelete={handleBulkDelete}
-                label="Invoice(s)"
-              />
+            
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              {/* HEAD TABLE */}
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-4 text-left">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedRows.length === data.length && data.length > 0
-                      }
-                      onChange={toggleSelectAll}
-                      className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
-                    />
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    InvoiceId
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    SubscriptionId
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Amount Paid
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Amount Due
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Paid At
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Period Start
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Period End
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Payment
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-gray-100">
-                {data.length > 0 ? (
-                  data.map((item) => (
-                    <tr
-                      key={item.id}
-                      className={`transition-colors cursor-pointer ${
-                        selectedRows.includes(item.id)
-                          ? "bg-[#392b80]/10"
-                          : "hover:bg-gray-50"
-                      }`}
-                      onClick={() => toggleRowSelection(item.id)}
+          {/* Desktop Table View */}
+          <div className="hidden lg:block">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="pl-4 py-3 text-left w-10">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.length === filteredData.length && filteredData.length > 0}
+                        onChange={toggleSelectAll}
+                        className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
+                      />
+                    </th>
+                    <th 
+                      className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => handleSort('stripeInvoiceId')}
                     >
-                      {/* Checkbox */}
-                      <td className="px-6 py-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(item.id)}
-                          onChange={() => toggleRowSelection(item.id)}
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-4 h-4 text-[#392b80] border-gray-300 rounded cursor-pointer"
-                        />
-                      </td>
+                      <div className="flex items-center gap-1">
+                        Invoice ID
+                        {getSortIcon('stripeInvoiceId')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => handleSort('stripeSubscriptionId')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Subscription ID
+                        {getSortIcon('stripeSubscriptionId')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => handleSort('amountPaid')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Amount Paid
+                        {getSortIcon('amountPaid')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => handleSort('amountDue')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Amount Due
+                        {getSortIcon('amountDue')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => handleSort('status')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Status
+                        {getSortIcon('status')}
+                      </div>
+                    </th>
+                    <th 
+                      className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => handleSort('paidAt')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Paid At
+                        {getSortIcon('paidAt')}
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Invoice
+                    </th>
+                  </tr>
+                </thead>
 
-                      {/* stripeInvoiceId */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-semibold text-[#392b80]">
-                          {item.stripeInvoiceId}
-                        </span>
-                      </td>
+                <tbody className="divide-y divide-gray-100">
+                  {sortedData.length > 0 ? (
+                    sortedData.map((item) => (
+                      <tr
+                        key={item.id}
+                        className={`transition-colors cursor-pointer ${
+                          selectedRows.includes(item.id)
+                            ? "bg-[#392b80]/10"
+                            : "hover:bg-gray-50"
+                        }`}
+                        onClick={() => toggleRowSelection(item.id)}
+                      >
+                        {/* Checkbox */}
+                        <td className="pl-4 py-3">
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(item.id)}
+                            onChange={() => toggleRowSelection(item.id)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-4 h-4 text-[#392b80] border-gray-300 rounded cursor-pointer focus:ring-[#392b80]"
+                          />
+                        </td>
 
-                      {/* stripeSubscriptionId */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-medium text-gray-700">
-                          {item.stripeSubscriptionId}
-                        </span>
-                      </td>
-
-                      {/* amountPaid */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <p className="font-medium text-gray-700">
-                          <span className="text-green-600">
-                            ${item.amountPaid}
-                          </span>{" "}
-                          <span className="text-gray-400 text-xs">
-                            {item.currency}
+                        {/* stripeInvoiceId */}
+                        <td className="px-4 py-3">
+                          <span className="text-sm font-semibold text-[#392b80] truncate block max-w-xs">
+                            {item.stripeInvoiceId}
                           </span>
-                        </p>
-                      </td>
+                        </td>
 
-                      {/* amountDue */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <p className="font-medium text-gray-700">
-                          <span className="text-blue-600">
-                            ${item.amountDue}
-                          </span>{" "}
-                          <span className="text-gray-400 text-xs">
-                            {item.currency}
+                        {/* stripeSubscriptionId */}
+                        <td className="px-4 py-3">
+                          <span className="text-sm font-medium text-gray-700 truncate block max-w-xs">
+                            {item.stripeSubscriptionId}
                           </span>
-                        </p>
-                      </td>
+                        </td>
 
-                      {/* Paid At */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">
-                          {new Date(item.paidAt).toLocaleDateString()}
+                        {/* amountPaid */}
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col">
+                            <p className="font-medium text-gray-700">
+                              <span className="text-green-600">
+                                ${item.amountPaid}
+                              </span>
+                              <span className="text-gray-400 text-xs ml-1">
+                                {item.currency}
+                              </span>
+                            </p>
+                            <div className="text-xs text-gray-500 mt-1">
+                              <span className="font-medium">Fee: </span>
+                              <span>${item.platformFee}</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* amountDue */}
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-gray-700">
+                            <span className="text-blue-600">
+                              ${item.amountDue}
+                            </span>
+                            <span className="text-gray-400 text-xs ml-1">
+                              {item.currency}
+                            </span>
+                          </p>
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+                            item.status === 'paid' ? 'bg-green-100 text-green-700' :
+                            'bg-amber-100 text-amber-700'
+                          }`}>
+                            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                          </span>
+                        </td>
+
+                        {/* Paid At */}
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col">
+                            <span className="text-sm text-gray-600">
+                              {new Date(item.paidAt).toLocaleDateString()}
+                            </span>
+                            <div className="text-xs text-gray-500 mt-1">
+                              <span className="font-medium">Period: </span>
+                              <span>
+                                {new Date(item.periodStart).toLocaleDateString()} - {new Date(item.periodEnd).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Invoice URL */}
+                        <td className="px-4 py-3">
+                          <a
+                            href={item.invoiceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center justify-center p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition"
+                          >
+                            <Eye className="w-5 h-5" />
+                          </a>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="8" className="px-6 py-12 text-center">
+                        <div className="flex flex-col items-center justify-center text-gray-500">
+                          <FileText className="w-12 h-12 mb-3 text-gray-300" />
+                          <p>No Invoices Found</p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile/Tablet Card View */}
+          <div className="lg:hidden">
+            {/* Select All Checkbox for Mobile */}
+            {sortedData.length > 0 && (
+              <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200">
+                <input
+                  type="checkbox"
+                  checked={selectedRows.length === sortedData.length && sortedData.length > 0}
+                  onChange={toggleSelectAll}
+                  className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
+                />
+                <span className="text-sm font-medium text-gray-700">Select All Invoices</span>
+              </div>
+            )}
+
+            {sortedData.length > 0 ? (
+              <div className="space-y-3 p-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {sortedData.map((item) => (
+                  <div
+                    key={item.id}
+                    className={`p-4 border rounded-xl transition-all ${
+                      selectedRows.includes(item.id)
+                        ? "bg-[#392b80]/10 border-[#392b80]"
+                        : "bg-white border-gray-200"
+                    }`}
+                    onClick={() => toggleRowSelection(item.id)}
+                  >
+                    <div className="space-y-4">
+                      {/* Header with checkbox and invoice info */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(item.id)}
+                            onChange={() => toggleRowSelection(item.id)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer mt-1"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-[#392b80] truncate">
+                              {item.stripeInvoiceId}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate mt-1">
+                              {item.stripeSubscriptionId}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Status Badge */}
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+                          item.status === 'paid' ? 'bg-green-100 text-green-700' :
+                          'bg-amber-100 text-amber-700'
+                        }`}>
+                          {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                         </span>
-                      </td>
+                      </div>
 
-                      {/* periodStart */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">
-                          {new Date(item.periodStart).toLocaleDateString()}
-                        </span>
-                      </td>
+                      {/* Invoice Details */}
+                      <div className="space-y-2 pl-10">
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div className="flex flex-col">
+                            <span className="font-medium text-gray-600">Amount Paid:</span>
+                            <span className="font-bold text-green-600">${item.amountPaid}</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-gray-600">Amount Due:</span>
+                            <span className="font-bold text-blue-600">${item.amountDue}</span>
+                          </div>
+                        </div>
 
-                      {/* periodEnd */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-600">
-                          {new Date(item.periodEnd).toLocaleDateString()}
-                        </span>
-                      </td>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-medium min-w-20">Fee:</span>
+                          <span>${item.platformFee}</span>
+                          <span className="text-xs text-gray-400">({item.currency})</span>
+                        </div>
 
-                      {/* invoiceUrl */}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <span className="font-medium">Paid:</span>
+                            <span>{new Date(item.paidAt).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <span className="font-medium">Period:</span>
+                            <span className="text-xs">
+                              {new Date(item.periodStart).toLocaleDateString()} - {new Date(item.periodEnd).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Invoice Link */}
+                      <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
                         <a
                           href={item.invoiceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center justify-center"
+                          className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium text-sm"
                         >
-                          <Eye className="w-8 h-8 p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition" />
+                          <Eye className="w-4 h-4" />
+                          <span>View Invoice</span>
                         </a>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="9" className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-500">
-                        <FileText className="w-12 h-12 mb-3 text-gray-300" />
-                        <p>No Invoices Found</p>
                       </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 text-center bg-white">
+                <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <p className="text-gray-500">No Invoices Found</p>
+              </div>
+            )}
           </div>
         </Card>
       </div>
