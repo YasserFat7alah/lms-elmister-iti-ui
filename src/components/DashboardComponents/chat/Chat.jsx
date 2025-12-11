@@ -1,15 +1,42 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import React, { useState, useEffect, useRef } from "react";
+import { FaRegComment } from "react-icons/fa";
+import { NewContact } from "./NewContact";
 
 const Chat = ({ selectedTeacher, teachers, setSelectedTeacher }) => {
   const [messages, setMessages] = useState(selectedTeacher?.messages || []);
   const [input, setInput] = useState("");
   const [search, setSearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showNewContact, setShowNewContact] = useState(false);
+
   const bottomRef = useRef(null);
 
-  // Filter teachers by name
+  // Array   contacts
+  const contacts = [
+    {
+      id: "mock_teacher_01",
+      name: "John Doe",
+      specialization: "Mathematics",
+      avatar: "/assets/imgs/teacher1.jpg",
+      degree: "M.Sc in Applied Mathematics",
+      subjects: ["Statistics", "Algebra"],
+      availability: ["online"],
+      messages: []
+    },
+    {
+      id: "mock_teacher_02",
+      name: "Jane Smith",
+      specialization: "Physics",
+      avatar: "/assets/imgs/teacher2.jpg",
+      degree: "Ph.D in Physics",
+      subjects: ["Mechanics", "Optics"],
+      availability: ["offline"],
+      messages: []
+    }
+  ];
+
   const filteredTeachers = teachers.filter((t) =>
     t.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -28,7 +55,7 @@ const Chat = ({ selectedTeacher, teachers, setSelectedTeacher }) => {
   const handleSelectTeacher = (teacher) => {
     setSelectedTeacher(teacher);
     setMessages(teacher.messages || []);
-    setSidebarOpen(false); 
+    setSidebarOpen(false);
   };
 
   // Send message
@@ -53,7 +80,6 @@ const Chat = ({ selectedTeacher, teachers, setSelectedTeacher }) => {
 
   return (
     <div className="flex h-[570px] bg-white rounded-lg shadow-md relative">
-
       {/* LEFT TEACHER LIST / SIDEBAR */}
       <div
         className={`fixed top-0 left-0 h-full w-72 bg-white border-r p-4 flex flex-col z-50
@@ -61,7 +87,19 @@ const Chat = ({ selectedTeacher, teachers, setSelectedTeacher }) => {
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:relative md:w-1/3 md:flex`}
       >
-        <h4 className="font-semibold text-lg text-[#392b80] py-4">Messages</h4>
+        <div className="flex items-center justify-between py-4">
+          <h4 className="font-semibold text-lg text-[#392b80] flex items-center gap-2">
+            Messages
+<FaRegComment
+  className="w-5 h-5 cursor-pointer hover:text-[#FF0055] transition"
+  onClick={() => {
+    setShowNewContact(true);
+    setSidebarOpen(false);
+  }}
+/>
+          </h4>
+        </div>
+
         <input
           type="text"
           value={search}
@@ -154,7 +192,7 @@ const Chat = ({ selectedTeacher, teachers, setSelectedTeacher }) => {
               }`}
             >
               <p>{msg.text}</p>
-              <p className="text-xs opacity-70 mt-1">{msg.time}</p>
+              <p className="text-xs opacity-70 mt-1 text-right">{msg.time}</p>
             </div>
           ))}
           <div ref={bottomRef}></div>
@@ -178,12 +216,25 @@ const Chat = ({ selectedTeacher, teachers, setSelectedTeacher }) => {
         </div>
       </div>
 
-      {/*  Overlay */}
+      {/* Overlay */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/30 z-40 md:hidden"
           onClick={() => setSidebarOpen(false)}
         ></div>
+      )}
+
+      {/* NewContact Modal */}
+      {showNewContact && (
+        <NewContact
+          allContacts={contacts} //   array 
+          isOpen={showNewContact}
+          onClose={() => setShowNewContact(false)}
+          onSelectContact={(contact) => {
+            setSelectedTeacher(contact);
+            setShowNewContact(false);
+          }}
+        />
       )}
     </div>
   );

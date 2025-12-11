@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import Chat from '../../../../components/dashboardComponents/chat/Chat'
+import Chat from '@/components/DashboardComponents/chat/Chat'
 import { useSearchParams } from 'next/navigation';
 import { mockTeachers } from '@/data/mockTeacher';
 
@@ -29,12 +29,14 @@ const page = () => {
   };
 
   return (
+  <div className="-m-4 md:-mx-6 md:-my-3"> 
     <Chat
       selectedTeacher={selectedTeacher}
       teachers={teachers}
       setSelectedTeacher={setSelectedTeacher}
       handleSelectTeacher={handleSelectTeacher}
     />
+  </div>
   );
 };
 
