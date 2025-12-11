@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { X, Send, Mail } from "lucide-react";
+import { X, Send, Mail, Plus } from "lucide-react";
 
 const NewsPopup = ({ editingItem, setIsPopupOpen, handleSend }) => {
   const formik = useFormik({
@@ -121,7 +121,7 @@ const NewsPopup = ({ editingItem, setIsPopupOpen, handleSend }) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               rows={8}
-              className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition-all resize-none ${
+              className={`w-full h-32 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition-all resize-none ${
                 formik.touched.message && formik.errors.message
                   ? "border-blue-400 focus:ring-red-200 bg-red-50/50"
                   : "border-gray-300 focus:ring-[#392b80]/20 focus:border-[#392b80]"
@@ -147,7 +147,7 @@ const NewsPopup = ({ editingItem, setIsPopupOpen, handleSend }) => {
               disabled={formik.isSubmitting}
               className="flex-1 flex items-center justify-center gap-2 md:px-6 py-3 bg-[#392b80] cursor-pointer text-white rounded-xl font-semibold  transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send className="w-5 h-5" />
+              <Plus className="w-5 h-5" />
               {editingItem ? "Update Newsletter" : "Add Newsletter"}
             </button>
             <button

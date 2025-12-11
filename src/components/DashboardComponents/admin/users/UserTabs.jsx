@@ -1,79 +1,20 @@
 "use client";
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Users, UserCheck, GraduationCap, Baby } from "lucide-react";
-import UserStateCards from "./UserStateCards";
+import { Users, UserCheck, GraduationCap, Baby, Search } from "lucide-react";
 import UserFilteritionTable from "./UserFilteritionTable";
+import { MdAdminPanelSettings } from "react-icons/md";
+import BulkBtn from "../BulkBtn";
+import { FaUserTie } from "react-icons/fa";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const UsersTabs = () => {
-  const [users, setUsers] = useState([
-    { 
-      id: 1, 
-      name: "Ali Hassan", 
-      email: "ali@gmail.com", 
-      role: "parent",
-      phone: "+20 123 456 7890",
-      location: "Cairo, Egypt",
-      joinDate: "2024-01-15",
-      status: "active"
-    },
-    { 
-      id: 2, 
-      name: "Sarah Ahmed", 
-      email: "sarah@gmail.com", 
-      role: "teacher",
-      phone: "+20 123 456 7891",
-      location: "Alexandria, Egypt",
-      joinDate: "2024-01-10",
-      status: "active"
-    },
-    { 
-      id: 3, 
-      name: "Omar Salah", 
-      email: "omar@gmail.com", 
-      role: "student",
-      location: "Giza, Egypt",
-      joinDate: "2024-01-20",
-      status: "active"
-    },
-    { 
-      id: 4, 
-      name: "Mona Adel", 
-      email: "mona@gmail.com", 
-      role: "parent",
-      phone: "+20 123 456 7893",
-      location: "Cairo, Egypt",
-      joinDate: "2024-01-18",
-      status: "active"
-    },
-    { 
-      id: 5, 
-      name: "Ahmed Ibrahim", 
-      email: "ahmed@gmail.com", 
-      role: "teacher",
-      phone: "+20 123 456 7894",
-      location: "Mansoura, Egypt",
-      joinDate: "2024-01-12",
-      status: "active"
-    },
-    { 
-      id: 6, 
-      name: "Layla Mohamed", 
-      email: "layla@gmail.com", 
-      role: "student",
-      location: "Cairo, Egypt",
-      joinDate: "2024-01-22",
-      status: "active"
-    },
-  ]);
-
+const UsersTabs = ({ users, parents, teachers, students , admins }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
-
-  // Filter users by role
-  const parents = users.filter((u) => u.role === "parent");
-  const teachers = users.filter((u) => u.role === "teacher");
-  const students = users.filter((u) => u.role === "student");
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [isBulkDelete, setIsBulkDelete] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  
 
   // Delete handler - handles both single and bulk delete
   const handleDelete = (idOrIds) => {
@@ -88,70 +29,161 @@ const UsersTabs = () => {
 
   // Edit handler
   const handleEdit = (updatedUser) => {
-    setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
+    setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
   };
 
   // Filter users by search term
   const filteredUsers = (list) => {
     if (!searchTerm) return list;
-    return list.filter(user =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    return list.filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  };
+
+  // Handle bulk delete
+  const handleBulkDelete = () => {
+    if (selectedRows.length === 0) return;
+    setIsBulkDelete(true);
+    setDeleteConfirm(true);
   };
 
   return (
     <div className="space-y-6 py-6 bg-gradient-to-br from-gray-50 to-white min-h-screen">
-      {/* ________________________Stats Cards_______________________ */}
-      <UserStateCards 
-        users={users} 
-        parents={parents} 
-        teachers={teachers} 
-        students={students}
-      />
-
       {/* ________________________________Tabs______________________ */}
-      <Tabs defaultValue="all" onValueChange={setActiveTab} >
-        <TabsList className="flex flex-wrap items-center justify-around w-full bg-white border border-gray-200 md:py-7 px-1.5 rounded-xl">
-          <TabsTrigger 
-            value="all" 
-            className="rounded-lg py-2 px-6 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FF0055] data-[state=active]:to-rose-600 data-[state=active]:text-white transition-all"
-          >
-            <Users className="w-4 h-4 mr-2" />
-            All Users
-          </TabsTrigger>
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="flex flex-col md:flex-row flex-wrap justify-between items-center gap-4 h-auto w-full bg-white border border-gray-200 p-4 rounded-xl">
+          <div className="w-full lg:w-auto">
+            {/* --- 1. MOBILE DROPDOWN (Visible only below MD) --- */}
+            <div className="w-full md:hidden">
+              <Select value={activeTab} onValueChange={setActiveTab}>
+                <SelectTrigger className="w-full text-base font-semibold py-2.5 px-4 h-auto focus:ring-blue-500/30 focus:border-blue-500">
+                  <SelectValue placeholder="Select User Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    <div className="flex items-center">
+                      <Users className="w-4 h-4 mr-2 text-blue-500" /> All Users
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="admins">
+                    <div className="flex items-center">
+                      <MdAdminPanelSettings className="w-4 h-4 mr-2 text-red-500" /> Admins
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="parents">
+                    <div className="flex items-center">
+                      <FaUserTie className="w-4 h-4 mr-2 text-purple-500" /> Parents
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="teachers">
+                    <div className="flex items-center">
+                      <GraduationCap className="w-4 h-4 mr-2 text-green-500" /> Teachers
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="children">
+                    <div className="flex items-center">
+                      <UserCheck className="w-4 h-4 mr-2 text-orange-500" /> Students
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <TabsTrigger 
-            value="parents" 
-            className="rounded-lg py-2 px-6 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all"
-          >
-            <Baby className="w-4 h-4 mr-2" />
-            Parents
-          </TabsTrigger>
+            {/* --- 2. DESKTOP TABS (Hidden below MD) --- */}
+            <div className="hidden md:block">
+              <div className="flex flex-row flex-wrap items-center gap-2">
+                <TabsTrigger
+                  value="all"
+                  className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white transition-all hover:bg-gray-50"
+                >
+                  <Users className="w-4 h-4 mr-2" /> All Users
+                </TabsTrigger>
 
-          <TabsTrigger 
-            value="teachers" 
-            className="rounded-lg py-2 px-6 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white transition-all"
-          >
-            <GraduationCap className="w-4 h-4 mr-2" />
-            Teachers
-          </TabsTrigger>
+                <TabsTrigger
+                  value="admins"
+                  className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white transition-all hover:bg-gray-50"
+                >
+                  <MdAdminPanelSettings className="w-4 h-4 mr-2" /> Admins
+                </TabsTrigger>
 
-          <TabsTrigger 
-            value="children" 
-            className="rounded-lg py-2 px-6 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white transition-all"
-          >
-            <UserCheck className="w-4 h-4 mr-2" />
-            Students
-          </TabsTrigger>
+                <TabsTrigger
+                  value="parents"
+                  className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all hover:bg-gray-50"
+                >
+                  <FaUserTie className="w-4 h-4 mr-2" /> Parents
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="teachers"
+                  className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white transition-all hover:bg-gray-50"
+                >
+                  <GraduationCap className="w-4 h-4 mr-2" /> Teachers
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="children"
+                  className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white transition-all hover:bg-gray-50"
+                >
+                  <UserCheck className="w-4 h-4 mr-2" /> Students
+                </TabsTrigger>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions Group */}
+          <div className="flex flex-col lg:flex-row items-center gap-3 w-full lg:w-auto">
+            {/* Bulk Actions Button */}
+            <div className="w-full sm:w-auto">
+              <BulkBtn
+                selectedCount={selectedRows.length}
+                onDelete={handleBulkDelete}
+                label="user(s) selected"
+              />
+            </div>
+
+            {/* Search */}
+            <div className="relative w-full sm:w-60">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              />
+            </div>
+          </div>
         </TabsList>
 
         <TabsContent value="all">
           <UserFilteritionTable
             filtered={filteredUsers(users)}
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            title="All Users" 
+            setSelectedRows = {setSelectedRows}
+            selectedRows={selectedRows}
+            isBulkDelete={isBulkDelete}
+            setIsBulkDelete={setIsBulkDelete}
+            deleteConfirm={deleteConfirm}
+            setDeleteConfirm={setDeleteConfirm}
+            title="All Users"
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </TabsContent>
+
+         <TabsContent value="admins">
+          <UserFilteritionTable
+            filtered={filteredUsers(admins)}
+            searchTerm={searchTerm}
+            setSelectedRows = {setSelectedRows}
+            selectedRows={selectedRows}
+            isBulkDelete={isBulkDelete}
+            setIsBulkDelete={setIsBulkDelete}
+            deleteConfirm={deleteConfirm}
+            setDeleteConfirm={setDeleteConfirm}
+            title="Admins"
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
@@ -161,8 +193,13 @@ const UsersTabs = () => {
           <UserFilteritionTable
             filtered={filteredUsers(parents)}
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            title="Parents" 
+            setSelectedRows = {setSelectedRows}
+            selectedRows={selectedRows}
+            isBulkDelete={isBulkDelete}
+            setIsBulkDelete={setIsBulkDelete}
+            deleteConfirm={deleteConfirm}
+            setDeleteConfirm={setDeleteConfirm}
+            title="Parents"
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
@@ -172,8 +209,13 @@ const UsersTabs = () => {
           <UserFilteritionTable
             filtered={filteredUsers(teachers)}
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            title="Teachers" 
+            setSelectedRows = {setSelectedRows}
+            selectedRows={selectedRows}
+            isBulkDelete={isBulkDelete}
+            setIsBulkDelete={setIsBulkDelete}
+            deleteConfirm={deleteConfirm}
+            setDeleteConfirm={setDeleteConfirm}
+            title="Teachers"
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
@@ -183,8 +225,13 @@ const UsersTabs = () => {
           <UserFilteritionTable
             filtered={filteredUsers(students)}
             searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            title="Students" 
+            setSelectedRows = {setSelectedRows}
+            selectedRows={selectedRows}
+            isBulkDelete={isBulkDelete}
+            setIsBulkDelete={setIsBulkDelete}
+            deleteConfirm={deleteConfirm}
+            setDeleteConfirm={setDeleteConfirm}
+            title="Students"
             onEdit={handleEdit}
             onDelete={handleDelete}
           />

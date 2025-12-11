@@ -3,7 +3,8 @@ import { apiSlice } from '../apiSlice';
 
 export const coursesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-getCourses: builder.query({
+    
+    getCourses: builder.query({
       query: (params) => ({
         url: COURSES_URL,
         method: 'GET',
@@ -11,6 +12,7 @@ getCourses: builder.query({
       }),
       providesTags: ['Courses'],
     }),
+
     getCourseById: builder.query({
       query: (courseId) => ({
         url: `${COURSES_URL}/${courseId}`,
@@ -18,6 +20,7 @@ getCourses: builder.query({
       }),
       providesTags: (result, error, id) => [{ type: 'Courses', id }],
     }),
+
     createCourse: builder.mutation({
       query: (data) => ({
         url: COURSES_URL,
@@ -27,7 +30,7 @@ getCourses: builder.query({
       invalidatesTags: ['Courses'],
     }),
 
-deleteCourse: builder.mutation({
+    deleteCourse: builder.mutation({
       query: (courseId) => ({
         url: `${COURSES_URL}/${courseId}`,
         method: 'DELETE',

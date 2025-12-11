@@ -5,7 +5,7 @@ import { Users, CheckCircle2, MessageSquare } from "lucide-react";
 
 const StatsCardsLetter = ({ totalSubscribers, selectedCount, thisMonthCount }) => {
   return (
-    <div className="grid md:grid-cols-3 gap-4 mb-6">
+    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
       <Card className="p-5 bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-blue-500 rounded-xl">

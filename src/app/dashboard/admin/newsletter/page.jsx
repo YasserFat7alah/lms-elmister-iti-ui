@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import SubscibedEmails from "@/components/dashboardComponents/admin/newsletter/SubscibedEmails";
-import StatsCardsLetter from "@/components/dashboardComponents/admin/newsletter/StateCardsLetter";
-import NewsletterTabel from "@/components/dashboardComponents/admin/newsletter/NewsletterTabel";
+import SubscibedEmails from "@/components/DashboardComponents/admin/newsletter/SubscibedEmails";
+import StatsCardsLetter from "@/components/DashboardComponents/admin/newsletter/StateCardsLetter";
+import NewsletterTabel from "@/components/DashboardComponents/admin/newsletter/NewsletterTabel";
 import NewsPopup from "@/components/dashboardComponents/admin/newsletter/NewsPopup";
 import AddNewsLetterBtn from "@/components/dashboardComponents/admin/newsletter/AddNewsLetterBtn";
 import HeaderAdmin from "@/components/dashboardComponents/admin/HeaderAdmin";
@@ -91,42 +91,44 @@ const page = () => {
 
   return (
     <div className="space-y-6 p-6  min-h-screen">
-      {/* Header */}
-      <div className="rounded-2xl p-5 bg-white border ">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-2xl font-bold text-[#FF0055]">
-                NewsLetter Support
-              </h1>
-              <p className="text-[#392b80] text-sm mt-1">
-                Manage and track all your newsletters in one place
-              </p>
-            </div>
-          </div>
-          <AddNewsLetterBtn onOpenPopup={handleAddNew} />
-        </div>
-      </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-6">
-        {/* Left Side - Newsletter Table */}
-        <div className="space-y-6">
-          {/* Stats Cards */}
-          <StatsCardsLetter
-            totalSubscribers={emails.length}
-            selectedCount={selectedEmails.length}
-            thisMonthCount={12}
-          />
+        <div>
+          {/* Header */}
+          <div className="rounded-2xl p-5 bg-white border mb-4 ">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <div>
+                  <h1 className="text-2xl font-bold text-[#FF0055]">
+                    NewsLetter Support
+                  </h1>
+                  <p className="text-[#392b80] text-sm mt-1">
+                    Manage and track all your newsletters in one place
+                  </p>
+                </div>
+              </div>
+              <AddNewsLetterBtn onOpenPopup={handleAddNew} />
+            </div>
+          </div>
+          {/* Left Side - Newsletter Table */}
+          <div className="space-y-6">
+            {/* Stats Cards */}
+            <StatsCardsLetter
+              totalSubscribers={emails.length}
+              selectedCount={selectedEmails.length}
+              thisMonthCount={12}
+            />
 
-          {/* Newsletter Table */}
-          <NewsletterTabel
-            data={newsletterData}
-            handleDelete={handleDelete}
-            handleEdit={handleEdit}
-          />
+            {/* Newsletter Table */}
+            <NewsletterTabel
+              data={newsletterData}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit}
+            />
+          </div>
+
         </div>
-
         {/* Right Side - Subscribed Emails */}
         <div className="space-y-6">
           <SubscibedEmails
@@ -136,6 +138,7 @@ const page = () => {
             setSelectedEmails={setSelectedEmails}
           />
         </div>
+
       </div>
 
       {/* Popup Dialog */}

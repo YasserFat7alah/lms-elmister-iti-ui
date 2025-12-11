@@ -86,6 +86,8 @@ const SubscibedEmails = ({
         <p className="text-sm text-gray-600">Manage your email subscribers</p>
       </div>
 
+        {/* Add Email */}
+        <AddEmailInput emails={emails} setEmails={setEmails} />
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -98,8 +100,6 @@ const SubscibedEmails = ({
         />
       </div>
 
-      {/* Add Email */}
-      <AddEmailInput emails={emails} setEmails={setEmails} />
 
       {/* Select All */}
       <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">

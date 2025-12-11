@@ -1,5 +1,5 @@
 import { apiSlice } from '../apiSlice';
-import { USERS_URL, USERS_URL_DATA } from '@/constants';
+import { USERS_LIST_URL, USERS_URL, USERS_URL_DATA } from '@/constants';
 
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -50,6 +50,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['User'],
     }),
+
     changePassword: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/change-password`,
@@ -57,6 +58,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
     forgotPassword: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/forgot-password`,
@@ -65,6 +67,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
 
     }),
+
     resetPassword: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/reset-password`,
@@ -72,6 +75,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
     completeProfile: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/complete-profile`,
@@ -89,8 +93,18 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       providesTags: ['Children']
     }),
 
+    getAllUsers: builder.query({
+      query: (params) => ({
+        url: USERS_LIST_URL,
+        method: 'GET',
+        params: params,
+      }),
+      providesTags: ["User"]
+    })
+
 
   }),
+
 });
 
 export const {
@@ -104,5 +118,6 @@ export const {
   useForgotPasswordMutation,
   useResetPasswordMutation,
   useCompleteProfileMutation,
+  useGetAllUsersQuery,
   useGetMyChildrenQuery
 } = usersApiSlice;
