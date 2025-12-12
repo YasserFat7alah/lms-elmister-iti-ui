@@ -308,7 +308,7 @@ const mockCourse = {
 const CourseDetails = () => {
   const router = useRouter();
   const params = useParams();
-  const courseId = params?.id; // Corrected: Access 'id' instead of 'courseId'
+  const courseId = params.courseId;
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -329,9 +329,6 @@ const CourseDetails = () => {
 
     if (courseId) {
       fetchCourseDetails();
-    } else {
-      // Stop loading if no ID is present (e.g. hydration issues or bad route), so we show "Not Found" instead of infinite loading
-      setLoading(false);
     }
   }, [courseId]);
 
@@ -930,6 +927,7 @@ const CourseDetails = () => {
                                   style={{ width: `${student.progress}%` }}
                                 ></div>
                               </div>
+                              <span className="text-sm text-gray-600">{student.progress}%</span>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -1082,11 +1080,9 @@ const CourseDetails = () => {
                 <div className="text-sm text-gray-500">Senior Instructor</div>
               </div>
             </div>
-            <Link href={`/dashboard/teacher/profile`} >
-              <button className="w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">
-                View Profile
-              </button>
-            </Link>
+            <button className="w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700">
+              View Profile
+            </button>
           </div>
 
           {/* Schedule Summary */}

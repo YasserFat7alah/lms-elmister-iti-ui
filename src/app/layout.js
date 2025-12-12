@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-import StoreProvider from "@/redux/StoreProvider"; 
+import StoreProvider from "@/redux/StoreProvider";
+import { SocketProvider } from "@/contexts/SocketContext";
+
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
@@ -15,7 +17,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="font-sans antialiased">
         <StoreProvider>
-          {children}
+          <SocketProvider>
+            {children}
+          </SocketProvider>
         </StoreProvider>
       </body>
     </html>

@@ -15,24 +15,24 @@ import {
 } from 'lucide-react'
 
 const COLORS = [
-  { name: 'أزرق', value: 'text-blue-600', bg: '#2563eb' },
-  { name: 'أحمر', value: 'text-red-600', bg: '#dc2626' },
-  { name: 'أخضر', value: 'text-green-600', bg: '#16a34a' },
-  { name: 'أصفر', value: 'text-yellow-600', bg: '#ca8a04' },
-  { name: 'بنفسجي', value: 'text-purple-600', bg: '#9333ea' },
-  { name: 'وردي', value: 'text-pink-600', bg: '#db2777' },
-  { name: 'رمادي', value: 'text-gray-600', bg: '#4b5563' },
-  { name: 'أسود', value: 'text-gray-900', bg: '#111827' }
+  { name: 'Blue', value: 'text-blue-600', bg: '#2563eb' },
+  { name: 'Red', value: 'text-red-600', bg: '#dc2626' },
+  { name: 'Green', value: 'text-green-600', bg: '#16a34a' },
+  { name: 'Yellow', value: 'text-yellow-600', bg: '#ca8a04' },
+  { name: 'Purple', value: 'text-purple-600', bg: '#9333ea' },
+  { name: 'Pink', value: 'text-pink-600', bg: '#db2777' },
+  { name: 'Gray', value: 'text-gray-600', bg: '#4b5563' },
+  { name: 'Black', value: 'text-gray-900', bg: '#111827' }
 ]
 
 const BACKGROUND_COLORS = [
-  { name: 'أبيض', value: 'bg-white' },
-  { name: 'رمادي فاتح', value: 'bg-gray-50' },
-  { name: 'أزرق فاتح', value: 'bg-blue-50' },
-  { name: 'أخضر فاتح', value: 'bg-green-50' },
-  { name: 'أصفر فاتح', value: 'bg-yellow-50' },
-  { name: 'وردي فاتح', value: 'bg-pink-50' },
-  { name: 'شفاف', value: 'bg-transparent' }
+  { name: 'White', value: 'bg-white' },
+  { name: 'Light Gray', value: 'bg-gray-50' },
+  { name: 'Light Blue', value: 'bg-blue-50' },
+  { name: 'Light Green', value: 'bg-green-50' },
+  { name: 'Light Yellow', value: 'bg-yellow-50' },
+  { name: 'Light Pink', value: 'bg-pink-50' },
+  { name: 'Transparent', value: 'bg-transparent' }
 ]
 
 export default function PropertiesPanel({ element, onUpdate }) {
@@ -49,8 +49,8 @@ export default function PropertiesPanel({ element, onUpdate }) {
       <div className="w-80 bg-white border-l p-6 flex flex-col items-center justify-center">
         <div className="text-center text-gray-500">
           <div className="text-4xl mb-4">🎯</div>
-          <p className="mb-2 font-medium">👈 اختر عنصرًا</p>
-          <p className="text-sm">ستظهر خصائصه هنا</p>
+          <p className="mb-2 font-medium">👈 Select an element</p>
+          <p className="text-sm">Its properties will appear here</p>
         </div>
       </div>
     )
@@ -78,22 +78,22 @@ export default function PropertiesPanel({ element, onUpdate }) {
       return (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">عنوان الاختبار</label>
+            <label className="block text-sm font-medium mb-1">Quiz Title</label>
             <input
               type="text"
               value={quizData.title || ''}
               onChange={(e) => handleContentChange({ ...quizData, title: e.target.value })}
               className="w-full p-2 border rounded text-sm"
-              placeholder="عنوان الاختبار"
+              placeholder="Quiz title"
             />
           </div>
 
           <div className="space-y-3">
-            <label className="block text-sm font-medium">الأسئلة</label>
+            <label className="block text-sm font-medium">Questions</label>
             {(quizData.questions || []).map((question, qIndex) => (
               <div key={question.id} className="border p-3 rounded bg-gray-50">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs font-medium text-gray-500">سؤال {qIndex + 1}</span>
+                  <span className="text-xs font-medium text-gray-500">Question {qIndex + 1}</span>
                   <button
                     onClick={() => {
                       const newQuestions = quizData.questions.filter((_, i) => i !== qIndex)
@@ -101,7 +101,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
                     }}
                     className="text-red-500 hover:text-red-700 text-xs"
                   >
-                    حذف
+                    Delete
                   </button>
                 </div>
 
@@ -114,7 +114,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
                     handleContentChange({ ...quizData, questions: newQuestions })
                   }}
                   className="w-full p-2 border rounded text-sm mb-2 bg-white"
-                  placeholder="نص السؤال"
+                  placeholder="Question text"
                 />
 
                 <div className="space-y-2 pl-2 border-l-2 border-gray-200">
@@ -140,7 +140,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
                           handleContentChange({ ...quizData, questions: newQuestions })
                         }}
                         className="flex-1 p-1 border rounded text-xs"
-                        placeholder={`خيار ${oIndex + 1}`}
+                        placeholder={`Option ${oIndex + 1}`}
                       />
                       {question.options.length > 2 && (
                         <button
@@ -161,12 +161,12 @@ export default function PropertiesPanel({ element, onUpdate }) {
                   <button
                     onClick={() => {
                       const newQuestions = [...quizData.questions]
-                      newQuestions[qIndex].options.push('خيار جديد')
+                      newQuestions[qIndex].options.push('New option')
                       handleContentChange({ ...quizData, questions: newQuestions })
                     }}
                     className="text-xs text-blue-600 hover:underline mt-1"
                   >
-                    + إضافة خيار
+                    + Add option
                   </button>
                 </div>
               </div>
@@ -178,8 +178,8 @@ export default function PropertiesPanel({ element, onUpdate }) {
                   ...(quizData.questions || []),
                   {
                     id: Date.now(),
-                    text: 'سؤال جديد',
-                    options: ['خيار 1', 'خيار 2'],
+                    text: 'New question',
+                    options: ['Option 1', 'Option 2'],
                     correctAnswer: 0
                   }
                 ]
@@ -187,7 +187,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
               }}
               className="w-full py-2 border border-dashed border-blue-300 text-blue-600 rounded text-sm hover:bg-blue-50"
             >
-              + إضافة سؤال جديد
+              + Add new question
             </button>
           </div>
         </div>
@@ -198,13 +198,13 @@ export default function PropertiesPanel({ element, onUpdate }) {
     if (['title', 'subtitle', 'paragraph', 'button'].includes(element.type)) {
       return (
         <div className="space-y-2">
-          <label className="block text-sm font-medium">النص</label>
+          <label className="block text-sm font-medium">Text</label>
           <textarea
             value={contentType === 'string' ? localContent : ''}
             onChange={(e) => handleContentChange(e.target.value)}
             rows={3}
             className="w-full p-2 border rounded text-sm"
-            placeholder="اكتب النص هنا..."
+            placeholder="Write text here..."
           />
         </div>
       )
@@ -213,7 +213,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
     if (element.type === 'image') {
       return (
         <div className="space-y-2">
-          <label className="block text-sm font-medium">رابط الصورة</label>
+          <label className="block text-sm font-medium">Image URL</label>
           <input
             type="url"
             value={contentType === 'string' ? localContent : ''}
@@ -228,13 +228,13 @@ export default function PropertiesPanel({ element, onUpdate }) {
     if (element.type === 'list') {
       return (
         <div className="space-y-2">
-          <label className="block text-sm font-medium">عناصر القائمة</label>
+          <label className="block text-sm font-medium">List items</label>
           <textarea
             value={contentType === 'string' ? localContent : ''}
             onChange={(e) => handleContentChange(e.target.value)}
             rows={4}
             className="w-full p-2 border rounded text-sm"
-            placeholder="اكتب كل عنصر في سطر جديد..."
+            placeholder="Write each item on a new line..."
           />
         </div>
       )
@@ -242,13 +242,13 @@ export default function PropertiesPanel({ element, onUpdate }) {
 
     return (
       <div className="space-y-2">
-        <label className="block text-sm font-medium">المحتوى</label>
+        <label className="block text-sm font-medium">Content</label>
         <textarea
           value={contentType === 'string' ? localContent : ''}
           onChange={(e) => handleContentChange(e.target.value)}
           rows={2}
           className="w-full p-2 border rounded text-sm"
-          placeholder="اكتب المحتوى هنا..."
+          placeholder="Write content here..."
         />
       </div>
     )
@@ -261,7 +261,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
       controls.push(
         <div key="text-styles" className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">حجم الخط</label>
+            <label className="block text-sm font-medium mb-2">Font Size</label>
             <div className="grid grid-cols-4 gap-1">
               {['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl'].map((size) => (
                 <button
@@ -279,7 +279,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">لون النص</label>
+            <label className="block text-sm font-medium mb-2">Text Color</label>
             <div className="grid grid-cols-4 gap-2">
               {COLORS.map((color) => (
                 <button
@@ -295,7 +295,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">المحاذاة</label>
+            <label className="block text-sm font-medium mb-2">Alignment</label>
             <div className="flex gap-2">
               <button
                 onClick={() => handleStyleChange('align', 'right')}
@@ -319,7 +319,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">التنسيق</label>
+            <label className="block text-sm font-medium mb-2">Formatting</label>
             <div className="flex gap-2">
               <button
                 onClick={() => handleStyleChange('fontWeight', localStyles.fontWeight === 'bold' ? 'normal' : 'bold')}
@@ -349,7 +349,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
       controls.push(
         <div key="background" className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">لون الخلفية</label>
+            <label className="block text-sm font-medium mb-2">Background Color</label>
             <div className="grid grid-cols-4 gap-2">
               {BACKGROUND_COLORS.map((bg) => (
                 <button
@@ -364,9 +364,9 @@ export default function PropertiesPanel({ element, onUpdate }) {
               ))}
             </div>
           </div>
-
+{/* 
           <div>
-            <label className="block text-sm font-medium mb-2">الزوايا</label>
+            <label className="block text-sm font-medium mb-2">Corners</label>
             <div className="flex gap-2">
               {['none', 'sm', 'md', 'lg', 'xl', 'full'].map((radius) => (
                 <button
@@ -381,7 +381,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       )
     }
@@ -389,11 +389,11 @@ export default function PropertiesPanel({ element, onUpdate }) {
     controls.push(
       <div key="spacing" className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">الهوامش</label>
+          <label className="block text-sm font-medium mb-2">Margins</label>
           <div className="space-y-3">
             <div>
               <div className="flex justify-between text-xs text-gray-500 mb-1">
-                <span>أعلى</span>
+                <span>Top</span>
                 <span>{localStyles.marginTop || 0}</span>
               </div>
               <input
@@ -407,7 +407,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
             </div>
             <div>
               <div className="flex justify-between text-xs text-gray-500 mb-1">
-                <span>أسفل</span>
+                <span>Bottom</span>
                 <span>{localStyles.marginBottom || 0}</span>
               </div>
               <input
@@ -429,12 +429,12 @@ export default function PropertiesPanel({ element, onUpdate }) {
 
   const getPreviewText = () => {
     if (typeof localContent === 'string') {
-      return localContent.slice(0, 50) || 'المعاينة ستظهر هنا...'
+      return localContent.slice(0, 50) || 'Preview will appear here...'
     }
     if (element.type === 'quiz' && localContent && typeof localContent === 'object') {
-      return `اختبار: ${localContent.title || 'بدون عنوان'} (${localContent.questions?.length || 0} أسئلة)`
+      return `Quiz: ${localContent.title || 'Untitled'} (${localContent.questions?.length || 0} questions)`
     }
-    return 'معاينة المحتوى المعقد غير متاحة'
+    return 'Complex content preview not available'
   }
 
   return (
@@ -442,7 +442,7 @@ export default function PropertiesPanel({ element, onUpdate }) {
       <div className="p-4 border-b sticky top-0 bg-white z-10">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold">خصائص العنصر</h3>
+            <h3 className="font-semibold">Element Properties</h3>
             <p className="text-sm text-gray-500 capitalize">{element.type}</p>
           </div>
           <div className="text-xs bg-gray-100 px-2 py-1 rounded">
@@ -454,23 +454,23 @@ export default function PropertiesPanel({ element, onUpdate }) {
       <div className="p-4 space-y-6">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium text-sm">المحتوى</h4>
+            <h4 className="font-medium text-sm">Content</h4>
             <span className="text-xs text-gray-500">
-              {typeof localContent === 'string' ? `${localContent.length} حرف` : 'معقد'}
+              {typeof localContent === 'string' ? `${localContent.length} characters` : 'Complex'}
             </span>
           </div>
           {renderContentControl()}
         </div>
 
         <div className="space-y-4">
-          <h4 className="font-medium text-sm">التنسيق والمظهر</h4>
+          <h4 className="font-medium text-sm">Formatting & Appearance</h4>
           {renderStyleControls()}
         </div>
 
-        <div className="pt-4 border-t">
+        {/* <div className="pt-4 border-t">
           <div className="flex items-center gap-2 mb-3">
             <Eye size={16} className="text-gray-500" />
-            <h4 className="font-medium text-sm">معاينة سريعة</h4>
+            <h4 className="font-medium text-sm">Quick Preview</h4>
           </div>
           <div className="bg-gray-50 border rounded p-3 text-sm">
             <div className={`${localStyles.color || 'text-gray-700'} ${localStyles.fontSize ? `text-${localStyles.fontSize}` : ''}`}>
@@ -478,10 +478,11 @@ export default function PropertiesPanel({ element, onUpdate }) {
               {typeof localContent === 'string' && localContent.length > 50 ? '...' : ''}
             </div>
             <div className="mt-2 text-xs text-gray-500">
-              الأنماط المطبقة: {Object.keys(localStyles).length}
+              Applied styles: {Object.keys(localStyles).length}
             </div>
           </div>
-        </div>
+        </div> */}
+
       </div>
     </div>
   )

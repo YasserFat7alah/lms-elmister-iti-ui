@@ -338,14 +338,14 @@ export default function TeacherDashboard() {
         </div>
 
         {/* Student Mood Analysis (Full Width) */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <MoodResults
             results={dashboardData.moodData}
             title="Student Mood Analysis"
             showExport={true}
             onRefresh={() => console.log('Refresh clicked')}
           />
-        </div>
+        </div> */}
 
         {/* Active Students (Full Width) */}
         <div className="mb-6">
@@ -613,7 +613,7 @@ export default function TeacherDashboard() {
               <h2 className="text-xl font-bold text-gray-800 mb-6">Quick Actions</h2>
 
               <div className="grid grid-cols-2 gap-4">
-                <Link href="/courses/new">
+                <Link href="/dashboard/teacher/courses/create">
                   <button className="bg-blue-50 border border-blue-200 rounded-xl p-4 hover:bg-blue-100 transition-colors w-full text-left h-32 flex flex-col justify-between group">
                     <div className="flex items-center justify-between mb-2">
                       <BookOpen size={24} className="text-blue-600 group-hover:scale-110 transition-transform" />

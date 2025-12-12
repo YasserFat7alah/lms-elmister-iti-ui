@@ -18,28 +18,27 @@ import {
 } from 'lucide-react'
 
 const ELEMENT_TYPES = [
-  { id: 'title', name: 'عنوان', icon: Type, color: 'text-blue-500', category: 'نصوص' },
-  { id: 'subtitle', name: 'عنوان فرعي', icon: Heading2, color: 'text-blue-400', category: 'نصوص' },
-  { id: 'paragraph', name: 'فقرة نصية', icon: FileText, color: 'text-gray-500', category: 'نصوص' },
-  { id: 'quote', name: 'اقتباس', icon: Quote, color: 'text-purple-500', category: 'نصوص' },
-  { id: 'image', name: 'صورة', icon: Image, color: 'text-green-500', category: 'وسائط' },
-  { id: 'button', name: 'زر', icon: Square, color: 'text-orange-500', category: 'تفاعلية' },
-  { id: 'list', name: 'قائمة', icon: List, color: 'text-indigo-500', category: 'نصوص' },
-  { id: 'card', name: 'بطاقة', icon: Layout, color: 'text-teal-500', category: 'تخطيط' },
-  { id: 'section', name: 'قسم', icon: PanelRight, color: 'text-cyan-500', category: 'تخطيط' },
-  { id: 'columns', name: 'أعمدة', icon: Columns, color: 'text-pink-500', category: 'تخطيط' },
-  { id: 'grid', name: 'شبكة', icon: Grid3x3, color: 'text-rose-500', category: 'تخطيط' },
-  { id: 'quiz', name: 'اختبار', icon: HelpCircle, color: 'text-red-500', category: 'تفاعلية' },
+{ id: 'title', name: 'Title', icon: Type, color: 'text-blue-500', category: 'Text' },
+{ id: 'subtitle', name: 'Subtitle', icon: Heading2, color: 'text-blue-400', category: 'Text' },
+{ id: 'paragraph', name: 'Text Paragraph', icon: FileText, color: 'text-gray-500', category: 'Text' },
+{ id: 'quote', name: 'Quote', icon: Quote, color: 'text-purple-500', category: 'Text' },
+{ id: 'image', name: 'Image', icon: Image, color: 'text-green-500', category: 'Media' },
+{ id: 'button', name: 'Button', icon: Square, color: 'text-orange-500', category: 'Interactive' },
+{ id: 'list', name: 'List', icon: List, color: 'text-indigo-500', category: 'Text' },
+{ id: 'card', name: 'Card', icon: Layout, color: 'text-teal-500', category: 'Layout' },
+{ id: 'section', name: 'Section', icon: PanelRight, color: 'text-cyan-500', category: 'Layout' },
+{ id: 'columns', name: 'Columns', icon: Columns, color: 'text-pink-500', category: 'Layout' },
+{ id: 'grid', name: 'Grid', icon: Grid3x3, color: 'text-rose-500', category: 'Layout' },
+{ id: 'quiz', name: 'Quiz', icon: HelpCircle, color: 'text-red-500', category: 'Interactive' },
 ]
-
 export default function ElementsPanel({ onAddElement }) {
   const categories = [...new Set(ELEMENT_TYPES.map(item => item.category))]
 
   return (
     <div className="w-64 bg-white border-r overflow-y-auto">
       <div className="p-4 border-b">
-        <h3 className="font-semibold text-lg">📦 مكتبة العناصر</h3>
-        <p className="text-sm text-gray-500">اسحب أو انقر لإضافة</p>
+        <h3 className="font-semibold text-lg">📦  Elements Library</h3>
+        <p className="text-sm text-gray-500"> Drag or click to add </p>
       </div>
 
       <div className="p-3">
@@ -68,7 +67,7 @@ export default function ElementsPanel({ onAddElement }) {
       </div>
 
       {/* قوالب سريعة */}
-      <div className="p-4 border-t">
+      {/* <div className="p-4 border-t">
         <h4 className="font-medium mb-3 text-sm">⚡ قوالب سريعة</h4>
         <div className="space-y-2">
           {[
@@ -93,10 +92,10 @@ export default function ElementsPanel({ onAddElement }) {
             </button>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* تعليمات */}
-      <div className="p-4 border-t bg-blue-50">
+      {/* <div className="p-4 border-t bg-blue-50">
         <h4 className="font-medium mb-2 text-sm text-blue-700">💡 نصائح سريعة</h4>
         <ul className="text-xs text-blue-600 space-y-1">
           <li>• انقر على العنصر لإضافته</li>
@@ -104,7 +103,7 @@ export default function ElementsPanel({ onAddElement }) {
           <li>• انقر نقرًا مزدوجًا للتعديل المباشر</li>
           <li>• استخدم Ctrl+Z للتراجع</li>
         </ul>
-      </div>
+      </div> */}
     </div>
   )
 }

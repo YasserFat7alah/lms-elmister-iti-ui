@@ -1,380 +1,391 @@
 "use client";
-import React, { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import {
-  ArrowLeft, Save, Plus, Trash2,
-  Calendar, Clock, Video, FileText,
-  Image, Link as LinkIcon
-} from "lucide-react";
 
-const CreateLessonPage = () => {
-  const params = useParams();
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { mockGroups, mockCourses } from "@/utils/mockData";
+
+export default function NewLessonPage() {
   const router = useRouter();
-  const courseId = params.courseId;
+  const params = useParams();
+
+  const courseId = params.id;
   const groupId = params.groupId;
 
+  const [loading, setLoading] = useState(true);
+  const [course, setCourse] = useState(null);
+  const [group, setGroup] = useState(null);
   const [lessonData, setLessonData] = useState({
     title: "",
     description: "",
-    date: "",
-    time: "",
-    duration: 120,
-    type: "online",
-    meetingLink: "",
-    materials: [],
-    sections: []
+    courseId: courseId,
+    groupId: groupId,
+    lessonType: "video",
+    content: "",
+    duration: "",
+    scheduledDate: "",
+    isPublished: false,
+    order: 1,
   });
 
-  const [sectionTemplates, setSectionTemplates] = useState([
-    { id: 1, title: "Pre-Lesson Homework", type: "pre_homework", defaultContent: "Please review the previous material" },
-    { id: 2, title: "Post-Lesson Homework", type: "post_homework", defaultContent: "Solve the following exercises" },
-    { id: 3, title: "Teacher Notes", type: "teacher_notes", defaultContent: "Important notes for the lesson" },
-    { id: 4, title: "Mood Survey", type: "mood_survey", defaultContent: "How do you feel today?" },
-    { id: 5, title: "Feedback Survey", type: "feedback_survey", defaultContent: "What are the weak points?" }
-  ]);
+  useEffect(() => {
+    if (!courseId || !groupId) return;
 
-  const [sections, setSections] = useState([]);
-  const [showTemplates, setShowTemplates] = useState(false);
+    setTimeout(() => {
+      const foundCourse = mockCourses.find((c) => c.id == courseId);
+      const foundGroup = mockGroups.find(
+        (g) => g.id == groupId && g.courseId == courseId
+      );
 
-  const handleChange = (field, value) => {
-    setLessonData({
-      ...lessonData,
-      [field]: value
-    });
-  };
+      setCourse(foundCourse);
+      setGroup(foundGroup);
+      setLoading(false);
+    }, 400);
+  }, [courseId, groupId]);
 
-  const addSection = (template) => {
-    const newSection = {
-      id: Date.now(),
-      type: template.type,
-      title: template.title,
-      content: template.defaultContent,
-      isActive: true,
-      visibleFrom: "",
-      visibleUntil: ""
-    };
-
-    setSections([...sections, newSection]);
-    setShowTemplates(false);
-  };
-
-  const removeSection = (id) => {
-    setSections(sections.filter(section => section.id !== id));
-  };
-
-  const updateSection = (id, field, value) => {
-    setSections(sections.map(section =>
-      section.id === id ? { ...section, [field]: value } : section
-    ));
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setLessonData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Creating lesson:", lessonData);
 
-    const lessonWithSections = {
-      ...lessonData,
-      sections: sections
-    };
-
-    console.log('Lesson Data:', lessonWithSections);
-
-    alert('Lesson created successfully!');
-    router.push(`/courses/${courseId}/groups/${groupId}`);
+    router.push(`/teacher/courses/${courseId}/groups/${groupId}/lessons`);
   };
 
-  return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">Create New Lesson</h1>
-            <p className="text-gray-600 mt-2">Add a new lesson to the group</p>
-          </div>
-          <Link href={`/courses/${courseId}/groups/${groupId}`}>
-            <button className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors rtl:space-x-reverse">
-              <ArrowLeft size={20} />
-              <span>Back to Group</span>
-            </button>
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!group || !course) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Group not found
+          </h2>
+          <Link
+            href={`/teacher/courses/${courseId}/groups`}
+            className="text-blue-600"
+          >
+            Back to Groups
           </Link>
         </div>
       </div>
+    );
+  }
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Basic Lesson Info */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">Basic Lesson Information</h2>
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Breadcrumb */}
+      <nav className="flex mb-6" aria-label="Breadcrumb">
+        <ol className="inline-flex items-center space-x-1 md:space-x-3">
+          <li>
+            <Link href="/teacher/courses" className="text-gray-600 hover:text-blue-600">
+              Courses
+            </Link>
+          </li>
+          <li><span className="mx-2">/</span></li>
 
+          <li>
+            <Link href={`/teacher/courses/${courseId}`} className="text-gray-600 hover:text-blue-600">
+              {course.title}
+            </Link>
+          </li>
+          <li><span className="mx-2">/</span></li>
+
+          <li>
+            <Link href={`/teacher/courses/${courseId}/groups`} className="text-gray-600 hover:text-blue-600">
+              Groups
+            </Link>
+          </li>
+          <li><span className="mx-2">/</span></li>
+
+          <li>
+            <Link href={`/teacher/courses/${courseId}/groups/${groupId}/lessons`} className="text-gray-600 hover:text-blue-600">
+              {group.name} Lessons
+            </Link>
+          </li>
+          <li><span className="mx-2">/</span></li>
+
+          <li>
+            <span className="text-blue-600 font-medium">New Lesson</span>
+          </li>
+        </ol>
+      </nav>
+
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Create New Lesson</h1>
+          <p className="text-gray-600 mt-2">
+            Add a new lesson to {group.name} in {course.title}
+          </p>
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Group Schedule:</strong> {group.schedule}
+            </p>
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border p-6">
           <div className="space-y-6">
-            {/* Title & Description */}
+            {/* Basic Information */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Lesson Title *
-              </label>
-              <input
-                type="text"
-                value={lessonData.title}
-                onChange={(e) => handleChange('title', e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-3"
-                placeholder="Enter lesson title"
-                required
-              />
-            </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Lesson Description
-              </label>
-              <textarea
-                value={lessonData.description}
-                onChange={(e) => handleChange('description', e.target.value)}
-                rows="3"
-                className="w-full border border-gray-300 rounded-lg p-3"
-                placeholder="Brief description of the lesson"
-              />
-            </div>
-
-            {/* Date & Time */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lesson Date *
-                </label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                  <input
-                    type="date"
-                    value={lessonData.date}
-                    onChange={(e) => handleChange('date', e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg p-3 pl-10"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lesson Time *
-                </label>
-                <div className="relative">
-                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                  <input
-                    type="time"
-                    value={lessonData.time}
-                    onChange={(e) => handleChange('time', e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg p-3 pl-10"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Duration (minutes) *
-                </label>
-                <input
-                  type="number"
-                  value={lessonData.duration}
-                  onChange={(e) => handleChange('duration', e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-3"
-                  min="30"
-                  max="480"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Lesson Type & Link */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lesson Type
-                </label>
-                <select
-                  value={lessonData.type}
-                  onChange={(e) => handleChange('type', e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-3"
-                >
-                  <option value="online">Online</option>
-                  <option value="offline">Offline</option>
-                </select>
-              </div>
-
-              {lessonData.type === "online" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Meeting Link
+                    Lesson Title *
                   </label>
-                  <div className="relative">
-                    <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
+                  <input
+                    type="text"
+                    name="title"
+                    value={lessonData.title}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter lesson title"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Scheduled Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="scheduledDate"
+                    value={lessonData.scheduledDate}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={lessonData.description}
+                  onChange={handleInputChange}
+                  rows="3"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Describe what will be covered in this lesson"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Lesson Order
+                  </label>
+                  <input
+                    type="number"
+                    name="order"
+                    value={lessonData.order}
+                    onChange={handleInputChange}
+                    min="1"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Order of this lesson in the group
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Lesson Type *
+                  </label>
+                  <select
+                    name="lessonType"
+                    value={lessonData.lessonType}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="video">Video Lesson</option>
+                    <option value="article">Article/Text</option>
+                    <option value="live">Live Session</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Lesson Content</h3>
+
+              {lessonData.lessonType === "video" && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Video URL *
+                    </label>
                     <input
                       type="url"
-                      value={lessonData.meetingLink}
-                      onChange={(e) => handleChange('meetingLink', e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg p-3 pl-10"
-                      placeholder="https://zoom.us/j/..."
+                      name="content"
+                      value={lessonData.content}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="https://example.com/video"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Duration (HH:MM)
+                    </label>
+                    <input
+                      type="text"
+                      name="duration"
+                      value={lessonData.duration}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="00:45"
                     />
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-        </div>
 
-        {/* Lesson Builder Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Lesson Builder</h2>
-            <button
-              type="button"
-              onClick={() => setShowTemplates(!showTemplates)}
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors rtl:space-x-reverse"
-            >
-              <Plus size={20} />
-              <span>Add Section</span>
-            </button>
-          </div>
-
-          {/* Templates Picker */}
-          {showTemplates && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-semibold text-gray-700 mb-3">Choose Section Type:</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {sectionTemplates.map((template) => (
-                  <button
-                    key={template.id}
-                    type="button"
-                    onClick={() => addSection(template)}
-                    className="bg-white border rounded-lg p-4 text-left hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="font-medium text-gray-800">{template.title}</div>
-                    <div className="text-sm text-gray-600 mt-1">Default Template</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Sections List */}
-          <div className="space-y-6">
-            {sections.map((section) => (
-              <div key={section.id} className="border rounded-lg p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h4 className="font-bold text-gray-800">{section.title}</h4>
-                  <div className="flex space-x-3 rtl:space-x-reverse">
-                    <label className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <input
-                        type="checkbox"
-                        checked={section.isActive}
-                        onChange={(e) => updateSection(section.id, 'isActive', e.target.checked)}
-                        className="text-blue-600"
-                      />
-                      <span className="text-sm text-gray-600">Active</span>
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => removeSection(section.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
+              {lessonData.lessonType === "article" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Article Content *
+                  </label>
+                  <textarea
+                    name="content"
+                    value={lessonData.content}
+                    onChange={handleInputChange}
+                    rows="10"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Write your article content here..."
+                    required
+                  />
                 </div>
+              )}
 
-                {/* Section Content */}
+              {lessonData.lessonType === "live" && (
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Content
+                      Live Session Link *
                     </label>
-                    <textarea
-                      value={section.content}
-                      onChange={(e) => updateSection(section.id, 'content', e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg p-3"
-                      rows="4"
-                      placeholder="Section content..."
+                    <input
+                      type="url"
+                      name="content"
+                      value={lessonData.content}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="https://meet.google.com/abc-defg-hij"
+                      required
                     />
                   </div>
 
-                  {/* Visibility Settings for Homework Sections */}
-                  {['pre_homework', 'post_homework'].includes(section.type) && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Visible From
-                        </label>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                          <input
-                            type="datetime-local"
-                            value={section.visibleFrom}
-                            onChange={(e) => updateSection(section.id, 'visibleFrom', e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg p-3 pl-10"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Visible Until
-                        </label>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                          <input
-                            type="datetime-local"
-                            value={section.visibleUntil}
-                            onChange={(e) => updateSection(section.id, 'visibleUntil', e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg p-3 pl-10"
-                          />
-                        </div>
-                      </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Start Time
+                      </label>
+                      <input
+                        type="time"
+                        name="startTime"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                      />
                     </div>
-                  )}
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        End Time
+                      </label>
+                      <input
+                        type="time"
+                        name="endTime"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Settings */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Settings</h3>
+
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="isPublished"
+                    name="isPublished"
+                    checked={lessonData.isPublished}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="isPublished" className="ml-2 block text-sm text-gray-900">
+                    Publish lesson immediately
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="allowComments"
+                    name="allowComments"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="allowComments" className="ml-2 block text-sm text-gray-900">
+                    Allow students to comment on this lesson
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="requireCompletion"
+                    name="requireCompletion"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="requireCompletion" className="ml-2 block text-sm text-gray-900">
+                    Require completion to proceed to next lesson
+                  </label>
                 </div>
               </div>
-            ))}
-
-            {/* Empty State */}
-            {sections.length === 0 && (
-              <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-                <FileText size={64} className="mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">No sections added</h3>
-                <p className="text-gray-500 mb-6">Click "Add Section" to start building the lesson</p>
-                <button
-                  type="button"
-                  onClick={() => setShowTemplates(true)}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Add First Section
-                </button>
-              </div>
-            )}
+            </div>
           </div>
-        </div>
 
-        {/* Submit Buttons */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex justify-end space-x-4 rtl:space-x-reverse">
-            <Link href={`/courses/${courseId}/groups/${groupId}`}>
-              <button
-                type="button"
-                className="px-8 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
+          {/* Form Actions */}
+          <div className="flex justify-end space-x-4 mt-8 pt-6 border-t">
+            <Link
+              href={`/teacher/courses/${courseId}/groups/${groupId}/lessons`}
+              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
             </Link>
+
             <button
               type="submit"
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center space-x-2 rtl:space-x-reverse"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              <Save size={20} />
-              <span>Save Lesson</span>
+              Create Lesson
             </button>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
-};
-
-export default CreateLessonPage;
+}

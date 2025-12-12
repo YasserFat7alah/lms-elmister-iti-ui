@@ -41,7 +41,7 @@ const Modal = ({
             <button
               onClick={onClose}
               className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="إغلاق"
+              aria-label="close"
             >
               <X size={20} />
             </button>

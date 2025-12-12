@@ -44,11 +44,11 @@ export function MoodCard({
     const [isHovered, setIsHovered] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
 
-    // حساب الاتجاه مقارنة بالمتوسط
+    // Calculate trend compared to average
     const moodTrend = mood >= 4 ? 'up' : mood <= 2 ? 'down' : 'neutral'
     const energyTrend = energy >= 70 ? 'up' : energy <= 30 ? 'down' : 'neutral'
 
-    // الحصول على أيقونة المزاج
+    // Get mood icon
     const getMoodIcon = () => {
         if (mood >= 4.5) return <Sparkles className="w-5 h-5 text-yellow-500" />
         if (mood >= 4) return <Sun className="w-5 h-5 text-amber-500" />
@@ -57,7 +57,7 @@ export function MoodCard({
         return <CloudSnow className="w-5 h-5 text-gray-300" />
     }
 
-    // الحصول على أيقونة الطاقة
+    // Get energy icon
     const getEnergyIcon = () => {
         if (energy >= 80) return <Zap className="w-5 h-5 text-green-500 animate-pulse" />
         if (energy >= 60) return <Activity className="w-5 h-5 text-green-400" />
@@ -66,7 +66,7 @@ export function MoodCard({
         return <Heart className="w-5 h-5 text-red-300" />
     }
 
-    // الحصول على لون الخلفية حسب النوع
+    // Get background color based on type
     const getTypeColor = () => {
         switch (type) {
             case 'before':
@@ -84,7 +84,7 @@ export function MoodCard({
         }
     }
 
-    // الحصول على تسمية النوع
+    // Get type label
     const getTypeLabel = () => {
         switch (type) {
             case 'before': return 'قبل الدرس'
@@ -99,7 +99,7 @@ export function MoodCard({
         }
     }
 
-    // الحصول على نص الوصف التلقائي
+    // Get automatic description text
     const getAutoDescription = () => {
         if (description) return description
 
@@ -114,7 +114,7 @@ export function MoodCard({
         return 'حاول أخذ استراحة أو تغيير النشاط'
     }
 
-    // تنسيق الوقت
+    // Format time
     const formatTime = (dateString) => {
         const date = new Date(dateString)
         return {
@@ -131,7 +131,7 @@ export function MoodCard({
         }
     }
 
-    // الوقت النسبي
+    // Relative time
     const getRelativeTime = (date) => {
         const now = new Date()
         const diffMs = now - date
@@ -150,7 +150,7 @@ export function MoodCard({
     const timeInfo = formatTime(timestamp)
     const autoDescription = getAutoDescription()
 
-    // النسخة المدمجة
+    // Compact version
     if (compact) {
         return (
             <div
@@ -179,7 +179,7 @@ export function MoodCard({
                     </div>
                 </div>
 
-                {/* مؤشر الاتجاه */}
+                {/* Trend indicator */}
                 {showTrend && (
                     <div className="absolute top-3 right-3">
                         {moodTrend === 'up' ? (
@@ -192,7 +192,7 @@ export function MoodCard({
                     </div>
                 )}
 
-                {/* وقت النشر */}
+                {/* Post time */}
                 {showTime && (
                     <div className="mt-3 pt-3 border-t border-gray-200/50 flex items-center justify-between">
                         <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -208,14 +208,14 @@ export function MoodCard({
         )
     }
 
-    // النسخة الكاملة
+    // Full version
     return (
         <div
             className={`relative bg-gradient-to-br ${getTypeColor()} rounded-2xl border transition-all duration-500 hover:shadow-xl ${isHovered ? 'shadow-lg' : ''} ${className}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* شارة النوع */}
+            {/* Type badge */}
             <div className="absolute -top-2 -right-2">
                 <div className={`px-3 py-1 rounded-full text-xs font-medium ${type === 'before' ? 'bg-blue-600 text-white' :
                     type === 'after' ? 'bg-green-600 text-white' :
@@ -225,7 +225,7 @@ export function MoodCard({
                 </div>
             </div>
 
-            {/* رأس البطاقة */}
+            {/* Card header */}
             <div className="p-5">
                 <div className="flex items-start justify-between mb-4">
                     <div>
@@ -267,9 +267,9 @@ export function MoodCard({
                     )}
                 </div>
 
-                {/* المؤشرات الرئيسية */}
+                {/* Main indicators */}
                 <div className="grid grid-cols-2 gap-6 mb-6">
-                    {/* مؤشر المزاج */}
+                    {/* Mood indicator */}
                     <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4">
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
@@ -329,7 +329,7 @@ export function MoodCard({
                             </div>
                         </div>
 
-                        {/* شريط التقدم */}
+                        {/* Progress bar */}
                         <div className="mt-4">
                             <div className="flex justify-between text-xs text-gray-500 mb-1">
                                 <span>منخفض</span>
@@ -344,7 +344,7 @@ export function MoodCard({
                         </div>
                     </div>
 
-                    {/* مؤشر الطاقة */}
+                    {/* Energy indicator */}
                     <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4">
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
@@ -402,7 +402,7 @@ export function MoodCard({
                             </div>
                         </div>
 
-                        {/* مؤشر البطارية */}
+                        {/* Battery indicator */}
                         <div className="mt-4">
                             <div className="flex justify-between text-xs text-gray-500 mb-1">
                                 <span>0%</span>
@@ -421,7 +421,7 @@ export function MoodCard({
                     </div>
                 </div>
 
-                {/* معلومات الوقت */}
+                {/* Time information */}
                 <div className="flex items-center justify-between text-sm text-gray-600">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
@@ -438,7 +438,7 @@ export function MoodCard({
                     </div>
                 </div>
 
-                {/* تفاصيل إضافية */}
+                {/* Additional details */}
                 {showDetails && isExpanded && (
                     <div className="mt-6 pt-6 border-t border-gray-200/50 animate-fadeIn">
                         <h5 className="font-medium mb-3 flex items-center gap-2">
@@ -462,7 +462,7 @@ export function MoodCard({
                     </div>
                 )}
 
-                {/* زر التوسيع */}
+                {/* Expand button */}
                 <button
                     onClick={() => setIsExpanded(!isExpanded)}
                     className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-white border rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all"
@@ -476,7 +476,7 @@ export function MoodCard({
     )
 }
 
-// مجموعة بطاقات المزاج
+// Mood cards grid
 export function MoodCardsGrid({ cards = [], columns = 3 }) {
     const gridCols = {
         1: 'grid-cols-1',
@@ -505,7 +505,7 @@ export function MoodCardsGrid({ cards = [], columns = 3 }) {
     )
 }
 
-// بطاقة موجزة للموجات
+// Compact mood wave card
 export function MoodWaveCard({ mood, energy, timestamp, onClick }) {
     const time = new Date(timestamp).toLocaleTimeString('ar-SA', {
         hour: '2-digit',
@@ -517,7 +517,7 @@ export function MoodWaveCard({ mood, energy, timestamp, onClick }) {
             className="relative group cursor-pointer"
             onClick={onClick}
         >
-            {/* موجة الطاقة */}
+            {/* Energy wave */}
             <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity">
                 <div className="w-full h-full">
                     <svg viewBox="0 0 100 40" className="w-full h-full">
@@ -539,7 +539,7 @@ export function MoodWaveCard({ mood, energy, timestamp, onClick }) {
                 </div>
             </div>
 
-            {/* البطاقة */}
+            {/* Card */}
             <div className="relative bg-white/90 backdrop-blur-sm border rounded-xl p-4 group-hover:shadow-lg transition-all">
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">

@@ -149,7 +149,7 @@ export default function CanvasArea({
                 autoFocus
               />
             ) : (
-              <h1 className="text-3xl font-bold">{element.content || 'عنوان رئيسي'}</h1>
+              <h1 className="text-3xl font-bold">{element.content || 'Main Title'}</h1>
             )}
           </div>
         )
@@ -167,7 +167,7 @@ export default function CanvasArea({
                 autoFocus
               />
             ) : (
-              <h2 className="text-2xl font-semibold">{element.content || 'عنوان فرعي'}</h2>
+              <h2 className="text-2xl font-semibold">{element.content || 'Subtitle'}</h2>
             )}
           </div>
         )
@@ -184,7 +184,7 @@ export default function CanvasArea({
                 autoFocus
               />
             ) : (
-              <p className="text-gray-700 leading-relaxed">{element.content || 'فقرة نصية...'}</p>
+              <p className="text-gray-700 leading-relaxed">{element.content || 'Text paragraph...'}</p>
             )}
           </div>
         )
@@ -193,10 +193,10 @@ export default function CanvasArea({
         return (
           <div className={`${baseClasses} ${styleClasses}`}>
             {element.content ? (
-              <img src={element.content} alt="صورة" className="w-full h-auto rounded" />
+              <img src={element.content} alt="Image" className="w-full h-auto rounded" />
             ) : (
               <div className="bg-gray-100 h-48 flex items-center justify-center rounded">
-                <span className="text-gray-400">🖼️ صورة</span>
+                <span className="text-gray-400">🖼️ Image</span>
               </div>
             )}
           </div>
@@ -216,7 +216,7 @@ export default function CanvasArea({
               />
             ) : (
               <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                {element.content || 'زر'}
+                {element.content || 'Button'}
               </button>
             )}
           </div>
@@ -232,7 +232,7 @@ export default function CanvasArea({
                   <li key={index} className="text-gray-700">{item}</li>
                 ))
               ) : (
-                <li className="text-gray-400">قائمة فارغة</li>
+                <li className="text-gray-400">Empty List</li>
               )}
             </ul>
           </div>
@@ -241,7 +241,7 @@ export default function CanvasArea({
       case 'quiz':
         const quizContent = typeof element.content === 'object' && element.content !== null
           ? element.content
-          : { title: 'اختبار جديد', questions: [] }
+          : { title: 'New Quiz', questions: [] }
 
         return (
           <div className={`${baseClasses} ${styleClasses} p-6`}>
@@ -249,11 +249,11 @@ export default function CanvasArea({
               <h3 className="text-lg font-bold text-blue-800 flex items-center gap-2">
                 <span>📝</span>
                 <span onDoubleClick={() => handleDoubleClick(element.id)}>
-                  {quizContent.title || 'عنوان الاختبار'}
+                  {quizContent.title || 'Quiz Title'}
                 </span>
               </h3>
               <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                {quizContent.questions?.length || 0} أسئلة
+                {quizContent.questions?.length || 0} Questions
               </span>
             </div>
 
@@ -261,14 +261,16 @@ export default function CanvasArea({
               {quizContent.questions?.map((question, qIndex) => (
                 <div key={question.id} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
                   <div className="flex justify-between items-start mb-2">
-                    <label className="text-xs font-medium text-gray-600">السؤال {qIndex + 1}: {question.text}</label>
+                    <label className="text-xs font-medium text-gray-600">
+                      Question {qIndex + 1}: {question.text}
+                    </label>
                     <button
                       onClick={() => {
                         const newQuestions = quizContent.questions.filter((_, i) => i !== qIndex)
                         onElementUpdate(element.id, { content: { ...quizContent, questions: newQuestions } })
                       }}
                       className="text-red-500 hover:bg-red-50 p-1 rounded text-xs"
-                      title="حذف السؤال"
+                      title="Delete Question"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -296,7 +298,7 @@ export default function CanvasArea({
 
             {quizContent.questions?.length === 0 && (
               <div className="text-center py-8 text-gray-400 text-sm">
-                لا توجد أسئلة. استخدم لوحة الخصائص لإضافة أسئلة.
+                No questions yet. Use the properties panel to add questions.
               </div>
             )}
           </div>
@@ -305,7 +307,7 @@ export default function CanvasArea({
       default:
         return (
           <div className={`${baseClasses} ${styleClasses}`}>
-            <p className="text-gray-500">عنصر غير معروف: {element.type}</p>
+            <p className="text-gray-500">Unknown element: {element.type}</p>
           </div>
         )
     }
@@ -351,16 +353,16 @@ export default function CanvasArea({
       <div className="bg-white border-b p-4 mb-4 rounded-lg shadow-sm">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-lg font-semibold">🏗️ منطقة التصميم</h2>
-            <p className="text-sm text-gray-500">اسحب وأفلت العناصر هنا أو انقر نقرتين للتعديل</p>
+            <h2 className="text-lg font-semibold">🏗️ Design Area</h2>
+            <p className="text-sm text-gray-500">Drag & drop elements here or double-click to edit</p>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <span className="px-2 py-1 bg-gray-100 rounded">
-              {elements.length} عناصر
+              {elements.length} Elements
             </span>
             {selectedElement && (
               <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                ⭐ محدد
+                ⭐ Selected
               </span>
             )}
           </div>
@@ -379,12 +381,12 @@ export default function CanvasArea({
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center p-8 max-w-md">
               <div className="text-gray-400 text-5xl mb-4">📝</div>
-              <h3 className="text-xl font-medium text-gray-700 mb-2">ابدأ في إنشاء درسك</h3>
-              <p className="text-gray-500 mb-6">اسحب العناصر من الشريط الجانبي أو انقر لإضافة عنصر جديد</p>
+              <h3 className="text-xl font-medium text-gray-700 mb-2">Start Creating Your Lesson</h3>
+              <p className="text-gray-500 mb-6">Drag items from the sidebar or click to add a new element</p>
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 bg-white/50">
                 <div className="text-gray-400 text-3xl mb-3">👇</div>
-                <p className="text-gray-600">اسحب وأفلت العناصر هنا</p>
-                <p className="text-sm text-gray-400 mt-1">أو استخدم الأزرار في الشريط الجانبي</p>
+                <p className="text-gray-600">Drag & drop elements here</p>
+                <p className="text-sm text-gray-400 mt-1">Or use the buttons in the sidebar</p>
               </div>
             </div>
           </div>
@@ -402,7 +404,7 @@ export default function CanvasArea({
               <div className="absolute -top-8 left-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20 bg-white shadow-md rounded-lg p-1 border">
                 <button
                   className="p-1.5 hover:bg-gray-100 rounded text-gray-600"
-                  title="اسحب لإعادة الترتيب"
+                  title="Drag to reorder"
                 >
                   <GripVertical size={14} />
                 </button>
@@ -412,7 +414,7 @@ export default function CanvasArea({
                 <button
                   className="p-1.5 hover:bg-gray-100 rounded text-gray-600 disabled:opacity-50"
                   onClick={() => onMove && onMove(element.id, 'up')}
-                  title="تحريك للأعلى"
+                  title="Move Up"
                   disabled={index === 0}
                 >
                   <ArrowUp size={14} />
@@ -421,7 +423,7 @@ export default function CanvasArea({
                 <button
                   className="p-1.5 hover:bg-gray-100 rounded text-gray-600 disabled:opacity-50"
                   onClick={() => onMove && onMove(element.id, 'down')}
-                  title="تحريك للأسفل"
+                  title="Move Down"
                   disabled={index === elements.length - 1}
                 >
                   <ArrowDown size={14} />
@@ -432,7 +434,7 @@ export default function CanvasArea({
                 <button
                   className="p-1.5 hover:bg-blue-50 rounded text-blue-600"
                   onClick={() => onDuplicate && onDuplicate(element.id)}
-                  title="نسخ"
+                  title="Duplicate"
                 >
                   <Copy size={14} />
                 </button>
@@ -440,7 +442,7 @@ export default function CanvasArea({
                 <button
                   className="p-1.5 hover:bg-red-50 rounded text-red-600"
                   onClick={() => onDelete && onDelete(element.id)}
-                  title="حذف"
+                  title="Delete"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -467,11 +469,11 @@ export default function CanvasArea({
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <span className="w-3 h-3 rounded bg-blue-500"></span>
-              <span>محدد</span>
+              <span>Selected</span>
             </div>
             <div className="flex items-center gap-1">
               <GripVertical size={14} />
-              <span>اسحب لإعادة الترتيب</span>
+              <span>Drag to reorder</span>
             </div>
           </div>
 
@@ -481,7 +483,7 @@ export default function CanvasArea({
               onClick={() => onAdd && onAdd('paragraph')}
             >
               <Plus size={16} />
-              <span>إضافة فقرة</span>
+              <span>Add Paragraph</span>
             </button>
           </div>
         </div>

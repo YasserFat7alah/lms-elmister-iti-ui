@@ -35,10 +35,10 @@ function InteractiveQuiz({ quizData, styleClasses }) {
         </div>
         <div>
           <h3 className="text-2xl font-bold text-blue-900">
-            {quizData.title || 'اختبار'}
+            {quizData.title || 'Quiz'}
           </h3>
           <p className="text-sm text-blue-600">
-            {quizData.questions?.length || 0} سؤال
+            {quizData.questions?.length || 0} Questions
           </p>
         </div>
       </div>
@@ -65,12 +65,12 @@ function InteractiveQuiz({ quizData, styleClasses }) {
                       {correct ? (
                         <>
                           <CheckCircle size={20} />
-                          <span>صحيح!</span>
+                          <span>Correct!</span>
                         </>
                       ) : (
                         <>
                           <XCircle size={20} />
-                          <span>خطأ</span>
+                          <span>Wrong</span>
                         </>
                       )}
                     </div>
@@ -90,32 +90,32 @@ function InteractiveQuiz({ quizData, styleClasses }) {
                         onClick={() => !hasAnswered && handleAnswerSelect(questionId, oIndex)}
                         disabled={hasAnswered}
                         className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all text-right ${showAsCorrect
-                            ? 'bg-green-100 border-2 border-green-500 shadow-sm'
-                            : showAsWrong
-                              ? 'bg-red-100 border-2 border-red-500'
-                              : isSelected
-                                ? 'bg-blue-100 border-2 border-blue-500'
-                                : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
-                          } ${hasAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                          ? 'bg-green-100 border-2 border-green-500 shadow-sm'
+                          : showAsWrong
+                            ? 'bg-red-100 border-2 border-red-500'
+                            : isSelected
+                              ? 'bg-blue-100 border-2 border-blue-500'
+                              : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                        } ${hasAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                       >
                         <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center text-sm font-bold flex-shrink-0 ${showAsCorrect
-                            ? 'border-green-600 bg-green-600 text-white'
-                            : showAsWrong
-                              ? 'border-red-600 bg-red-600 text-white'
-                              : isSelected
-                                ? 'border-blue-600 bg-blue-600 text-white'
-                                : 'border-gray-300 text-gray-600'
-                          }`}>
+                          ? 'border-green-600 bg-green-600 text-white'
+                          : showAsWrong
+                            ? 'border-red-600 bg-red-600 text-white'
+                            : isSelected
+                              ? 'border-blue-600 bg-blue-600 text-white'
+                              : 'border-gray-300 text-gray-600'
+                        }`}>
                           {String.fromCharCode(65 + oIndex)}
                         </div>
                         <span className={`flex-1 ${showAsCorrect
-                            ? 'font-semibold text-green-900'
-                            : showAsWrong
-                              ? 'font-semibold text-red-900'
-                              : isSelected
-                                ? 'font-semibold text-blue-900'
-                                : 'text-gray-700'
-                          }`}>
+                          ? 'font-semibold text-green-900'
+                          : showAsWrong
+                            ? 'font-semibold text-red-900'
+                            : isSelected
+                              ? 'font-semibold text-blue-900'
+                              : 'text-gray-700'
+                        }`}>
                           {option}
                         </span>
                         {showAsCorrect && (
@@ -135,7 +135,7 @@ function InteractiveQuiz({ quizData, styleClasses }) {
                       onClick={() => handleCheckAnswer(questionId, question.correctAnswer)}
                       className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition-colors"
                     >
-                      تحقق من الإجابة
+                      Check Answer
                     </button>
                   </div>
                 )}
@@ -143,7 +143,7 @@ function InteractiveQuiz({ quizData, styleClasses }) {
                 {hasAnswered && !correct && (
                   <div className="mt-4 pr-11 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-sm text-yellow-800">
-                      <span className="font-bold">💡 الإجابة الصحيحة:</span> {String.fromCharCode(65 + question.correctAnswer)} - {question.options[question.correctAnswer]}
+                      <span className="font-bold">💡 Correct Answer:</span> {String.fromCharCode(65 + question.correctAnswer)} - {question.options[question.correctAnswer]}
                     </p>
                   </div>
                 )}
@@ -154,7 +154,7 @@ function InteractiveQuiz({ quizData, styleClasses }) {
       ) : (
         <div className="text-center py-12 bg-white rounded-lg border-2 border-dashed border-gray-300">
           <div className="text-4xl mb-3">📝</div>
-          <p className="text-gray-500">لا توجد أسئلة في هذا الاختبار</p>
+          <p className="text-gray-500">No questions in this quiz</p>
         </div>
       )}
     </div>
@@ -173,7 +173,7 @@ export default function PreviewPage() {
       try {
         setTemplate(JSON.parse(saved))
       } catch (error) {
-        console.error('خطأ في تحميل القالب:', error)
+        console.error('Error loading template:', error)
       }
     }
     setLoading(false)
@@ -206,21 +206,21 @@ export default function PreviewPage() {
       case 'title':
         return (
           <h1 className={`${baseClasses} ${styleClasses} text-3xl font-bold mb-4`}>
-            {typeof element.content === 'string' ? element.content : 'عنوان'}
+            {typeof element.content === 'string' ? element.content : 'Title'}
           </h1>
         )
 
       case 'subtitle':
         return (
           <h2 className={`${baseClasses} ${styleClasses} text-2xl font-semibold mb-3`}>
-            {typeof element.content === 'string' ? element.content : 'عنوان فرعي'}
+            {typeof element.content === 'string' ? element.content : 'Subtitle'}
           </h2>
         )
 
       case 'paragraph':
         return (
           <p className={`${baseClasses} ${styleClasses} mb-4 leading-relaxed`}>
-            {typeof element.content === 'string' ? element.content : 'فقرة'}
+            {typeof element.content === 'string' ? element.content : 'Paragraph'}
           </p>
         )
 
@@ -235,7 +235,7 @@ export default function PreviewPage() {
               />
             ) : (
               <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
-                <span className="text-gray-400">🖼️ صورة</span>
+                <span className="text-gray-400">🖼️ Image</span>
               </div>
             )}
           </div>
@@ -246,7 +246,7 @@ export default function PreviewPage() {
           <button
             className={`${baseClasses} ${styleClasses} my-4 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700`}
           >
-            {typeof element.content === 'string' ? element.content : 'زر'}
+            {typeof element.content === 'string' ? element.content : 'Button'}
           </button>
         )
 
@@ -263,21 +263,21 @@ export default function PreviewPage() {
       case 'quiz':
         const quizData = typeof element.content === 'object' && element.content !== null
           ? element.content
-          : { title: 'اختبار', questions: [] }
+          : { title: 'Quiz', questions: [] }
 
         return <InteractiveQuiz quizData={quizData} styleClasses={`${baseClasses} ${styleClasses}`} />
 
       case 'card':
         return (
           <div className={`${baseClasses} ${styleClasses} p-6 rounded-xl shadow-sm border mb-4`}>
-            <div>{typeof element.content === 'string' ? element.content : 'بطاقة'}</div>
+            <div>{typeof element.content === 'string' ? element.content : 'Card'}</div>
           </div>
         )
 
       default:
         return (
           <div className={`${baseClasses} ${styleClasses} mb-4`}>
-            {typeof element.content === 'string' ? element.content : 'محتوى'}
+            {typeof element.content === 'string' ? element.content : 'Content'}
           </div>
         )
     }
@@ -288,7 +288,7 @@ export default function PreviewPage() {
   }
 
   const handleExportPDF = () => {
-    alert('سيتم تصدير PDF - هذه الخاصية تحتاج لإعدادات إضافية')
+    alert('PDF export will be done - this feature requires additional setup')
   }
 
   if (loading) {
@@ -296,7 +296,7 @@ export default function PreviewPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">جاري تحميل المعاينة...</p>
+          <p className="mt-4 text-gray-600">Loading preview...</p>
         </div>
       </div>
     )
@@ -307,13 +307,13 @@ export default function PreviewPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">📄</div>
-          <h2 className="text-xl font-semibold mb-2">لا يوجد قالب للمعاينة</h2>
-          <p className="text-gray-600 mb-6">ارجع إلى المحرر وأنشئ درسًا أولاً</p>
+          <h2 className="text-xl font-semibold mb-2">No Template Found</h2>
+          <p className="text-gray-600 mb-6">Go back to the editor and create a lesson first</p>
           <button
             onClick={() => router.push('/lesson-builder/editor')}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            العودة للمحرر
+            Back to Editor
           </button>
         </div>
       </div>
@@ -329,22 +329,22 @@ export default function PreviewPage() {
             className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg hover:bg-gray-200"
           >
             <ArrowLeft size={18} />
-            العودة للمحرر
+            Back to Editor
           </button>
 
           <div>
             <h2 className="text-xl font-semibold">{template.name}</h2>
-            <p className="text-gray-500 text-sm">معاينة</p>
+            <p className="text-gray-500 text-sm">Preview</p>
           </div>
         </div>
 
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <button
             onClick={handlePrint}
             className="px-4 py-2 bg-white border rounded-lg flex items-center gap-2 hover:bg-gray-50"
           >
             <Printer size={18} />
-            طباعة
+            Print
           </button>
 
           <button
@@ -352,17 +352,17 @@ export default function PreviewPage() {
             className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-700"
           >
             <Download size={18} />
-            تصدير PDF
+            Export PDF
           </button>
 
           <button
-            onClick={() => alert('سيتم مشاركة الرابط')}
+            onClick={() => alert('Link will be shared')}
             className="px-4 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2 hover:bg-green-700"
           >
             <Share2 size={18} />
-            مشاركة
+            Share
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="max-w-4xl mx-auto p-6">
@@ -376,28 +376,28 @@ export default function PreviewPage() {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm mb-8">
+        {/* <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm mb-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="text-2xl font-bold text-blue-600">{template.elements.length}</div>
-              <div className="text-sm text-gray-600">عدد العناصر</div>
+              <div className="text-sm text-gray-600">Elements Count</div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="text-2xl font-bold text-green-600">{template.version}</div>
-              <div className="text-sm text-gray-600">الإصدار</div>
+              <div className="text-sm text-gray-600">Version</div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="text-sm text-gray-600">آخر تحديث</div>
+              <div className="text-sm text-gray-600">Last Update</div>
               <div className="text-sm font-medium">
-                {new Date(template.updatedAt || template.createdAt).toLocaleDateString('ar-SA')}
+                {new Date(template.updatedAt || template.createdAt).toLocaleDateString('en-US')}
               </div>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="text-sm text-gray-600">الحالة</div>
-              <div className="text-sm font-medium text-green-600">جاهز</div>
+              <div className="text-sm text-gray-600">Status</div>
+              <div className="text-sm font-medium text-green-600">Ready</div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

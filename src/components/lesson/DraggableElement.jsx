@@ -49,12 +49,12 @@ export default function DraggableElement({
 
   const getContentPreview = () => {
     if (typeof element.content === 'string') {
-      return element.content || 'محتوى فارغ'
+      return element.content || 'Empty content'
     }
     if (element.type === 'quiz' && element.content && typeof element.content === 'object') {
-      return `${element.content.title || 'اختبار'} (${element.content.questions?.length || 0} أسئلة)`
+      return `${element.content.title || 'Quiz'} (${element.content.questions?.length || 0} Questions)`
     }
-    return 'محتوى معقد'
+    return 'Complex content'
   }
 
   return (
@@ -90,7 +90,7 @@ export default function DraggableElement({
               onDuplicate(element.id)
             }}
             className="p-1 hover:bg-gray-100 rounded"
-            title="نسخ"
+            title="Duplicate"
           >
             <Copy size={14} />
           </button>
@@ -101,7 +101,7 @@ export default function DraggableElement({
               onSelect(element.id)
             }}
             className="p-1 hover:bg-gray-100 rounded"
-            title="تعديل"
+            title="Edit"
           >
             <Settings size={14} />
           </button>
@@ -112,7 +112,7 @@ export default function DraggableElement({
               onDelete(element.id)
             }}
             className="p-1 hover:bg-red-100 text-red-600 rounded"
-            title="حذف"
+            title="Delete"
           >
             <X size={14} />
           </button>
@@ -130,13 +130,13 @@ export default function DraggableElement({
       >
         {element.type === 'title' && (
           <div className="text-lg font-bold truncate">
-            {typeof element.content === 'string' ? (element.content || 'عنوان فارغ') : 'عنوان'}
+            {typeof element.content === 'string' ? (element.content || 'Empty title') : 'Title'}
           </div>
         )}
 
         {element.type === 'paragraph' && (
           <div className="text-sm text-gray-600 line-clamp-2">
-            {typeof element.content === 'string' ? (element.content || 'فقرة نصية فارغة...') : 'فقرة'}
+            {typeof element.content === 'string' ? (element.content || 'Empty paragraph...') : 'Paragraph'}
           </div>
         )}
 
@@ -149,14 +149,14 @@ export default function DraggableElement({
                 className="max-h-32 object-cover rounded"
               />
             ) : (
-              <span className="text-gray-400">🖼️ صورة</span>
+              <span className="text-gray-400">🖼️ Image</span>
             )}
           </div>
         )}
 
         {element.type === 'button' && (
           <div className="inline-block px-4 py-2 bg-primary-500 text-white rounded">
-            {typeof element.content === 'string' ? (element.content || 'زر') : 'زر'}
+            {typeof element.content === 'string' ? (element.content || 'Button') : 'Button'}
           </div>
         )}
 
@@ -168,12 +168,12 @@ export default function DraggableElement({
                 <div className="font-semibold text-sm">
                   {element.content && typeof element.content === 'object' && element.content.title
                     ? element.content.title
-                    : 'اختبار جديد'}
+                    : 'New Quiz'}
                 </div>
                 <div className="text-xs text-gray-500">
                   {element.content && typeof element.content === 'object' && element.content.questions
-                    ? `${element.content.questions.length} أسئلة`
-                    : '0 أسئلة'}
+                    ? `${element.content.questions.length} Questions`
+                    : '0 Questions'}
                 </div>
               </div>
             </div>
@@ -182,8 +182,8 @@ export default function DraggableElement({
 
         {element.type === 'card' && (
           <div className="border rounded p-3">
-            <div className="font-semibold mb-1">بطاقة</div>
-            <div className="text-sm text-gray-600">محتوى البطاقة...</div>
+            <div className="font-semibold mb-1">Card</div>
+            <div className="text-sm text-gray-600">Card content...</div>
           </div>
         )}
 
