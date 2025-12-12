@@ -73,7 +73,7 @@ export default function Page() {
 
                             <div className="flex items-center gap-2">
                                 <span className="text-gray-300">Created by</span>
-                                <Link href={`/teachers/${teacher?._id}`} className="flex items-center gap-2 hover:text-pink-300 transition-colors font-semibold">
+                                <Link href={teacher?.username ? `/users/${teacher.username}` : '#'} className="flex items-center gap-2 hover:text-pink-300 transition-colors font-semibold">
                                     <Avatar className="w-6 h-6 border border-white/20">
                                         <AvatarImage src={instructorAvatar} />
                                         <AvatarFallback className="text-[10px] text-black">

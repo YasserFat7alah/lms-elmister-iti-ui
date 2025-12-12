@@ -22,6 +22,9 @@ export const publicApiSlice = apiSlice.injectEndpoints({
                     params.selectedSubjects.forEach(s => queryParams.append("subject", s));
                 }
 
+                // Teacher ID Filter
+                if (params.teacherId) queryParams.append("teacherId", params.teacherId);
+
                 // Grade Level Filter (Array)
                 if (params.gradeLevel) {
                     if (Array.isArray(params.gradeLevel)) {
@@ -71,7 +74,43 @@ export const publicApiSlice = apiSlice.injectEndpoints({
             },
             providesTags: ["Groups"],
         }),
+        getPublicTeachers: builder.query({
+            query: (params) => {
+                const queryParams = new URLSearchParams();
+                if (params.page) queryParams.append("page", params.page);
+                if (params.limit) queryParams.append("limit", params.limit);
+                if (params.search) queryParams.append("search", params.search);
+                if (params.rating) queryParams.append("rating", params.rating);
+
+                if (params.subject && Array.isArray(params.subject)) {
+                    params.subject.forEach(s => queryParams.append("subject", s));
+                }
+                // Also support 'selectedSubjects' for consistency with filter component
+                if (params.selectedSubjects && Array.isArray(params.selectedSubjects)) {
+                    params.selectedSubjects.forEach(s => queryParams.append("subject", s));
+                }
+
+                return {
+                    url: `/public/teachers?${queryParams.toString()}`,
+                    method: "GET",
+                };
+            },
+            providesTags: ["Teachers"],
+        }),
+        getUserByUsername: builder.query({
+            query: (username) => ({
+                url: `/public/users/${username}`,
+                method: "GET",
+            }),
+            providesTags: (result, error, username) => [{ type: "Users", id: username }],
+        }),
     }),
 });
 
-export const { useGetPublicCoursesQuery, useGetPublicCourseByIdQuery, useGetPublicGroupsQuery } = publicApiSlice;
+export const {
+    useGetPublicCoursesQuery,
+    useGetPublicCourseByIdQuery,
+    useGetPublicGroupsQuery,
+    useGetPublicTeachersQuery,
+    useGetUserByUsernameQuery
+} = publicApiSlice;

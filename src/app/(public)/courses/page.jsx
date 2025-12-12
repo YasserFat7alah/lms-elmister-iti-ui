@@ -85,6 +85,9 @@ const CoursesContent = () => {
     router.push(`?${params.toString()}`, { scroll: false });
   }, [searchParams, router]);
 
+  // 6. Reset Key for Search Component
+  const [resetKey, setResetKey] = React.useState(0);
+
   // 5. Reset Handler (Atomic)
   const handleReset = React.useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -94,6 +97,7 @@ const CoursesContent = () => {
     params.delete('gradeFilter');
     params.delete('languageFilter');
     params.set('page', '1');
+    setResetKey(prev => prev + 1);
     router.push(`?${params.toString()}`, { scroll: false });
   }, [searchParams, router]);
 
@@ -154,15 +158,15 @@ const CoursesContent = () => {
   const coursesList = coursesData?.data || [];
   const availableFilters = coursesData?.filters || { subjects: [], gradeLevels: [], languages: [] };
 
-  if (isLoading) return <div className="text-center py-10">Loading Courses...</div>;
+  if (isLoading) return <div className="text-center py-20 flex justify-center"><Spinner size={40} /></div>;
   if (isError) return <div className="text-center py-10 text-red-500">Error: {error?.data?.message || 'Something went wrong'}</div>;
 
   return (
     <>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 my-6 flex flex-col xl:flex-row gap-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-0 mb-6 xl:my-6 flex flex-col xl:flex-row gap-8">
 
         {/* Desktop/Tablet Sidebar (Sticky) */}
-        <aside className="hidden xl:block w-64 xl:w-72 flex-none">
+        <aside className="hidden xl:block w-64 2xl:w-72 flex-none">
           <Filterition
             onFilter={handleSubjectChange}
             selectedSubjects={selectedSubjects}
@@ -208,10 +212,8 @@ const CoursesContent = () => {
 
         <div className="flex-1 w-full min-w-0">
 
-          <SectionHeader
-            title="Browse our courses"
-          >
-            <CourseSearch onSearch={handleSearch} />
+          <SectionHeader title="Browse our courses">
+            <CourseSearch onSearch={handleSearch} resetTrigger={resetKey} defaultValue={searchQuery} />
           </SectionHeader>
 
 
@@ -225,7 +227,11 @@ const CoursesContent = () => {
               onPageChange={handlePageChange}
             />
           ) : (
-            <div className="text-center text-gray-500 mt-10">No courses found matching your criteria.</div>
+            <div className="text-center text-gray-500 mt-20 p-10 bg-gray-50 rounded-xl">
+              <p className="text-lg font-semibold">No courses found matching your criteria.</p>
+              <p className="text-sm">Try adjusting your filters or search.</p>
+              <button onClick={handleReset} className="mt-4 text-[#FF0055] underline hover:text-red-700">Clear all filters</button>
+            </div>
           )}
 
         </div>

@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSelector } from 'react-redux';
 import { useDeleteCommentMutation } from '@/redux/api/endPoints/commentsApiSlice';
-import { Trash2, MessageSquareReply } from 'lucide-react';
+import { Trash2, MessageSquareReply, Shield } from 'lucide-react';
 import DeleteModal from '@/components/shared/DeleteModal';
 
 const CourseInquiries = ({ comments = [], teacherId }) => {
@@ -49,14 +49,22 @@ const CourseInquiries = ({ comments = [], teacherId }) => {
             <ul className='space-y-6'>
                 {comments.map(comment => {
                     const isInstructor = teacherId && comment.user?._id === teacherId;
+                    const isAdmin = comment.user?.role === 'admin';
                     const isAuthor = userInfo?.user?._id === comment.user?._id;
 
                     return (
                         <li key={comment._id} className='flex gap-4 items-start group'>
-                            <Avatar className={`w-10 h-10 border ${isInstructor ? 'border-pink-500 ring-2 ring-pink-100' : 'border-gray-200'} mt-1 shrink-0`}>
-                                <AvatarImage src={comment.user?.avatar?.url || comment.user?.avatar} />
-                                <AvatarFallback>{comment.user?.name?.charAt(0) || 'U'}</AvatarFallback>
-                            </Avatar>
+                            <div className="relative mt-1 shrink-0">
+                                <Avatar className={`w-10 h-10 border ${isAdmin ? 'border-blue-500 ring-2 ring-blue-100' : isInstructor ? 'border-pink-500 ring-2 ring-pink-100' : 'border-gray-200'}`}>
+                                    <AvatarImage src={comment.user?.avatar?.url || comment.user?.avatar} />
+                                    <AvatarFallback>{comment.user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                                </Avatar>
+                                {isAdmin && (
+                                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm ring-1 ring-gray-100">
+                                        <Shield size={10} className="text-blue-600 fill-blue-100" />
+                                    </div>
+                                )}
+                            </div>
 
                             <div className="flex-1">
                                 {/* Inquiry Header */}
@@ -64,9 +72,15 @@ const CourseInquiries = ({ comments = [], teacherId }) => {
                                     <div className="flex items-center gap-2">
                                         <h4 className="font-bold text-gray-900 text-sm">{comment.user?.name || "Unknown"}</h4>
 
-                                        {isInstructor && (
+                                        {isInstructor && !isAdmin && (
                                             <Badge className="text-[10px] px-1.5 py-0 h-5 bg-pink-100 text-pink-700 hover:bg-pink-200 border-none shadow-none">
                                                 Author
+                                            </Badge>
+                                        )}
+
+                                        {isAdmin && (
+                                            <Badge className="text-[10px] px-1.5 py-0 h-5 bg-blue-100 text-blue-700 hover:bg-blue-200 border-none shadow-none flex items-center gap-1">
+                                                Admin
                                             </Badge>
                                         )}
 

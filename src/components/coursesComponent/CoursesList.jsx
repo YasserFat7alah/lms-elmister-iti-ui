@@ -59,12 +59,12 @@ const CoursesList = ({ courses, currentPage, totalPages, onPageChange }) => {
 
 
   return (
-    <div className=''>
+    <div className='flex flex-col gap-8 pb-10'>
       {courses.length === 0 ? (
         <p className='font-bold text-gray-700 text-lg my-8'>No Courses Found For Selected Subjects.</p>
       ) : (
         <>
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 animate-in fade-in duration-700'>
             {courses.map(course => (
               <div key={course._id} className="h-full">
                 <CourseCard course={course} />

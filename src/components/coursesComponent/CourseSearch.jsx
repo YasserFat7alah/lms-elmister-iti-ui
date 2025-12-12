@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
-const CourseSearch = ({ onSearch, className = "" }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+const CourseSearch = ({ onSearch, defaultValue = "", resetTrigger, className = "" }) => {
+  const [searchTerm, setSearchTerm] = useState(defaultValue);
 
   // Use ref to keep latest onSearch without triggering effect
   const onSearchRef = React.useRef(onSearch);
@@ -12,6 +12,13 @@ const CourseSearch = ({ onSearch, className = "" }) => {
   useEffect(() => {
     onSearchRef.current = onSearch;
   }, [onSearch]);
+
+  // Handle explicit reset signal from parent
+  useEffect(() => {
+    if (resetTrigger) {
+      setSearchTerm("");
+    }
+  }, [resetTrigger]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -34,6 +41,7 @@ const CourseSearch = ({ onSearch, className = "" }) => {
         className="pl-10 pr-4 py-2 h-10 w-full rounded-full border-gray-200 bg-white/90 backdrop-blur-sm shadow-sm hover:shadow-md hover:border-[#392b80]/30 focus:border-[#392b80] focus:ring-[#392b80]/20 transition-all duration-300 placeholder:text-gray-400 text-gray-700"
         type='search'
         placeholder="Search courses..."
+        value={searchTerm}
         onChange={handleSearch}
       />
     </div>

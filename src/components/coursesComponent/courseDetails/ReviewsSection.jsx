@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 
-const ReviewsSection = ({ reviews = [], averageRating = 0, totalReviews = 0 }) => {
+const ReviewsSection = ({ reviews = [], averageRating = 0, totalReviews = 0, className = "" }) => {
     const currentRating = averageRating || 0;
     const count = totalReviews || 0;
     const finalReviews = reviews;
@@ -17,7 +17,7 @@ const ReviewsSection = ({ reviews = [], averageRating = 0, totalReviews = 0 }) =
     });
 
     return (
-        <div className="bg-white rounded-b-xl shadow-sm border border-t-0 border-gray-100 p-5 h-full flex flex-col w-full">
+        <div className={`bg-white rounded-b-xl shadow-sm border border-t-0 border-gray-100 p-5 h-full flex flex-col w-full ${className}`}>
             <h3 className="text-lg font-bold text-gray-900 mb-4 shrink-0">Reviews</h3>
 
             {/* Rating Summary */}

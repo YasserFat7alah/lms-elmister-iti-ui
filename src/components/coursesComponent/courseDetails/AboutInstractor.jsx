@@ -1,11 +1,15 @@
+'use client'
 import { FaGooglePlay, FaStar, FaUserFriends } from "react-icons/fa";
 import { FaBookOpen } from "react-icons/fa";
 import Image from 'next/image'
 import React from 'react'
+import { useRouter } from 'next/navigation';
 
 const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
 const AboutInstractor = ({ course, teacher }) => {
+    const router = useRouter();
+
     if (!teacher) return null;
 
     const teacherProfile = teacher.teacherData || {};
@@ -17,11 +21,20 @@ const AboutInstractor = ({ course, teacher }) => {
     const rating = teacherProfile.averageRating || 0;
     const reviewsCount = teacherProfile.totalRatings || 0;
 
+    const handleProfileClick = () => {
+        if (teacher.username) {
+            router.push(`/users/${teacher.username}`);
+        }
+    };
+
     return (
         <div className=''>
 
             {/* MAIN INFO */}
-            <div className="flex flex-col md:flex-row gap-5 items-start">
+            <div
+                onClick={handleProfileClick}
+                className="flex flex-col md:flex-row gap-5 items-start cursor-pointer hover:bg-gray-50 p-4 rounded-xl transition-colors border border-transparent hover:border-gray-100 -mx-4 md:mx-0"
+            >
                 {/* Avatar */}
                 <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm shrink-0">
                     <img
@@ -34,13 +47,13 @@ const AboutInstractor = ({ course, teacher }) => {
                 <div className="flex-1 w-full">
                     <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                         <div>
-                            <h4 className='text-xl font-bold text-gray-900'>{teacher.name}</h4>
+                            <h4 className='text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors'>{teacher.name}</h4>
                             <div className="flex flex-wrap gap-2 items-center text-xs mt-1">
-                                <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-medium capitalize border border-blue-100">
+                                <span className="px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-medium capitalize border border-purple-200">
                                     {teacher.role}
                                 </span>
                                 <span className="text-gray-400">•</span>
-                                <span className="text-gray-500">{teacher.email}</span>
+                                <span className="text-gray-500">@{teacher.username}</span>
                             </div>
                         </div>
 
