@@ -1,44 +1,81 @@
 "use client";
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Users, UserCheck, GraduationCap, Baby, Search } from "lucide-react";
+import { Users, UserCheck, GraduationCap, Search } from "lucide-react";
 import UserFilteritionTable from "./UserFilteritionTable";
 import { MdAdminPanelSettings } from "react-icons/md";
 import BulkBtn from "../BulkBtn";
 import { FaUserTie } from "react-icons/fa";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import UserDetailModal from "./UserDetailModal";
+import { useDeleteUserMutation, useUpdateUserMutation } from "@/redux/api/endPoints/usersApiSlice";
 
-const UsersTabs = ({ users, parents, teachers, students , admins }) => {
+const UsersTabs = ({ users, parents, teachers, students, admins }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [selectedRows, setSelectedRows] = useState([]);
   const [isBulkDelete, setIsBulkDelete] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  
+
+  const [deleteUser] = useDeleteUserMutation();
+  const [updateUser] = useUpdateUserMutation();
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+  // Toggle row selection
+  const toggleRowSelection = (userId) => {
+    setSelectedRows(prev =>
+      prev.includes(userId)
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  // Handle single click - Open Modal
+  const handleUserClick = (userId) => {
+    setSelectedUserId(userId);
+    setIsModalOpen(true);
+  };
+
+  // Handle double click - Toggle Selection
+  const handleRowDoubleClick = (userId) => {
+    toggleRowSelection(userId);
+  };
 
   // Delete handler - handles both single and bulk delete
-  const handleDelete = (idOrIds) => {
-    if (Array.isArray(idOrIds)) {
-      // Bulk delete:
-      setUsers(users.filter((u) => !idOrIds.includes(u.id)));
-    } else {
-      // Single delete: filter out the user with the matching ID
-      setUsers(users.filter((u) => u.id !== idOrIds));
+  const handleDelete = async (idOrIds) => {
+    try {
+      if (Array.isArray(idOrIds)) {
+        await Promise.all(idOrIds.map(id => deleteUser(id).unwrap()));
+        setSelectedRows([]);
+      } else {
+        await deleteUser(idOrIds).unwrap();
+      }
+    } catch (error) {
+      console.error("Failed to delete user:", error);
     }
   };
 
   // Edit handler
-  const handleEdit = (updatedUser) => {
-    setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+  const handleEdit = async (updatedUser) => {
+    try {
+      const { id, ...data } = updatedUser;
+      // API expects 'id' or '_id'? usually it's id in url. 
+      // Admin service likely uses id.
+      await updateUser({ id, ...data }).unwrap();
+    } catch (error) {
+      console.error("Failed to update user:", error);
+    }
   };
 
   // Filter users by search term
   const filteredUsers = (list) => {
-    if (!searchTerm) return list;
+    if (!searchTerm) return list || [];
     return list.filter(
       (user) =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -161,7 +198,7 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
           <UserFilteritionTable
             filtered={filteredUsers(users)}
             searchTerm={searchTerm}
-            setSelectedRows = {setSelectedRows}
+            setSelectedRows={setSelectedRows}
             selectedRows={selectedRows}
             isBulkDelete={isBulkDelete}
             setIsBulkDelete={setIsBulkDelete}
@@ -170,14 +207,16 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
             title="All Users"
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onUserClick={handleUserClick}
+            onRowDoubleClick={handleRowDoubleClick}
           />
         </TabsContent>
 
-         <TabsContent value="admins">
+        <TabsContent value="admins">
           <UserFilteritionTable
             filtered={filteredUsers(admins)}
             searchTerm={searchTerm}
-            setSelectedRows = {setSelectedRows}
+            setSelectedRows={setSelectedRows}
             selectedRows={selectedRows}
             isBulkDelete={isBulkDelete}
             setIsBulkDelete={setIsBulkDelete}
@@ -186,6 +225,8 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
             title="Admins"
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onUserClick={handleUserClick}
+            onRowDoubleClick={handleRowDoubleClick}
           />
         </TabsContent>
 
@@ -193,7 +234,7 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
           <UserFilteritionTable
             filtered={filteredUsers(parents)}
             searchTerm={searchTerm}
-            setSelectedRows = {setSelectedRows}
+            setSelectedRows={setSelectedRows}
             selectedRows={selectedRows}
             isBulkDelete={isBulkDelete}
             setIsBulkDelete={setIsBulkDelete}
@@ -202,6 +243,8 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
             title="Parents"
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onUserClick={handleUserClick}
+            onRowDoubleClick={handleRowDoubleClick}
           />
         </TabsContent>
 
@@ -209,7 +252,7 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
           <UserFilteritionTable
             filtered={filteredUsers(teachers)}
             searchTerm={searchTerm}
-            setSelectedRows = {setSelectedRows}
+            setSelectedRows={setSelectedRows}
             selectedRows={selectedRows}
             isBulkDelete={isBulkDelete}
             setIsBulkDelete={setIsBulkDelete}
@@ -218,6 +261,8 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
             title="Teachers"
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onUserClick={handleUserClick}
+            onRowDoubleClick={handleRowDoubleClick}
           />
         </TabsContent>
 
@@ -225,7 +270,7 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
           <UserFilteritionTable
             filtered={filteredUsers(students)}
             searchTerm={searchTerm}
-            setSelectedRows = {setSelectedRows}
+            setSelectedRows={setSelectedRows}
             selectedRows={selectedRows}
             isBulkDelete={isBulkDelete}
             setIsBulkDelete={setIsBulkDelete}
@@ -234,9 +279,18 @@ const UsersTabs = ({ users, parents, teachers, students , admins }) => {
             title="Students"
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onUserClick={handleUserClick}
+            onRowDoubleClick={handleRowDoubleClick}
           />
         </TabsContent>
       </Tabs>
+
+      {/* Detailed View Modal */}
+      <UserDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        userId={selectedUserId}
+      />
     </div>
   );
 };

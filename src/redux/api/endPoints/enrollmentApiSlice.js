@@ -10,17 +10,44 @@ export const enrollmentApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: { studentId },
             }),
+            invalidatesTags: ['Enrollment'],
         }),
         getMyEnrollments: builder.query({
             query: () => ({
                 url: `${ENROLLMENT_URL}/me`,
                 method: 'GET',
             }),
+            providesTags: ['Enrollment'],
+        }),
+        getAllEnrollments: builder.query({
+            query: () => ({
+                url: ENROLLMENT_URL,
+                method: 'GET',
+            }),
+            providesTags: ['Enrollment'],
+        }),
+        deleteEnrollment: builder.mutation({
+            query: (id) => ({
+                url: `${ENROLLMENT_URL}/admin/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Enrollment'],
+        }),
+        updateEnrollmentStatus: builder.mutation({
+            query: ({ id, status }) => ({
+                url: `${ENROLLMENT_URL}/${id}/status`,
+                method: 'PATCH',
+                body: { status },
+            }),
+            invalidatesTags: ['Enrollment'],
         }),
     }),
 });
 
 export const {
     useCheckoutMutation,
-    useGetMyEnrollmentsQuery
+    useGetMyEnrollmentsQuery,
+    useGetAllEnrollmentsQuery,
+    useDeleteEnrollmentMutation,
+    useUpdateEnrollmentStatusMutation
 } = enrollmentApiSlice;

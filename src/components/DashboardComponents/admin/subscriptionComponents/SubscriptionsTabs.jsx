@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import SubscriptionsTable from "./SubscriptionsTable";
 import RecietPopup from "./RecietPopup";
 import BulkBtn from "../BulkBtn";
+import SubscriptionStateCards from "./SubscriptionStateCards";
 import { useGetAllEnrollmentsQuery, useDeleteEnrollmentMutation, useUpdateEnrollmentStatusMutation } from "@/redux/api/endPoints/enrollmentApiSlice";
 
 const SubscriptionsTabs = () => {
@@ -107,7 +108,8 @@ const SubscriptionsTabs = () => {
     if (isError) return <div className="p-8 text-center text-red-500">Error loading data.</div>;
 
     return (
-        <div className="space-y-6 py-6 bg-linear-to-br from-gray-50 to-white min-h-screen">
+        <div className="space-y-6 py-6 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+            <SubscriptionStateCards enrollments={enrollments} />
             <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="flex flex-col sm:flex-row flex-wrap justify-between items-center gap-4 h-auto w-full bg-white border border-gray-200 p-4 rounded-xl">
                     <div className="w-full lg:w-auto">
@@ -152,35 +154,35 @@ const SubscriptionsTabs = () => {
                             <div className="flex flex-row flex-wrap items-center gap-2">
                                 <TabsTrigger
                                     value="all"
-                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-linear-to-r data-[state=active]:from-[#392b80] data-[state=active]:to-purple-700 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
+                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#392b80] data-[state=active]:to-purple-700 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
                                 >
                                     <Users className="w-4 h-4 mr-2" /> All Subscriptions
                                 </TabsTrigger>
 
                                 <TabsTrigger
                                     value="active"
-                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-linear-to-r data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
+                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
                                 >
                                     <CheckCircle className="w-4 h-4 mr-2" /> Active
                                 </TabsTrigger>
 
                                 <TabsTrigger
                                     value="incomplete"
-                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-linear-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
+                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
                                 >
                                     <Clock className="w-4 h-4 mr-2" /> Incomplete
                                 </TabsTrigger>
 
                                 <TabsTrigger
                                     value="past_due"
-                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-linear-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
+                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
                                 >
                                     <Clock className="w-4 h-4 mr-2" /> Past Due
                                 </TabsTrigger>
 
                                 <TabsTrigger
                                     value="canceled"
-                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-linear-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
+                                    className="flex items-center whitespace-nowrap rounded-lg py-2 px-4 font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white transition-all hover:bg-gray-50 cursor-pointer"
                                 >
                                     <XCircle className="w-4 h-4 mr-2" /> Canceled
                                 </TabsTrigger>

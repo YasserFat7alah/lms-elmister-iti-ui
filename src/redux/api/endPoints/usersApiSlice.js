@@ -100,7 +100,32 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         params: params,
       }),
       providesTags: ["User"]
-    })
+    }),
+
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `${USERS_URL_DATA}/admin/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['User'],
+    }),
+
+    updateUser: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL_DATA}/admin/${data.id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['User'],
+    }),
+
+    getUserDetails: builder.query({
+      query: (id) => ({
+        url: `/admins/users/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['User'],
+    }),
 
 
   }),
@@ -119,5 +144,8 @@ export const {
   useResetPasswordMutation,
   useCompleteProfileMutation,
   useGetAllUsersQuery,
-  useGetMyChildrenQuery
+  useGetMyChildrenQuery,
+  useDeleteUserMutation,
+  useUpdateUserMutation,
+  useGetUserDetailsQuery
 } = usersApiSlice;
