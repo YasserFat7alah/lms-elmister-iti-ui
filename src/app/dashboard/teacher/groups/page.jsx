@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import { Search, Users, BookOpen, ArrowRight, CalendarDays, MoreVertical } from "lucide-react";
+import { Search, Users, BookOpen, ArrowRight, CalendarDays, MoreVertical, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/shared/Loader";
@@ -12,16 +12,32 @@ import { useGetAllGroupsQuery } from "@/redux/api/endPoints/groupsApiSlice";
 export default function GroupsDirectoryPage() {
   const { userInfo } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState("");
-  const currentUser = userInfo?.user;
+
+  const teacherId = useMemo(() => {
+    if (userInfo?.accessToken) {
+      try {
+        const tokenParts = userInfo.accessToken.split('.');
+        if (tokenParts.length === 3) {
+          const payload = JSON.parse(atob(tokenParts[1]));
+          return payload.id || payload._id;
+        }
+      } catch (e) {
+        return userInfo?.user?._id;
+      }
+    }
+    return userInfo?.user?._id || userInfo?._id;
+  }, [userInfo]);
+
   const {
     data: groupsData,
     isLoading,
     isError,
-    error
+    error,
+    refetch
   } = useGetAllGroupsQuery(
-    { teacherId: currentUser?._id },
+    { teacherId },
     {
-      skip: !currentUser?._id,
+      skip: !teacherId,
       refetchOnMountOrArgChange: true
     }
   );
@@ -32,24 +48,37 @@ export default function GroupsDirectoryPage() {
     group.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (isLoading || !currentUser?._id) {
+  const formatDays = (schedule) => {
+    if (!schedule || !Array.isArray(schedule) || schedule.length === 0) {
+      return "No Schedule";
+    }
+    
+    const days = schedule
+      .map(s => {
+        if (!s.day) return ""; 
+        return s.day.charAt(0).toUpperCase() + s.day.slice(1, 3);
+      })
+      .filter(Boolean);
+
+    return [...new Set(days)].join(', ');
+  };
+
+  if (isLoading || !teacherId) {
     return <div className="h-screen flex items-center justify-center"><Spinner /></div>;
   }
 
   if (isError) {
-    console.error("Groups Fetch Error:", error);
     return (
       <div className="h-screen flex flex-col items-center justify-center text-red-500 gap-2">
         <p className="font-bold">Failed to load groups</p>
         <p className="text-sm text-gray-600">{error?.data?.message || "Something went wrong"}</p>
-        <Button variant="outline" onClick={() => window.location.reload()}>Retry</Button>
+        <Button variant="outline" onClick={() => refetch()}>Retry Connection</Button>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50/50 p-6 space-y-8">
-
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">My Groups</h1>
@@ -102,27 +131,25 @@ export default function GroupsDirectoryPage() {
                 <div className="p-5 space-y-3 flex-grow">
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <div className="flex items-center gap-2">
-                      <Users size={16} className="text-gray-400" />
-                      <span>{group.students?.length || group.capacity || 0} group capacity</span>
+                      <Layers size={16} className="text-gray-400" />
+                      <span>{group.studentsCount || 0} / {group.capacity} Students</span>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between text-sm text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <Users size={16} className="text-gray-400" />
-                      <span>{group.students?.length || group.studentsCount || 0} studentsCount</span>
-                    </div>
-                  </div>
-
 
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <div className="flex items-center gap-2">
                       <CalendarDays size={16} className="text-gray-400" />
-                      <span className="truncate max-w-[150px]">
-                        {group.schedule?.map(s => s.day?.slice(0, 3)).join(', ') || "No Schedule"}
+                      <span className="truncate max-w-[180px] font-medium text-gray-700">
+                        {formatDays(group.schedule)}
                       </span>
                     </div>
                   </div>
+                  
+                   {group.startingDate && (
+                    <div className="text-xs text-gray-400 pl-6">
+                        Start: {new Date(group.startingDate).toLocaleDateString()}
+                    </div>
+                   )}
                 </div>
 
                 <div className="p-4 pt-0 mt-auto">
@@ -143,11 +170,14 @@ export default function GroupsDirectoryPage() {
           </div>
           <h3 className="text-xl font-bold text-gray-900">No Groups Found</h3>
           <p className="text-gray-500 max-w-sm mt-2">
-            You don't have any groups yet. Create a course and add groups to see them here.
+            You don't have any active groups matching your search.
           </p>
-          <Link href="/dashboard/teacher/createCourse" className="mt-6">
-            <Button variant="outline">Go to Create Course</Button>
-          </Link>
+          <div className="mt-6 flex gap-3">
+             <Button variant="outline" onClick={() => refetch()}>Refresh List</Button>
+             <Link href="/dashboard/teacher/createCourse">
+                <Button>Create New Course</Button>
+             </Link>
+          </div>
         </div>
       )}
     </div>

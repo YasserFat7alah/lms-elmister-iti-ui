@@ -9,6 +9,8 @@ export const USERS_URL = "/auth";
 export const USERS_URL_DATA = '/users';
 export const USERS_LIST_URL = "/users";
 
+
+export const LESSONS_URL = "/lessons"; 
 export const COURSES_URL = '/courses';
 export const GROUPS_URL = '/groups';
 export const COMMENTS_URL = '/comments';

@@ -20,7 +20,7 @@ const ROLE_LINKS = {
   student: [
     { label: "Dashboard", href: "/dashboard/student/my-learning", icon: LayoutDashboard },
     { label: "Update Profile", href: "/dashboard/student/profile", icon: User },
-    { label: "Courses Schedule", href: "/dashboard/student/courses", icon: BookOpen },
+    { label: "Courses Schedule", href: "/dashboard/student/schedule", icon: BookOpen },
     { label: "live-sessions", href: "/dashboard/student/live-sessions", icon: Award },
     { label: "Assignments", href: "/dashboard/student/assignments", icon: FileText },
     { label: "Study Material", href: "/dashboard/student/materials", icon: FileQuestion },
@@ -46,6 +46,7 @@ const ROLE_LINKS = {
     { label: "Overview", href: "/dashboard/parent/overview", icon: LayoutDashboard },
     { label: "Profile", href: "/dashboard/parent/profile", icon: User },
     { label: "My Children", href: "/dashboard/parent/children", icon: Baby, exact: true },
+    { label: "My Children schedule", href: "/dashboard/parent/schedule", icon: Baby, exact: true },
     { label: "Teachers", href: "/dashboard/parent/teachers", icon: Users },
     { label: "Payments", href: "/dashboard/parent/payments", icon: CreditCard },
     { label: "Messages", href: "/dashboard/parent/messages", icon: MessageSquare },

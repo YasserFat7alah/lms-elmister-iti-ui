@@ -1,11 +1,10 @@
-
 "use client";
 
 import { useState } from "react";
 import { Formik, Form, FieldArray } from "formik";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { Users, CheckCircle2, Lock, Trash2, Edit3, Calendar, DollarSign } from "lucide-react";
+import { Users, CheckCircle2, Lock, Edit3, Calendar, DollarSign, Plus } from "lucide-react"; 
 import { Button } from "@/components/ui/button";
 import MediaUploader from "@/components/teacherCreateCourse/MediaUploader";
 import GroupModal from "@/components/teacherCreateCourse/GroupModal";
@@ -68,7 +67,7 @@ export default function CreateCoursePage() {
 
   const handleFinalSubmit = async (values, actionType) => {
     if (actionType === "publish" && values.groups.length === 0) {
-      toast.error("You must add at least one group to publish.");
+      toast.error("You must add at least one group to send for review.");
       return;
     }
 
@@ -98,7 +97,7 @@ export default function CreateCoursePage() {
         subject: values.subject,
         gradeLevel: values.gradeLevel,
         courseLanguage: values.courseLanguage,
-        status: "draft",
+        status: "draft", 
         tags: values.tags,
         thumbnail: cleanThumbnail,
         video: cleanVideo,
@@ -133,11 +132,11 @@ export default function CreateCoursePage() {
       if (actionType === "publish") {
         await updateCourse({
           courseId: newCourseId,
-          data: { title: values.title, status: "in-review" },
+          data: { title: values.title, status: "in-review" }, 
         }).unwrap();
       }
 
-      toast.success(actionType === "publish" ? "Sent for Review! 🚀" : "Draft Saved! 💾");
+      toast.success(actionType === "publish" ? "Course Created & Sent for Review! " : "Draft Saved! ");
       router.push("/dashboard/teacher/courses");
     } catch (err) {
       console.error(err);
@@ -150,12 +149,12 @@ export default function CreateCoursePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="">
-        <div className="max-w-7xl  px-6 lg:px-8 py-1">
+        <div className="max-w-7xl px-6 lg:px-8 py-1">
           <h1 className="text-2xl lg:text-3xl font-semibold text-gray-800">Create New Course</h1>
         </div>
       </header>
 
-      <main className="max-w-7xl  px-4 sm:px-6 lg:px-8 py-3">
+      <main className="max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
         <Formik
           initialValues={{
             title: "",
@@ -177,7 +176,7 @@ export default function CreateCoursePage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   <section className="lg:col-span-2">
                     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6" style={{ minHeight: "calc(100vh - 360px)" }}>
-                      <CourseBasicInfo values={values} setFieldValue={setFieldValue} onAddGroup={() => handleOpenGroupModal()} />
+                      <CourseBasicInfo values={values} setFieldValue={setFieldValue} onAddGroup={() => {}} />
                     </div>
                   </section>
 
@@ -214,13 +213,28 @@ export default function CreateCoursePage() {
                   </aside>
                 </div>
 
-                {values.groups.length > 0 && (
-                  <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-                    <div className="flex items-center gap-3 mb-6">
+                <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
                       <Users className="text-[#FF4667]" size={20} />
-                      <h2 className="text-lg font-semibold text-gray-800">Course Batches ({values.groups.length})</h2>
+                      <h2 className="text-lg font-semibold text-gray-800">
+                        Course groups {values.groups.length > 0 && `(${values.groups.length})`}
+                      </h2>
                     </div>
+                    <Button 
+                      type="button" 
+                      onClick={() => handleOpenGroupModal()}
+                      className="bg-pink-600 text-white  border border-blue-200 "
+                    >
+                      <Plus size={16} className="mr-2" /> Add group
+                    </Button>
+                  </div>
 
+                  {values.groups.length === 0 ? (
+                    <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                      <p className="text-gray-400 text-sm">No batches added yet. Click "Add Batch" to start.</p>
+                    </div>
+                  ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                       <FieldArray name="groups">
                         {({ remove }) => (
@@ -239,7 +253,7 @@ export default function CreateCoursePage() {
                                     <Users size={14} /> <span className="truncate">{group.capacity} Students</span>
                                   </div>
                                   <div className="flex items-center gap-2">
-                                    <DollarSign size={14} /> <span className="truncate">{group.price} EGP</span>
+                                    <DollarSign size={14} /> <span className="truncate text-green-700 font-bold">{group.price} $</span>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <Calendar size={14} /> <span className="truncate">{group.startingDate}</span>
@@ -247,11 +261,8 @@ export default function CreateCoursePage() {
                                 </div>
 
                                 <div className="flex gap-3 border-t pt-3 mt-auto">
-                                  <Button type="button" variant="outline" size="sm" onClick={() => handleOpenGroupModal(group, idx)} className="flex-1 h-9 text-xs">
+                                  <Button type="button" variant="outline" size="sm" onClick={() => handleOpenGroupModal(group, idx)} className="w-full h-9 text-xs">
                                     <Edit3 size={14} className="mr-1" /> Edit
-                                  </Button>
-                                  <Button type="button" variant="ghost" size="sm" onClick={() => remove(idx)} className="h-9 w-9 p-0 text-red-500 hover:text-red-700">
-                                    <Trash2 size={16} />
                                   </Button>
                                 </div>
                               </article>
@@ -260,8 +271,8 @@ export default function CreateCoursePage() {
                         )}
                       </FieldArray>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 <GroupModal
                   isOpen={isGroupModalOpen}
@@ -293,11 +304,11 @@ export default function CreateCoursePage() {
                     <div className="hidden sm:flex items-center gap-3">
                       {values.groups.length > 0 ? (
                         <span className="inline-flex items-center gap-2 text-green-600 font-medium">
-                          <CheckCircle2 size={18} /> Ready
+                          <CheckCircle2 size={18} /> Ready to send
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-2 text-gray-400 text-sm">
-                          <Lock size={16} /> Add group to Publish
+                          <Lock size={16} /> Add batch to Publish
                         </span>
                       )}
                     </div>
@@ -319,7 +330,7 @@ export default function CreateCoursePage() {
                         onClick={() => handleFinalSubmit(values, "publish")}
                         className={`flex-1 sm:flex-none px-6 py-2 text-white ${values.groups.length === 0 ? "bg-gray-300" : "bg-[#FF4667] hover:bg-[#ff2e53]"}`}
                       >
-                        {isLoading ? "Publishing..." : "Publish Course"}
+                        {isLoading ? "Processing..." : "Create & Send to Review"}
                       </Button>
                     </div>
                   </div>
