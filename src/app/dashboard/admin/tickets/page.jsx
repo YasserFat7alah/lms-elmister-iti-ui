@@ -4,9 +4,9 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div>
+    <div className="space-y-6 p-6 min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Header */}
-      <HeaderAdmin title="Support Tickets" description="Manage, track, and respond to all user inquiries efficiently in one place."/>
+      <HeaderAdmin title="Support Tickets" description="Manage, track, and respond to all user inquiries efficiently in one place." />
 
       {/* Main Content */}
       <div className="mt-6">

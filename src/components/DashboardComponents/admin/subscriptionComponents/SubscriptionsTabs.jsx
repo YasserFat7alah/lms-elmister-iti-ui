@@ -7,6 +7,7 @@ import SubscriptionsTable from "./SubscriptionsTable";
 import RecietPopup from "./RecietPopup";
 import BulkBtn from "../BulkBtn";
 import SubscriptionStateCards from "./SubscriptionStateCards";
+import { Spinner } from "@/components/shared/Loader";
 import { useGetAllEnrollmentsQuery, useDeleteEnrollmentMutation, useUpdateEnrollmentStatusMutation } from "@/redux/api/endPoints/enrollmentApiSlice";
 
 const SubscriptionsTabs = () => {
@@ -104,7 +105,7 @@ const SubscriptionsTabs = () => {
         setDeleteConfirm(true);
     };
 
-    if (isLoading) return <div className="p-8 text-center text-gray-500">Loading subscriptions...</div>;
+    if (isLoading) return <div className="flex justify-center items-center h-64"><Spinner /></div>;
     if (isError) return <div className="p-8 text-center text-red-500">Error loading data.</div>;
 
     return (

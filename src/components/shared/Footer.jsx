@@ -1,8 +1,38 @@
+"use client";
 import Link from "next/link";
 import { RiMailLine, RiPhoneLine, RiMapPinLine, RiFacebookCircleFill, RiTwitterXFill, RiInstagramLine, RiLinkedinFill } from "react-icons/ri";
 import Image from "next/image";
 
+import { useState } from "react";
+import { useSubscribeMutation } from "@/redux/api/endPoints/newsletterApiSlice";
+import { toast } from "react-hot-toast";
+
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribe, { isLoading }] = useSubscribeMutation();
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    try {
+      await subscribe({ email }).unwrap();
+      toast.success("Subscribed successfully!");
+      setEmail("");
+    } catch (err) {
+      const errorMessage = err?.data?.message || "Failed to subscribe. Please try again.";
+
+      if (errorMessage.toLowerCase().includes("already subscribed")) {
+        toast.error("You have already subscribed to our newsletter.");
+      } else {
+        toast.error(errorMessage);
+      }
+    }
+  };
+
   return (
     <footer className="bg-[#0f172a] text-white border-t border-[#1e293b]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -67,15 +97,21 @@ export function Footer() {
             <div>
               <h3 className="font-bold text-lg mb-4 text-gray-100">Newsletter</h3>
               <p className="text-gray-400 text-sm mb-4">Subscribe to get the latest updates and news.</p>
-              <form className="flex flex-col gap-3">
+              <form className="flex flex-col gap-3" onSubmit={handleSubscribe}>
                 <div className="relative">
                   <input
                     type="email"
                     placeholder="Email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm placeholder-gray-500 focus:outline-none focus:border-[#FF0055] focus:bg-white/10 transition-colors text-white"
                   />
-                  <button className="absolute right-1.5 top-1.5 bottom-1.5 bg-[#FF0055] hover:bg-[#D90045] text-white px-4 rounded-lg text-sm font-semibold transition-colors">
-                    Join
+                  <button
+                    disabled={isLoading}
+                    className="absolute right-1.5 top-1.5 bottom-1.5 bg-[#FF0055] hover:bg-[#D90045] text-white px-4 rounded-lg text-sm font-semibold transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? "..." : "Join"}
                   </button>
                 </div>
               </form>

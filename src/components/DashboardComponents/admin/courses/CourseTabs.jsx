@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BookOpen, Archive, CheckCircle, Search } from "lucide-react";
+import { Spinner } from "@/components/shared/Loader";
 import CourseTable from "./CourseTable";
 import CourseEditDialog from "./CourseEditDialog";
 
@@ -70,7 +71,7 @@ const CourseTabs = ({
   const handleUpdate = async (updatedCourse) => {
     try {
       const courseId = updatedCourse._id || updatedCourse.id;
-      
+
       const updatePayload = {
         title: updatedCourse.title,
         subTitle: updatedCourse.subTitle,
@@ -78,12 +79,12 @@ const CourseTabs = ({
         gradeLevel: updatedCourse.gradeLevel,
         status: updatedCourse.status,
       };
-  
+
       await updateCourse({
         courseId: courseId,
         data: updatePayload,
       }).unwrap();
-      
+
       setOpenDialog(false);
     } catch (err) {
       console.error("Failed to update course:", err);
@@ -112,7 +113,12 @@ const CourseTabs = ({
     );
   };
 
-  if (isLoading) return <p className="text-center py-8">Loading courses...</p>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner />
+      </div>
+    );
   if (isError)
     return (
       <p className="text-center py-8 text-red-500">Failed to load courses.</p>

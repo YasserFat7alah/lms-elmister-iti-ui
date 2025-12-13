@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Trash2, Pencil, Calendar, Share, Eye, Search, ChevronUp, ChevronDown, Send } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import ViewPopup from "./ViewPopup";
-import ConfirmDeletePopUp from "./ConfirmDeletePopup";
+import DeleteModal from "@/components/shared/DeleteModal";
 import BulkBtn from "../BulkBtn";
 
 const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) => {
@@ -18,7 +18,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
   // Filter data based on search term
   const filteredData = React.useMemo(() => {
     if (!searchTerm) return data;
-    
+
     const searchLower = searchTerm.toLowerCase();
     return data.filter(item =>
       item.title?.toLowerCase().includes(searchLower) ||
@@ -56,8 +56,8 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
     if (sortConfig.key !== key) {
       return <ChevronUp className="w-3 h-3 opacity-30" />;
     }
-    return sortConfig.direction === 'asc' 
-      ? <ChevronUp className="w-3 h-3" /> 
+    return sortConfig.direction === 'asc'
+      ? <ChevronUp className="w-3 h-3" />
       : <ChevronDown className="w-3 h-3" />;
   };
 
@@ -83,7 +83,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
   const handleBulkDelete = () => {
     if (selectedRows.length === 0) return;
     setIsBulkDelete(true);
-    setDeleteConfirm({ type: 'bulk' });
+    setDeleteConfirm({ type: 'bulk' }); // Just a marker
   };
 
   // Open view popup
@@ -131,7 +131,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
         <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
-     
+
             </div>
 
             {/* Search and Bulk Actions */}
@@ -173,7 +173,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                       className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
                     />
                   </th>
-                  <th 
+                  <th
                     className="px-2 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort('title')}
                   >
@@ -182,7 +182,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                       {getSortIcon('title')}
                     </div>
                   </th>
-                  <th 
+                  <th
                     className="px-2 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort('subject')}
                   >
@@ -191,7 +191,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                       {getSortIcon('subject')}
                     </div>
                   </th>
-                  <th 
+                  <th
                     className="px-2 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort('createdat')}
                   >
@@ -200,7 +200,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                       {getSortIcon('createdat')}
                     </div>
                   </th>
-                  <th 
+                  <th
                     className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort('updatedat')}
                   >
@@ -219,11 +219,10 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                   sortedData.map((item) => (
                     <tr
                       key={item.id}
-                      className={`transition-colors cursor-pointer ${
-                        selectedRows.includes(item.id)
-                          ? "bg-[#392b80]/10"
-                          : "hover:bg-gray-50"
-                      }`}
+                      className={`transition-colors cursor-pointer ${selectedRows.includes(item.id)
+                        ? "bg-[#392b80]/10"
+                        : "hover:bg-gray-50"
+                        }`}
                       onClick={() => toggleRowSelection(item.id)}
                     >
                       <td className="pl-3 py-3">
@@ -242,7 +241,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                       </td>
                       <td className="px-2 py-3">
                         <p className="text-sm text-gray-600">
-                          {truncateText(item.subject , 15)} 
+                          {truncateText(item.subject, 15)}
                         </p>
                       </td>
                       <td className="px-2 py-3">
@@ -358,11 +357,10 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
               {sortedData.map((item) => (
                 <Card
                   key={item.id}
-                  className={`p-4 border rounded-xl transition-all h-[270px] ${
-                    selectedRows.includes(item.id)
-                      ? "bg-[#392b80]/10 border-[#392b80]"
-                      : "bg-white border-gray-200"
-                  }`}
+                  className={`p-4 border rounded-xl transition-all h-[270px] ${selectedRows.includes(item.id)
+                    ? "bg-[#392b80]/10 border-[#392b80]"
+                    : "bg-white border-gray-200"
+                    }`}
                   onClick={() => toggleRowSelection(item.id)}
                 >
                   <div className="space-y-4">
@@ -394,7 +392,7 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
                         <span className="font-medium">Created:</span>
                         <span>{item.createdat}</span>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
                         <span className="font-medium">Updated:</span>
@@ -481,14 +479,17 @@ const NewsletterTabel = ({ data = [], handleDelete, handleEdit, handleSend }) =>
         onSend={handleSend}
       />
 
-      {/* Confirm Delete Popup */}
-      <ConfirmDeletePopUp
-        item={deleteConfirm}
+      {/* Delete Modal */}
+      <DeleteModal
         isOpen={!!deleteConfirm}
+        onClose={cancelDelete}
         onConfirm={confirmDelete}
-        onCancel={cancelDelete}
-        isBulk={isBulkDelete}
-        selectedCount={selectedRows.length}
+        title={isBulkDelete ? "Delete Selected Newsletters" : "Delete Newsletter"}
+        description={
+          isBulkDelete
+            ? `Are you sure you want to delete ${selectedRows.length} newsletters? This action cannot be undone.`
+            : "Are you sure you want to delete this newsletter? This action cannot be undone."
+        }
       />
     </>
   );

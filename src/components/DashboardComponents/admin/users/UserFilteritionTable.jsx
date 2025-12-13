@@ -5,12 +5,16 @@ import { Users, GraduationCap, Search, Trash2, Edit, Mail, Phone, ChevronUp, Che
 import { MdAlternateEmail } from "react-icons/md";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { FaUserTie } from "react-icons/fa";
-import EditUserPopup from "./EditUserPopup ";
+import EditUserPopup from "./EditUserPopup "; // Note the space in filename
 import ConfirmDeletePopUp from "./ConfirmDeletePopUp";
+import ViewUserPopup from "./ViewUserPopup "; // Note the space in filename
 
 const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteConfirm, setDeleteConfirm, isBulkDelete, setIsBulkDelete, onEdit, onDelete }) => {
   const [editUser, setEditUser] = useState(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [viewUserId, setViewUserId] = useState(null);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [clickTimeout, setClickTimeout] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   const handleSort = (key) => {
@@ -28,7 +32,7 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
 
     return [...dataToSort].sort((a, b) => {
       let aValue, bValue;
-      
+
       if (sortConfig.key === 'name') {
         aValue = a.name.toLowerCase();
         bValue = b.name.toLowerCase();
@@ -60,12 +64,13 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
     if (sortConfig.key !== key) {
       return <ChevronUp className="w-3 h-3 opacity-30" />;
     }
-    return sortConfig.direction === 'asc' 
-      ? <ChevronUp className="w-3 h-3" /> 
+    return sortConfig.direction === 'asc'
+      ? <ChevronUp className="w-3 h-3" />
       : <ChevronDown className="w-3 h-3" />;
   };
 
   const toggleRowSelection = (id) => {
+    // If in selection mode or starting it
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
@@ -79,11 +84,42 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
     }
   };
 
+  const handleRowClick = (user) => {
+    if (selectedRows.length > 0) {
+      // If selection mode is active, single click toggles selection
+      toggleRowSelection(user.id);
+    } else {
+      // Normal mode: Wait for double click, if no double click, open view
+      if (clickTimeout) {
+        clearTimeout(clickTimeout);
+        setClickTimeout(null);
+      }
+
+      const timeout = setTimeout(() => {
+        setViewUserId(user.id);
+        setIsViewOpen(true);
+        setClickTimeout(null);
+      }, 250);
+      setClickTimeout(timeout);
+    }
+  };
+
+  const handleRowDoubleClick = (user) => {
+    if (clickTimeout) {
+      clearTimeout(clickTimeout);
+      setClickTimeout(null);
+    }
+    // Double click toggles selection (Starts selection mode if not active)
+    toggleRowSelection(user.id);
+  };
+
   const handleDeleteClick = (e, user) => {
     e.stopPropagation();
     setIsBulkDelete(false);
     setDeleteConfirm(user);
   };
+
+
 
   const confirmDelete = () => {
     if (isBulkDelete) {
@@ -122,14 +158,16 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="pl-4 py-3 text-left w-10">
-                  <input
-                    type="checkbox"
-                    checked={selectedRows.length === filtered.length && filtered.length > 0}
-                    onChange={toggleSelectAll}
-                    className="w-4 h-4 text-[#FF0055] rounded border-gray-300 focus:ring-[#FF0055] cursor-pointer"
-                  />
+                  {selectedRows.length > 0 && (
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.length === filtered.length && filtered.length > 0}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 text-[#FF0055] rounded border-gray-300 focus:ring-[#FF0055] cursor-pointer"
+                    />
+                  )}
                 </th>
-                <th 
+                <th
                   className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => handleSort('name')}
                 >
@@ -138,7 +176,7 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     {getSortIcon('name')}
                   </div>
                 </th>
-                <th 
+                <th
                   className="hidden md:table-cell px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => handleSort('email')}
                 >
@@ -150,7 +188,7 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                 <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   Contact
                 </th>
-                <th 
+                <th
                   className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => handleSort('role')}
                 >
@@ -159,7 +197,7 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     {getSortIcon('role')}
                   </div>
                 </th>
-                <th 
+                <th
                   className="hidden lg:table-cell px-4 py-3 text-left text-xs whitespace-nowrap font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => handleSort('gender')}
                 >
@@ -178,29 +216,30 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                 sortedData.map((user) => (
                   <tr
                     key={user.id}
-                    className={`transition-colors cursor-pointer ${
-                      selectedRows.includes(user.id) ? "bg-[#FF0055]/10" : "hover:bg-gray-50"
-                    }`}
-                    onClick={() => toggleRowSelection(user.id)}
+                    className={`transition-colors cursor-pointer ${selectedRows.includes(user.id) ? "bg-[#FF0055]/10" : "hover:bg-gray-50"
+                      }`}
+                    onClick={() => handleRowClick(user)}
+                    onDoubleClick={() => handleRowDoubleClick(user)}
                   >
                     <td className="pl-4 py-3">
-                      <input
-                        type="checkbox"
-                        checked={selectedRows.includes(user.id)}
-                        onChange={() => toggleRowSelection(user.id)}
-                        className="w-4 h-4 text-[#FF0055] rounded border-gray-300 focus:ring-[#FF0055] cursor-pointer"
-                        onClick={(e) => e.stopPropagation()}
-                      />
+                      {selectedRows.length > 0 && (
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(user.id)}
+                          onChange={() => toggleRowSelection(user.id)}
+                          className="w-4 h-4 text-[#FF0055] rounded border-gray-300 focus:ring-[#FF0055] cursor-pointer"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${
-                            user.role === "parent" ? "bg-purple-500"
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${user.role === "parent" ? "bg-purple-500"
                             : user.role === "teacher" ? "bg-green-500"
-                            : user.role === "admin" ? "bg-red-500"
-                              : "bg-orange-500"
-                          }`}
+                              : user.role === "admin" ? "bg-red-500"
+                                : "bg-orange-500"
+                            }`}
                         >
                           {user.name.charAt(0)}
                         </div>
@@ -235,17 +274,16 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
-                          user.role === "parent" ? "bg-purple-100 text-purple-700"
-                            : user.role === "teacher" ? "bg-green-100 text-green-700"
-                            : user.role === "admin" ? "bg-red-100 text-red-700" 
-                            : "bg-orange-100 text-orange-700"
-                        }`}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${user.role === "parent" ? "bg-purple-100 text-purple-700"
+                          : user.role === "teacher" ? "bg-green-100 text-green-700"
+                            : user.role === "admin" ? "bg-red-100 text-red-700"
+                              : "bg-orange-100 text-orange-700"
+                          }`}
                       >
                         {user.role === "parent" && <FaUserTie className="w-3.5 h-3.5" />}
                         {user.role === "teacher" && <GraduationCap className="w-3.5 h-3.5" />}
                         {user.role === "student" && <Users className="w-3.5 h-3.5" />}
-                        {user.role === "admin" && <MdAdminPanelSettings className="w-3.5 h-3.5"/>}
+                        {user.role === "admin" && <MdAdminPanelSettings className="w-3.5 h-3.5" />}
                         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                       </span>
                     </td>
@@ -305,11 +343,10 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
             {sortedData.map((user) => (
               <Card
                 key={user.id}
-                className={`p-4 shadow-lg border rounded-xl transition-all cursor-pointer ${
-                  selectedRows.includes(user.id)
-                    ? "bg-[#FF0055]/10 border-[#FF0055]"
-                    : "bg-white border-gray-200"
-                }`}
+                className={`p-4 shadow-lg border rounded-xl transition-all cursor-pointer ${selectedRows.includes(user.id)
+                  ? "bg-[#FF0055]/10 border-[#FF0055]"
+                  : "bg-white border-gray-200"
+                  }`}
                 onClick={() => toggleRowSelection(user.id)}
               >
                 <div className="space-y-4">
@@ -324,12 +361,11 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                         onClick={(e) => e.stopPropagation()}
                       />
                       <div
-                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg ${
-                          user.role === "parent" ? "bg-purple-500"
+                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg ${user.role === "parent" ? "bg-purple-500"
                           : user.role === "teacher" ? "bg-green-500"
-                          : user.role === "admin" ? "bg-red-500"
-                            : "bg-orange-500"
-                        }`}
+                            : user.role === "admin" ? "bg-red-500"
+                              : "bg-orange-500"
+                          }`}
                       >
                         {user.name.charAt(0)}
                       </div>
@@ -344,17 +380,16 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
 
                     {/* Role Badge */}
                     <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                        user.role === "parent" ? "bg-purple-100 text-purple-700"
-                          : user.role === "teacher" ? "bg-green-100 text-green-700"
-                          : user.role === "admin" ? "bg-red-100 text-red-700" 
-                          : "bg-orange-100 text-orange-700"
-                      }`}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${user.role === "parent" ? "bg-purple-100 text-purple-700"
+                        : user.role === "teacher" ? "bg-green-100 text-green-700"
+                          : user.role === "admin" ? "bg-red-100 text-red-700"
+                            : "bg-orange-100 text-orange-700"
+                        }`}
                     >
                       {user.role === "parent" && <FaUserTie className="w-3 h-3" />}
                       {user.role === "teacher" && <GraduationCap className="w-3 h-3" />}
                       {user.role === "student" && <Users className="w-3 h-3" />}
-                      {user.role === "admin" && <MdAdminPanelSettings className="w-3 h-3"/>}
+                      {user.role === "admin" && <MdAdminPanelSettings className="w-3 h-3" />}
                       <span className="hidden xs:inline">{user.role.charAt(0).toUpperCase() + user.role.slice(1)}</span>
                       <span className="xs:hidden">{user.role.charAt(0).toUpperCase()}</span>
                     </span>
@@ -366,7 +401,7 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                       <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
                       <span className="truncate">{user.email}</span>
                     </div>
-                    
+
                     {user.phone && (
                       <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -419,6 +454,13 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
         }}
         onSave={handleSaveEdit}
       />
+
+      {isViewOpen && (
+        <ViewUserPopup
+          userId={viewUserId}
+          onClose={() => setIsViewOpen(false)}
+        />
+      )}
 
       {/* Confirm Delete Popup */}
       <ConfirmDeletePopUp

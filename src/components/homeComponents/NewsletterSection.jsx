@@ -3,7 +3,36 @@
 import Image from "next/image";
 import { FiMail } from "react-icons/fi";
 
+import { useState } from "react";
+import { useSubscribeMutation } from "@/redux/api/endPoints/newsletterApiSlice";
+import { toast } from "react-hot-toast";
+
 export default function NewsletterSection() {
+  const [email, setEmail] = useState("");
+  const [subscribe, { isLoading }] = useSubscribeMutation();
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    try {
+      await subscribe({ email }).unwrap();
+      toast.success("Subscribed successfully!");
+      setEmail("");
+    } catch (err) {
+      const errorMessage = err?.data?.message || "Failed to subscribe. Please try again.";
+
+      if (errorMessage.toLowerCase().includes("already subscribed")) {
+        toast.error("You have already subscribed to our newsletter.");
+      } else {
+        toast.error(errorMessage);
+      }
+    }
+  };
+
   return (
     <section className="py-5 relative bg-gray-950 text-white overflow-hidden">
       {/* Wave  */}
@@ -33,23 +62,26 @@ export default function NewsletterSection() {
               Create account to receive our Newsletter, Course Recommend & Promotions.
             </p>
 
-            <div className="flex flex-row gap-3 max-w-lg mx-auto lg:mx-0">
+            <form onSubmit={handleSubscribe} className="flex flex-row gap-3 max-w-lg mx-auto lg:mx-0">
               <div className="relative flex-1">
                 <FiMail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
                 <input
                   type="email"
                   placeholder="Email Address"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-14 pr-5 py-3.5 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 text-sm"
                 />
               </div>
               <button
                 type="submit"
-                className="px-8 py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full font-bold text-sm whitespace-nowrap hover:scale-105 transition shadow-lg"
+                disabled={isLoading}
+                className="px-8 py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full font-bold text-sm whitespace-nowrap hover:scale-105 transition shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Subscribe
+                {isLoading ? "Subscribing..." : "Subscribe"}
               </button>
-            </div>
+            </form>
           </div>
 
           <div className="hidden lg:flex justify-end">

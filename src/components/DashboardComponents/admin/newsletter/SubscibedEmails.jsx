@@ -1,17 +1,14 @@
-"use client";
 import React, { useState } from "react";
 import {
   Trash2,
   Mail,
   Search,
-  Plus,
   Trash2Icon,
-  AlertTriangle,
-  X,
 } from "lucide-react";
 import AddEmailInput from "./AddEmailInput";
-import { Dialog } from "@/components/ui/dialog";
-import PopUp from "../PopUp";
+import DeleteModal from "@/components/shared/DeleteModal";
+import { useUnsubscribeMutation } from "@/redux/api/endPoints/newsletterApiSlice";
+import { toast } from "react-hot-toast";
 
 const SubscibedEmails = ({
   emails,
@@ -21,35 +18,41 @@ const SubscibedEmails = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [unsubscribe, { isLoading: isDeleting }] = useUnsubscribeMutation();
 
   // _________ Filter Emails Based on Search Term _________
   const filteredEmails = emails.filter((item) =>
     item.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // _________ Delete Selected Emails _________
-  // const handleDeleteSelected = () => {
-  //   setEmails((prev) =>
-  //     prev.filter((email) => !selectedEmails.includes(email.id))
-  //   );
-  //   setSelectedEmails([]);
-  // };
-
   // _________ Confirm Delete Selected Emails _________
-  const handleConfirmDelete = () => {
-    if (deleteTarget === "all") {
-      // delete all selected emails
-      setEmails((prev) =>
-        prev.filter((email) => !selectedEmails.includes(email.id))
-      );
-      setSelectedEmails([]);
-    } else {
-      // delete one email
-      setEmails((prev) => prev.filter((email) => email.id !== deleteTarget));
-      setSelectedEmails((prev) => prev.filter((id) => id !== deleteTarget));
-    }
+  const handleConfirmDelete = async () => {
+    try {
+      if (deleteTarget === "all") {
+        // Delete all selected emails
+        // Backend unsubscribe typically takes one email. Need to check if bulk delete is supported or loop.
+        // Assuming loop for now as API slice only has unsubscribe (single).
+        const emailsToDelete = filteredEmails.filter(e => selectedEmails.includes(e.id));
 
-    setDeleteTarget(null);
+        await Promise.all(emailsToDelete.map(email => unsubscribe({ email: email.email }).unwrap()));
+
+        // Optimistically update or refetch will handle it (page refreshes usually)
+        // But here we might want to update local state if parent doesn't auto-refetch
+        toast.success("Selected subscribers deleted successfully");
+        setSelectedEmails([]);
+      } else {
+        // Delete single email
+        const emailToDelete = emails.find(e => e.id === deleteTarget);
+        if (emailToDelete) {
+          await unsubscribe({ email: emailToDelete.email }).unwrap();
+          toast.success("Subscriber deleted successfully");
+        }
+      }
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error(err);
+      toast.error(err?.data?.message || "Failed to delete subscriber");
+    }
   };
 
   // _________ Handle Select/Deselect Email _________
@@ -86,8 +89,8 @@ const SubscibedEmails = ({
         <p className="text-sm text-gray-600">Manage your email subscribers</p>
       </div>
 
-        {/* Add Email */}
-        <AddEmailInput emails={emails} setEmails={setEmails} />
+      {/* Add Email */}
+      <AddEmailInput emails={emails} setEmails={setEmails} />
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -135,11 +138,10 @@ const SubscibedEmails = ({
         {filteredEmails.map((item) => (
           <div
             key={item.id}
-            className={`flex items-center justify-between p-4 border rounded-xl transition-all ${
-              selectedEmails.includes(item.id)
+            className={`flex items-center justify-between p-4 border rounded-xl transition-all ${selectedEmails.includes(item.id)
                 ? "bg-green-500/5 border-green-500/30 shadow-sm"
                 : "bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3 flex-1">
               <input
@@ -175,67 +177,20 @@ const SubscibedEmails = ({
           </div>
         )}
       </div>
-      {/* ________________Confirm Delete Selected Emails______________ */}
-      <PopUp isOpen={deleteTarget !== null} onClose={cancelDelete}>
-        {/* Header */}
-        <div className="bg-gradient-to-r from-red-50 to-rose-50 p-6 border-b border-red-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-red-100 rounded-full">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
-              </div>
 
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">
-                  Confirm Delete
-                </h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  This action cannot be undone.
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={cancelDelete}
-              className="p-2 hover:bg-red-100 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-500" />
-            </button>
-          </div>
-        </div>
-
-        {/* Body */}
-        <div className="p-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-3">
-            {deleteTarget === "all"
-              ? "Delete Selected Emails?"
-              : "Delete Email?"}
-          </h2>
-
-          <p className="text-gray-600 text-sm mb-6">
-            {deleteTarget === "all"
-              ? `Are you sure you want to delete ${selectedEmails.length} emails?`
-              : `Are you sure you want to delete this email?`}
-          </p>
-
-          {/* Buttons */}
-          <div className="flex items-center justify-end gap-3">
-            <button
-              onClick={cancelDelete}
-              className="px-5 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition"
-            >
-              Cancel
-            </button>
-
-            <button
-              onClick={handleConfirmDelete}
-              className="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </PopUp>
+      {/* Delete Modal */}
+      <DeleteModal
+        isOpen={deleteTarget !== null}
+        onClose={cancelDelete}
+        onConfirm={handleConfirmDelete}
+        title={deleteTarget === "all" ? "Delete Selected Emails" : "Delete Subscriber"}
+        description={
+          deleteTarget === "all"
+            ? `Are you sure you want to delete ${selectedEmails.length} subscribers? This action cannot be undone.`
+            : "Are you sure you want to delete this subscriber? This action cannot be undone."
+        }
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

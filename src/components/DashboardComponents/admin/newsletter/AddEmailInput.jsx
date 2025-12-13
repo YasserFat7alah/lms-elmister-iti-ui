@@ -5,14 +5,18 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/button";
 
+import { useSubscribeMutation } from "@/redux/api/endPoints/newsletterApiSlice";
+import { toast } from "react-hot-toast";
+
 const AddEmailInput = ({ emails, setEmails }) => {
+  const [subscribe, { isLoading }] = useSubscribeMutation();
 
   // ----- Validation Schema -----
   const emailSchema = Yup.object().shape({
     email: Yup.string()
       .required("Email is required")
       .email("Please enter a valid email address")
-      .test('unique-email', 'This email is already subscribed', function(value) {
+      .test('unique-email', 'This email is already subscribed', function (value) {
         if (!value) return true;
         return !emails.some(e => e.email.toLowerCase() === value.toLowerCase());
       })
@@ -25,22 +29,16 @@ const AddEmailInput = ({ emails, setEmails }) => {
       validationSchema={emailSchema}
       validateOnChange={true}
       validateOnBlur={true}
-      onSubmit={(values, { resetForm, setSubmitting }) => {
-        const trimmedEmail = values.email.trim();
-        if (!trimmedEmail) {
+      onSubmit={async (values, { resetForm, setSubmitting }) => {
+        try {
+          await subscribe({ email: values.email.trim() }).unwrap();
+          toast.success("Subscriber added successfully");
+          resetForm();
+        } catch (err) {
+          toast.error(err?.data?.message || "Failed to add subscriber");
+        } finally {
           setSubmitting(false);
-          return;
         }
-
-        const newEmailObj = {
-          id: Date.now(),
-          email: trimmedEmail,
-          subscribed: new Date().toISOString().split("T")[0],
-        };
-
-        setEmails([newEmailObj, ...emails]);
-        resetForm();
-        setSubmitting(false);
       }}
     >
       {({ errors, touched, isSubmitting, values, setFieldTouched }) => (
@@ -54,10 +52,9 @@ const AddEmailInput = ({ emails, setEmails }) => {
                 type="email"
                 placeholder="Enter subscriber email address"
                 className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none transition-all font-medium
-                  ${
-                    errors.email && touched.email
-                      ? "border-red-400 focus:ring-2 focus:ring-red-200 bg-red-50/50 text-red-900 placeholder:text-red-400 "
-                      : "border-gray-300 focus:ring-2 focus:ring-green-200 focus:border-green-500 bg-white"
+                  ${errors.email && touched.email
+                    ? "border-red-400 focus:ring-2 focus:ring-red-200 bg-red-50/50 text-red-900 placeholder:text-red-400 "
+                    : "border-gray-300 focus:ring-2 focus:ring-green-200 focus:border-green-500 bg-white"
                   }
                 `}
                 onKeyPress={(e) => {
@@ -81,10 +78,9 @@ const AddEmailInput = ({ emails, setEmails }) => {
               disabled={isSubmitting || (errors.email && touched.email) || !values.email.trim()}
               onClick={() => setFieldTouched('email', true)}
               className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all 
-                ${
-                  isSubmitting || (errors.email && touched.email) || !values.email.trim() 
-                    ? "bg-[#392b80] text-white"
-                    : " text-white cursor-pointer "
+                ${isSubmitting || (errors.email && touched.email) || !values.email.trim()
+                  ? "bg-[#392b80] text-white"
+                  : " text-white cursor-pointer "
                 }
               `}
             >
