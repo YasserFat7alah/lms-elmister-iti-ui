@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
@@ -16,8 +15,8 @@ import {
   useUpdateCourseMutation 
 } from "@/redux/api/endPoints/coursesApiSlice";
 import { toast } from "react-hot-toast";
-import CourseDetailsModal from "@/components/teacherCreateCourse/CourseDetailsModal";
 import DeleteModal from "@/components/shared/DeleteModal"; 
+import CourseDetailsModal from "@/components/teacherCreateCourse/courseDetailsModal";
 
 const StatusBadge = ({ status }) => {
   const styles = {

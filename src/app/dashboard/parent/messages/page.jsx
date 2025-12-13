@@ -17,12 +17,16 @@ const MessagesContent = () => {
     teacherId ? mockTeachers.find((t) => t.id === teacherId) : mockTeachers[0]
   );
 
+
   useEffect(() => {
     if (teacherId) {
       const teacher = mockTeachers.find((t) => t.id === teacherId);
       if (teacher) setSelectedTeacher(teacher);
     }
   }, [teacherId]);
+
+
+  
 
   const handleSelectTeacher = (teacher) => {
     setSelectedTeacher(teacher);

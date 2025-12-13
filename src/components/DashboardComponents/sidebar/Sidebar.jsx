@@ -15,6 +15,7 @@ import {
   Baby, Mail, Info
 } from "lucide-react";
 import Image from "next/image";
+import { MdHomeWork } from "react-icons/md";
 
 const ROLE_LINKS = {
   student: [
@@ -34,7 +35,7 @@ const ROLE_LINKS = {
     { label: "create Course", href: "/dashboard/teacher/createCourse", icon: Wallet },
     { label: "student Schedule", href: "/dashboard/teacher/schedule", icon: Megaphone },
     { label: "Groups", href: "/dashboard/teacher/groups", icon: FileText },
-    { label: "Students", href: "/dashboard/teacher/students", icon: Users },
+    // { label: "Create Assignments", href: "/dashboard/teacher/create-assighnment", icon: MdHomeWork },
     { label: "Quiz", href: "/dashboard/teacher/quizzes", icon: FileQuestion },
     { label: "Quiz Results", href: "/dashboard/teacher/quiz-results", icon: ClipboardCheck },
     { label: "Payout", href: "/dashboard/teacher/payout", icon: CreditCard },

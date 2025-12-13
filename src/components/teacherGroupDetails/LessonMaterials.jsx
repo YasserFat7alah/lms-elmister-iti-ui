@@ -40,7 +40,11 @@ export default function LessonMaterials({ lessonId, materials = [] }) {
       setFormData({ title: "", url: "", type: "link" });
       setIsOpen(false);
     } catch (err) {
-      toast.error("Failed to add material");
+        console.log("FULL ERROR:", err);
+        console.log("ERROR DATA:", err?.data);
+        console.log("ERROR MESSAGE:", err?.data?.message);
+        alert(err?.data?.message || "Failed to create assignment");
+
     }
   };
 
@@ -53,7 +57,6 @@ export default function LessonMaterials({ lessonId, materials = [] }) {
     }
   };
 
-  // دالة لاختيار الأيقونة حسب النوع
   const getIcon = (type) => {
     switch (type) {
       case "pdf": return <FileText className="text-red-500" size={20} />;

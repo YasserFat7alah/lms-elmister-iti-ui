@@ -1,155 +1,121 @@
 "use client";
-import React, { useState } from "react";
-import { 
-  FileText, Calendar, CheckCircle2, Clock, 
-  AlertCircle, Search, ChevronRight, PlayCircle, Eye
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { STATUS, getAssignmentStatus } from '@/components/DashboardComponents/student/assignments/utils/assignmentUtils';
+import React, { useState, useMemo } from 'react';
+import AssignmentCard from '@/components/DashboardComponents/student/assignments/AssignmentCard';
+import { SearchBar } from '@/components/DashboardComponents/student/assignments/SearchBar';
+import { useGetStudentAssignmentsQuery } from '@/redux/api/endPoints/assignmentsApiSlice';
 
-import { STUDENT_ASSIGNMENTS } from "@/data/STUDENT_ASSIGNMENTS";
+export default function AssignmentsPage() {
+  const [activeTab, setActiveTab] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
-export default function StudentAssignmentsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("todo");
+  // ------------------ Fetch student assignments from API ------------------
+  const { data: assignments = {} , isLoading, isError } = useGetStudentAssignmentsQuery();
 
-  const filteredAssignments = STUDENT_ASSIGNMENTS.filter((assignment) => {
-    const matchesSearch = assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          assignment.course.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    let matchesTab = false;
-    if (activeTab === "todo") {
-      matchesTab = assignment.status === "pending" || assignment.status === "overdue";
-      matchesTab = assignment.status === "submitted" || assignment.status === "graded";
+  // ------------------ Merge submissions if needed ------------------
+  // Assuming `assignments` from API already contains submission info if available
+const data = useMemo(() => assignments?.data || [], [assignments]);
+
+  // ------------------ Filter Logic ------------------
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+
+    let tabFiltered = data.filter(item => {
+      const { status } = getAssignmentStatus(item, item.submission);
+
+      switch(activeTab) {
+        case 'todo': return status === STATUS.TODO;
+        case 'completed': return status === STATUS.SUBMITTED || status === STATUS.GRADED || status === STATUS.OVERDUE_SUBMITTED;
+        case 'missing': return status === STATUS.LATE || status === STATUS.MISSED;
+        default: return true;
+      }
+    });
+
+    if (!searchTerm) {
+      return tabFiltered.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
     }
 
-    return matchesSearch && matchesTab;
-  });
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "pending": return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200 border-yellow-200">Pending</Badge>;
-      case "submitted": return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200">Submitted</Badge>;
-      case "graded": return <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-green-200">Graded</Badge>;
-      case "overdue": return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">Overdue</Badge>;
-      default: return null;
-    }
-  };
+    return tabFiltered.filter(item => {
+      const titleMatch = item.title.toLowerCase().includes(lowerCaseSearchTerm);
+      const courseMatch = item.course?.title?.toLowerCase().includes(lowerCaseSearchTerm);
+      return titleMatch || courseMatch;
+    }).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  }, [data, activeTab, searchTerm]);
 
-  const getActionBtn = (assignment) => {
-    if (assignment.status === "pending") {
-      return (
-        <Button className="bg-[#FF0055] hover:bg-pink-700 text-white w-full sm:w-auto">
-           {assignment.type === 'quiz' ? <><PlayCircle size={16} className="mr-2"/> Start Quiz</> : <><FileText size={16} className="mr-2"/> Submit Now</>}
-        </Button>
-      );
-    } 
-    if (assignment.status === "submitted") {
-      return (
-        <Button variant="outline" className="text-gray-600 w-full sm:w-auto">
-           <Eye size={16} className="mr-2"/> View Submission
-        </Button>
-      );
-    }
-    if (assignment.status === "graded") {
-      return (
-        <div className="text-right">
-           <span className="block text-xs text-gray-400">Score</span>
-           <span className="text-lg font-bold text-green-600">{assignment.obtainedPoints} / {assignment.totalPoints}</span>
-        </div>
-      );
-    }
-    return <span className="text-red-500 text-sm font-medium">Missed Deadline</span>;
-  };
+  // ------------------ Tabs ------------------
+  const tabs = [
+    { id: 'all', label: 'All Assignments' },
+    { id: 'todo', label: 'To Do' },
+    { id: 'completed', label: 'Completed' },
+    { id: 'missing', label: 'Overdue' },
+  ];
+
+  // ------------------ Render ------------------
+  if (isLoading) {
+    return <p className="text-center py-20">Loading assignments...</p>;
+  }
+
+  if (isError) {
+    return <p className="text-center py-20 text-red-500">Failed to load assignments.</p>;
+  }
 
   return (
-    <div className="space-y-6 max-w-7xl  pb-10">
-      
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Assignments</h1>
-        <p className="text-gray-500 text-sm">Track your upcoming tasks, quizzes, and grades.</p>
+    <div className="py-8 max-w-5xl mx-auto bg-gray-50 min-h-screen">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">My Assignments</h1>
+        <p className="text-gray-500 mt-2">Manage your coursework and track your deadlines.</p>
       </div>
 
-      <Tabs defaultValue="todo" onValueChange={setActiveTab} className="w-full">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-          <TabsList className="bg-gray-100 p-1 rounded-lg">
-            <TabsTrigger value="todo" className="px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">To Do</TabsTrigger>
-            <TabsTrigger value="completed" className="px-6 data-[state=active]:bg-white data-[state=active]:shadow-sm">Completed</TabsTrigger>
-          </TabsList>
-
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-            <Input 
-              placeholder="Search assignments..." 
-              className="pl-10 bg-white"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+      {/* --- FILTER & SEARCH SECTION --- */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        {/* Tab Bar */}
+        <div className="flex gap-1 bg-white p-1 rounded-xl border border-gray-200 shadow-sm w-fit">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === tab.id 
+                ? 'bg-[#FF0055] text-white shadow-md' 
+                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        <TabsContent value={activeTab} className="space-y-4">
-          {filteredAssignments.length > 0 ? (
-            filteredAssignments.map((assignment) => (
-              <Card key={assignment.id} className={`border-l-4 shadow-sm hover:shadow-md transition-all ${
-                assignment.status === 'overdue' ? 'border-l-red-500' : 
-                assignment.status === 'graded' ? 'border-l-green-500' : 
-                assignment.status === 'pending' ? 'border-l-yellow-400' : 'border-l-blue-400'
-              }`}>
-                <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  
-                  <div className="flex gap-4">
-                    <div className={`p-3 rounded-full h-12 w-12 flex items-center justify-center shrink-0 
-                      ${assignment.type === 'quiz' ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'}`}>
-                      {assignment.type === 'quiz' ? <Clock size={24} /> : <FileText size={24} />}
-                    </div>
-                    
-                    <div>
-                      <h3 className="font-bold text-gray-900 text-lg">{assignment.title}</h3>
-                      <p className="text-sm text-gray-500 font-medium">{assignment.course}</p>
-                      
-                      <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
-                        <div className="flex items-center gap-1">
-                           <Calendar size={14} /> 
-                           <span className={assignment.status === 'overdue' ? 'text-red-500 font-bold' : ''}>
-                              {new Date(assignment.dueDate).toLocaleDateString()}
-                           </span>
-                        </div>
-                        {assignment.status === 'pending' && (
-                           <div className="flex items-center gap-1 text-yellow-600">
-                              <AlertCircle size={14} /> Due {new Date(assignment.dueDate) > new Date() ? 'soon' : 'today'}
-                           </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+        {/* Search Bar */}
+        <SearchBar 
+          value={searchTerm} 
+          onChange={setSearchTerm} 
+          placeholder="Search assignments by title or course..." 
+        />
+      </div>
 
-                  <div className="flex items-center gap-4 sm:border-l sm:pl-6 sm:h-full">
-                     <div className="hidden sm:block">
-                        {getStatusBadge(assignment.status)}
-                     </div>
-                     <div className="w-full sm:w-auto">
-                        {getActionBtn(assignment)}
-                     </div>
-                  </div>
-
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="text-center py-16 bg-white rounded-xl border border-dashed border-gray-200">
-               <div className="mx-auto bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle2 className="text-gray-400" size={32} />
-               </div>
-               <h3 className="text-lg font-medium text-gray-900">No assignments found</h3>
-               <p className="text-gray-500">You are all caught up for this section!</p>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+      {/* List */}
+      <div className="space-y-4">
+        {filteredData.length > 0 ? (
+          filteredData.map(item => (
+            <AssignmentCard 
+              key={item._id} 
+              assignment={item} 
+              submission={item.submission} 
+            />
+          ))
+        ) : (
+          <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
+            <p className="text-gray-400">
+                {searchTerm 
+                    ? `No assignments found matching "${searchTerm}" in the selected category.`
+                    : "No assignments found for this filter."
+                }
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
