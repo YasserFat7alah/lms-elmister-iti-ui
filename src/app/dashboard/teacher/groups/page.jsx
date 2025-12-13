@@ -28,6 +28,8 @@ export default function GroupsDirectoryPage() {
 
   const groups = groupsData?.data || [];
 
+  console.log(groups)
+
   const filteredGroups = groups.filter(group =>
     group.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
