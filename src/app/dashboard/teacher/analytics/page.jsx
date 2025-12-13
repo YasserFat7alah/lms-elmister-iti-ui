@@ -1,5 +1,5 @@
 'use client';
-import { FullPageLoader as Loader } from '@/components/shared/Loader';
+import { Spinner } from '@/components/shared/Loader';
 import TeacherAnalytics from '@/components/DashboardComponents/teacher/analytics/TeacherAnalytics';
 import { useGetTeacherDashboardQuery } from '@/redux/api/endPoints/teachersApiSlice';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
@@ -8,7 +8,7 @@ const Page = () => {
   // Initial load without params gets global/default stats
   const { data: dashboardData, isLoading, error } = useGetTeacherDashboardQuery({});
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <div className="h-[calc(100vh-100px)] flex items-center justify-center"><Spinner /></div>;
   if (error) return <div className="text-center text-red-500 py-10">Failed to load analytics</div>;
 
   return (
