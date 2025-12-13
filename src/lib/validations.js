@@ -89,3 +89,14 @@ export const teacherSignupSchema = Yup.object({
   password: Yup.string().min(8, "Password must be at least 6 characters").required("Password is required"),
   confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], "Passwords must match").required("Confirm Password is required"),
 });
+
+
+
+
+export const courseSchema = Yup.object().shape({
+  title: Yup.string().min(5, "Title is too short").required("Course title is required"),
+  description: Yup.string().min(20, "Description must be detailed").required("Required"),
+  level: Yup.string().required("Level is required"),
+  subject: Yup.string().required("Subject is required"),
+  // Thumbnail مش هنعمله required دلوقتي عشان لو لسه بيرفع الصورة
+});

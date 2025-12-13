@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { 
-  LayoutDashboard, User, BookOpen, Award, Heart, Star, 
-  FileQuestion, ShoppingBag, MessageSquare, LifeBuoy, 
-  Settings, LogOut, X, GraduationCap, Users, Megaphone, 
+import {
+  LayoutDashboard, User, BookOpen, Award, Heart, Star,
+  FileQuestion, ShoppingBag, MessageSquare, LifeBuoy,
+  Settings, LogOut, X, GraduationCap, Users, Megaphone,
   FileText, ClipboardCheck, Wallet, CreditCard, FileBarChart,
   Baby, Certificates
-} from "lucide-react"; 
+} from "lucide-react";
 
 const TeacherSidebar = ({ open, setOpen }) => {
   const pathname = usePathname();
@@ -63,11 +63,11 @@ const TeacherSidebar = ({ open, setOpen }) => {
             </div>
             <div>
               <p className="font-semibold text-gray-800 text-sm">Eugene Andre</p>
-              <p className="text-xs text-gray-600">Instructor</p>
+              <p className="text-xs text-gray-600">Teacher</p>
             </div>
           </div>
-          <button 
-            onClick={() => setOpen(false)} 
+          <button
+            onClick={() => setOpen(false)}
             className="lg:hidden text-gray-400 hover:text-gray-600"
           >
             <X size={20} />
@@ -76,7 +76,7 @@ const TeacherSidebar = ({ open, setOpen }) => {
 
         {/* Navigation */}
         <div className="h-[calc(100vh-80px)] overflow-y-auto px-4 py-6 scrollbar-hide">
-          
+
           {/* Main Menu */}
           <div className="mb-6">
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">
@@ -93,13 +93,13 @@ const TeacherSidebar = ({ open, setOpen }) => {
                     href={link.href}
                     onClick={() => setOpen(false)}
                     className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors
-                      ${isActive 
-                          ? "bg-blue-50 text-blue-600 border-r-2 border-blue-600" 
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      ${isActive
+                        ? "bg-blue-50 text-blue-600 border-r-2 border-blue-600"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       }
                     `}
                   >
-                    <Icon size={18} className="flex-shrink-0" />
+                    <Icon size={18} className="shrink-0" />
                     <span className="truncate">{link.label}</span>
                   </Link>
                 );
@@ -117,13 +117,13 @@ const TeacherSidebar = ({ open, setOpen }) => {
                 href="/teachers/settings"
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors
-                  ${pathname === '/teachers/settings' 
-                    ? "bg-blue-50 text-blue-600 border-r-2 border-blue-600" 
+                  ${pathname === '/teachers/settings'
+                    ? "bg-blue-50 text-blue-600 border-r-2 border-blue-600"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }
                 `}
               >
-                <Settings size={18} className="flex-shrink-0" />
+                <Settings size={18} className="shrink-0" />
                 <span>Settings</span>
               </Link>
 
@@ -131,7 +131,7 @@ const TeacherSidebar = ({ open, setOpen }) => {
                 onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
               >
-                <LogOut size={18} className="flex-shrink-0" />
+                <LogOut size={18} className="shrink-0" />
                 <span>Logout</span>
               </button>
             </nav>
@@ -142,7 +142,7 @@ const TeacherSidebar = ({ open, setOpen }) => {
             <div className="px-3">
               <h4 className="text-sm font-semibold text-gray-800 mb-2">DreamsLMS</h4>
               <p className="text-xs text-gray-600 leading-relaxed">
-                Platform designed to help organizations, educators, and learners manage, 
+                Platform designed to help organizations, educators, and learners manage,
                 deliver, and track learning activities.
               </p>
             </div>

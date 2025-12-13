@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import StoreProvider from "@/redux/StoreProvider";
-import { SocketProvider } from "@/contexts/SocketContext";
+import { Toaster } from 'react-hot-toast';
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -15,11 +15,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased" suppressHydrationWarning={true}>
         <StoreProvider>
-          <SocketProvider>
-            {children}
-          </SocketProvider>
+
+          {children}
+          <Toaster position="top-center" />
+
         </StoreProvider>
       </body>
     </html>

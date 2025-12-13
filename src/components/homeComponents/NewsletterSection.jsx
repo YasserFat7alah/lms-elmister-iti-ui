@@ -5,7 +5,7 @@ import { FiMail } from "react-icons/fi";
 
 export default function NewsletterSection() {
   return (
-    <section className="relative bg-gray-950 text-white py-2 overflow-hidden">
+    <section className="py-5 relative bg-gray-950 text-white overflow-hidden">
       {/* Wave  */}
       <div className="absolute top-0 left-0 w-full">
         <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
@@ -13,7 +13,7 @@ export default function NewsletterSection() {
         </svg>
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-6">
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8">
 
           <div className="space-y-6 text-center lg:text-left">

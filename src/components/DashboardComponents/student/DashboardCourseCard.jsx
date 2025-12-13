@@ -37,14 +37,12 @@ const DashboardCourseCard = ({ course }) => {
             {course.title}
         </h3>
 
-        {/* Rating */}
         <div className="flex items-center gap-2 mb-4">
             <Star size={16} className="text-yellow-400 fill-yellow-400" />
             <span className="font-bold text-gray-900">{course.rating}</span>
             <span className="text-gray-400 text-sm">({course.reviews} Reviews)</span>
         </div>
 
-        {/* Price & Action Button */}
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
             <span className="text-xl font-bold text-[#FF0055]">${course.price}</span>
             

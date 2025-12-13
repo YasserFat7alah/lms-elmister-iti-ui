@@ -18,17 +18,31 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.userInfo = action.payload;
-      
+      const { user, accessToken, refreshToken } = action.payload;
+
+      state.userInfo = {
+        ...state.userInfo,
+        ...action.payload,
+        refreshToken: refreshToken || state.userInfo?.refreshToken,
+        user: {
+          ...state.userInfo?.user,
+          ...user
+        }
+      };
+
       if (typeof window !== 'undefined') {
-        localStorage.setItem('userInfo', JSON.stringify(action.payload));
-        
-        if (action.payload.accessToken) {
-           Cookies.set('token', action.payload.accessToken, { expires: 7 }); 
+        localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
+
+        if (accessToken) {
+          Cookies.set('accessToken', accessToken, { expires: 1 });
         }
 
-        if (action.payload.user?.role) {
-           Cookies.set('user_role', action.payload.user.role, { expires: 7 }); 
+        if (refreshToken) {
+          Cookies.set('refreshToken', refreshToken, { expires: 7 });
+        }
+
+        if (state.userInfo.user?.role) {
+          Cookies.set('user_role', state.userInfo.user.role, { expires: 7 });
         }
       }
     },
@@ -36,8 +50,9 @@ const authSlice = createSlice({
       state.userInfo = null;
       if (typeof window !== 'undefined') {
         localStorage.removeItem('userInfo');
-        Cookies.remove('token');
-        Cookies.remove('user_role'); 
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
+        Cookies.remove('user_role');
       }
     },
   },

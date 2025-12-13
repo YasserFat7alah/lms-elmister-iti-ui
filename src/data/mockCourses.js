@@ -129,7 +129,7 @@ export const mockCourses = [
     subject: "English",
     gradeLevel: "7",
     status: "published",
-    pricing: { isPaid: false, price: 0, currency: "USD" },
+    pricing: { isPaid: true, price: 30, currency: "USD" },
     language: "English",
     tags: ["grammar", "writing"],
     teacherId: "mock_teacher_02",

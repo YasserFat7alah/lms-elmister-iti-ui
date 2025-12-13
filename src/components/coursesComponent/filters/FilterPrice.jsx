@@ -1,76 +1,69 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import React, { useEffect, useState, useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import React, { useEffect, useState, useRef } from "react";
+
+const PRICE_RANGES = [
+  { label: "Free", value: "Free" },
+  { label: "0-50 EGP", value: "0-50" },
+  { label: "50-100 EGP", value: "50-100" },
+  { label: "100-150 EGP", value: "100-150" },
+  { label: "150+ EGP", value: "150-10000" } // Open ended catch-all
+];
 
 const FilterPrice = ({ priceFilter, onPriceChange }) => {
-  const priceTypes = ["free", "paid"];
-  const [selectedPrices, setSelectedPrices] = useState(
-    Array.isArray(priceFilter) ? priceFilter : priceFilter !== "all" ? [priceFilter] : []
-  );
+  const [selectedRanges, setSelectedRanges] = useState(priceFilter || []);
   const isSyncingRef = useRef(false);
 
-  const handlePriceToggle = (priceType) => {
-    setSelectedPrices(prev => 
-      prev.includes(priceType)
-        ? prev.filter(p => p !== priceType)
-        : [...prev, priceType]
+  const handleRangeToggle = (value) => {
+    setSelectedRanges(prev =>
+      prev.includes(value) ? prev.filter(r => r !== value) : [...prev, value]
     );
   };
 
-  // Sync with external state when reset (only when external changes to reset)
+  // Sync with prop
   useEffect(() => {
-    if (priceFilter === "all" && selectedPrices.length > 0) {
+    const propStr = JSON.stringify([...(priceFilter || [])].sort());
+    const stateStr = JSON.stringify([...selectedRanges].sort());
+    if (propStr !== stateStr) {
       isSyncingRef.current = true;
-      setSelectedPrices([]);
-    } else if (Array.isArray(priceFilter) && priceFilter.length > 0) {
-      const priceFilterStr = JSON.stringify([...priceFilter].sort());
-      const selectedPricesStr = JSON.stringify([...selectedPrices].sort());
-      if (priceFilterStr !== selectedPricesStr) {
-        isSyncingRef.current = true;
-        setSelectedPrices(priceFilter);
-      }
+      setSelectedRanges(priceFilter || []);
     }
   }, [priceFilter]);
 
-  // Update parent when local state changes (only if different from current prop)
+  // Sync to parent
   useEffect(() => {
     if (isSyncingRef.current) {
       isSyncingRef.current = false;
       return;
     }
-
-    if (selectedPrices.length === 0) {
-      if (priceFilter !== "all") {
-        onPriceChange("all");
-      }
-    } else {
-      const selectedPricesStr = JSON.stringify([...selectedPrices].sort());
-      const priceFilterStr = Array.isArray(priceFilter) ? JSON.stringify([...priceFilter].sort()) : "";
-      if (selectedPricesStr !== priceFilterStr) {
-        onPriceChange(selectedPrices);
-      }
+    const propStr = JSON.stringify([...(priceFilter || [])].sort());
+    const stateStr = JSON.stringify([...selectedRanges].sort());
+    if (propStr !== stateStr) {
+      onPriceChange(selectedRanges);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPrices]);
+  }, [selectedRanges]);
 
   return (
-    <Accordion type="single" collapsible className='lg:border lg:px-2 lg:py-1 lg:rounded-lg'>
-      <AccordionItem value="price-filter">
-        <AccordionTrigger className='text-gray-800 data-[state=open]:bg-gray-100/50 lg:data-[state=open]:bg-white px-2 mb-3 lg:mb-1'>Price Filter</AccordionTrigger>
+    <Accordion type="single" collapsible defaultValue="price" className="lg:border lg:px-2 lg:py-1 lg:rounded-lg">
+      <AccordionItem value="price">
+        <AccordionTrigger className="text-gray-800 data-[state=open]:bg-gray-100/50 lg:data-[state=open]:bg-white px-2 mb-3 lg:mb-1 rounded-none">
+          Price
+        </AccordionTrigger>
         <AccordionContent>
           <div className="px-3">
-            <div className="flex flex-wrap items-center lg:items-start justify-start gap-x-3 gap-y-4  lg:flex-col">
-              {priceTypes.map((priceType) => (
-                <div key={priceType} className="flex gap-2 items-center">
+            <div className="flex flex-col gap-3">
+              {PRICE_RANGES.map((range) => (
+                <div key={range.value} className="flex gap-2 items-center">
                   <Checkbox
-                    id={`price-${priceType}`}
+                    id={`price-${range.value}`}
                     className="bg-white"
-                    checked={selectedPrices.includes(priceType)}
-                    onCheckedChange={() => handlePriceToggle(priceType)}
+                    checked={selectedRanges.includes(range.value)}
+                    onCheckedChange={() => handleRangeToggle(range.value)}
                   />
-                  <Label className='text-gray-700 capitalize' htmlFor={`price-${priceType}`}>
-                    {priceType}
+                  <Label className='text-gray-700 cursor-pointer' htmlFor={`price-${range.value}`}>
+                    {range.label}
                   </Label>
                 </div>
               ))}

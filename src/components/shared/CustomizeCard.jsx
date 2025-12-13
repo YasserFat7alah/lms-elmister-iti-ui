@@ -7,28 +7,22 @@ export default function CustomizeCard({
   image, 
   title, 
   subTitle, 
-  rating //  optional 
+  rating 
 }) {
   return (
-    <div className="min-w-[220px] sm:min-w-[240px] bg-white shadow-lg p-6 rounded-2xl flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+    <div className="w-full bg-white shadow-lg p-6 rounded-2xl flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
       
-      {/* image أو Icon */}
       {image ? (
         <div className="w-24 h-24 mb-4 rounded-full overflow-hidden ring-4 ring-purple-100 shadow-lg">
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover"
-          />
+          <img src={image} alt={title} className="w-full h-full object-cover" />
         </div>
       ) : Icon ? (
         <Icon className="w-12 h-12 text-[#392C7D] mb-4" />
       ) : null}
 
       <div className="w-12 h-1 rounded-full bg-[#392C7D]/10 mb-4"></div>
-      
-      {/*   rating */}
-      {rating !== undefined && rating !== null && (
+
+      {rating !== undefined && (
         <Rating 
           defaultRating={rating} 
           readOnly 

@@ -23,8 +23,8 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-20 bg-gradient-to-br from-pink-50 to-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-10 bg-linear-to-br from-pink-50 to-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-gray-900 mb-4">
@@ -73,32 +73,38 @@ export default function Testimonials() {
                 src="/image.png"
                 alt="Happy team"
                 width={600}
-                height={400}   
+                height={400}
                 className="w-full h-full object-cover"
               />
             </div>
           </div>
         </div>
 
-        {/*  Become An Instructor + Become A Student */}
-        <div className="grid md:grid-cols-2 gap-8 mt-16 max-w-5xl mx-auto">
-          <div className="bg-gradient-to-br from-orange-400 to-yellow-500 rounded-3xl p-10 text-white shadow-2xl text-center md:text-left">
-            <h3 className="text-3xl font-bold mb-4">Become An Instructor</h3>
-            <p className="text-white/90 mb-8">
-              Top instructors from around the world teach millions of students on Mentoring.
-            </p>
-            <button className="bg-white text-orange-600 px-8 py-4 rounded-full font-bold text-lg flex items-center gap-3 mx-auto md:mx-0 hover:scale-105 transition">
-              Apply Now <FaArrowRight />
+        {/*  Become A Teacher + Become A Student */}
+        <div className="flex flex-col md:flex-row gap-6 lg:gap-10 mt-5 lg:mt-5 max-w-6xl mx-auto">
+          <div className="flex-1 bg-linear-to-br from-orange-400 to-yellow-500 rounded-3xl p-8 lg:p-10 text-white shadow-2xl flex flex-col justify-between min-h-[280px] lg:min-h-[320px]">
+            <div>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-3 lg:mb-4">Become A Teacher</h3>
+              <p className="text-white/90 text-sm lg:text-base leading-relaxed">
+                Top instructors from around the world teach millions of students on Mentoring.
+              </p>
+            </div>
+
+            <button className="bg-white text-orange-600 px-6 py-3 rounded-full font-bold text-sm lg:text-base flex items-center gap-2 w-fit mx-auto md:mx-0 hover:scale-105 transition-all duration-300 shadow-lg">
+              Apply Now <FaArrowRight className="text-orange-600" />
             </button>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl p-10 text-white shadow-2xl text-center md:text-left">
-            <h3 className="text-3xl font-bold mb-4">Become A Student</h3>
-            <p className="text-white/90 mb-8">
-              Start your educational journey with us and access a wealth of resources
-            </p>
-            <button className="bg-white text-purple-600 px-8 py-4 rounded-full font-bold text-lg flex items-center gap-3 mx-auto md:mx-0 hover:scale-105 transition">
-              Enroll Now <FaArrowRight />
+          <div className="flex-1 bg-linear-to-br from-purple-500 to-pink-500 rounded-3xl p-8 lg:p-10 text-white shadow-2xl flex flex-col justify-between min-h-[280px] lg:min-h-[320px]">
+            <div>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-3 lg:mb-4">Become A Student</h3>
+              <p className="text-white/90 text-sm lg:text-base leading-relaxed">
+                Start your educational journey with us and access a wealth of resources
+              </p>
+            </div>
+
+            <button className="bg-white text-purple-600 px-6 py-3 rounded-full font-bold text-sm lg:text-base flex items-center gap-2 w-fit mx-auto md:mx-0 hover:scale-105 transition-all duration-300 shadow-lg">
+              Enroll Now <FaArrowRight className="text-purple-600" />
             </button>
           </div>
         </div>

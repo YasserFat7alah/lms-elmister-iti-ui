@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
-import { studentStats, enrolledCourses } from "@/data/studentData"; 
-import DashboardCourseCard from "@/components/dashboardComponents/student/DashboardCourseCard";
+import { studentStats, enrolledCourses } from "@/data/studentData";
+import DashboardCourseCard from "@/components/DashboardComponents/student/DashboardCourseCard";
+
 import { BookOpen, PlayCircle, Trophy } from "lucide-react";
 import PageBreadcrumb from "@/components/shared/dashboard/PageBreadcrumb";
 import DashboardBanner from "@/components/shared/dashboard/DashboardBanner";
 
 export default function StudentDashboardPage() {
-  
+
   const getIcon = (iconName) => {
     switch (iconName) {
       case "book": return <BookOpen size={28} />;
@@ -19,8 +20,8 @@ export default function StudentDashboardPage() {
 
   return (
     <div className="space-y-8">
-             <PageBreadcrumb />
-       <DashboardBanner />
+      <PageBreadcrumb />
+      <DashboardBanner />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {studentStats.map((stat, index) => (
@@ -38,13 +39,13 @@ export default function StudentDashboardPage() {
 
       <div>
         <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Recently Enrolled Courses</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Recently Enrolled Courses</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {enrolledCourses.map((course) => (
-                <DashboardCourseCard key={course.id} course={course} />
-            ))}
+          {enrolledCourses.map((course) => (
+            <DashboardCourseCard key={course.id} course={course} />
+          ))}
         </div>
       </div>
 

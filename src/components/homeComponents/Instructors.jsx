@@ -1,6 +1,6 @@
 "use client";
 
-import CustomizeCard from "../shared/CustomizeCard";    
+import CustomizeCard from "../shared/CustomizeCard";
 import Rating from "../shared/Rating";
 
 import { FaHeart, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
@@ -42,15 +42,15 @@ const instructorsData = [
 
 export default function Instructors() {
   return (
-    <section className="py-16 bg-gradient-to-br from-purple-50 via-white to-pink-50">
-      <div className="max-w-7xl mx-auto px-4 text-center">
+    <section className="py-10 bg-linear-to-br from-purple-50 via-white to-pink-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Trending Badge */}
-        <span className="inline-block bg-gradient-to-r from-pink-400 to-rose-400 text-white text-xs font-bold px-5 py-2 rounded-full mb-4">
-          Trending Instructors
+        <span className="inline-block bg-linear-to-r from-pink-400 to-rose-400 text-white text-xs font-bold px-5 py-2 rounded-full mb-4">
+          Trending Teachers
         </span>
 
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-          Top Class & Professional Instructors
+          Top Class & Professional Teachers
         </h2>
         <p className="text-gray-600 text-lg max-w-3xl mx-auto mb-12">
           Empowering Change: Stories from Those Who Took the Leap
@@ -63,7 +63,7 @@ export default function Instructors() {
               {/* Trending Badge للكارت الفردي */}
               {instructor.trending && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                  <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+                  <span className="bg-linear-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
                     Trending
                   </span>
                 </div>
