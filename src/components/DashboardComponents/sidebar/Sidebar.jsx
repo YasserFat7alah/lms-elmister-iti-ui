@@ -12,7 +12,7 @@ import {
   FileQuestion, ShoppingBag, MessageSquare, LifeBuoy,
   Settings, LogOut, X, Users, Megaphone,
   FileText, ClipboardCheck, Wallet, CreditCard, FileBarChart,
-  Baby, Mail
+  Baby, Mail, Info
 } from "lucide-react";
 import Image from "next/image";
 
@@ -39,7 +39,6 @@ const ROLE_LINKS = {
     { label: "Quiz Results", href: "/dashboard/teacher/quiz-results", icon: ClipboardCheck },
     { label: "Payout", href: "/dashboard/teacher/payout", icon: CreditCard },
     { label: "Messages", href: "/dashboard/teacher/messages", icon: MessageSquare },
-    { label: "Support Tickets", href: "/dashboard/teacher/support", icon: LifeBuoy },
   ],
 
   parent: [
@@ -57,7 +56,7 @@ const ROLE_LINKS = {
     {
       group: "Dashboard",
       items: [
-        { label: "Overview", href: "/dashboard/admin/overview", icon: LayoutDashboard },
+        { label: "Anayltics", href: "/dashboard/admin/analytics", icon: LayoutDashboard },
       ],
     },
     {
@@ -236,6 +235,24 @@ const Sidebar = ({ open, setOpen }) => {
               System
             </h3>
             <nav className="space-y-1">
+
+              {/* Support Tickets Link - Visible for non-admins */}
+              {!isAdmin && role && (
+                <Link
+                  href={`/dashboard/${role}/support`}
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                    ${pathname?.includes(`/dashboard/${role}/support`)
+                      ? "bg-[#FF0055]/10 text-[#FF0055]"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    }
+                  `}
+                >
+                  <Info size={19} className={pathname?.includes(`/dashboard/${role}/support`) ? "text-[#FF0055]" : "text-gray-400"} />
+                  <span>Support Center</span>
+                </Link>
+              )}
+
               <Link
                 href="/settings"
                 onClick={() => setOpen(false)}

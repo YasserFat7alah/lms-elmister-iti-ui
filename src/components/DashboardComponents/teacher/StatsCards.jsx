@@ -1,40 +1,42 @@
 'use client'
 
-const StatsCards = () => {
+const StatsCards = ({ data }) => {
   const stats = [
-    { 
-      title: 'Enrolled Courses', 
-      value: '13', 
+    {
+      title: 'Enrolled Courses',
+      value: data?.activeCourses || 0, // interpreting Enrolled as Active or using totalCourses? 
+      // Actually 'Enrolled Courses' might mean Courses that have students? Or just Active Courses.
+      // Let's use activeCourses for now
       bgColor: 'bg-blue-500',
       icon: '📚'
     },
-    { 
-      title: 'Total Students', 
-      value: '17', 
+    {
+      title: 'Total Students',
+      value: data?.totalStudents || 0,
       bgColor: 'bg-green-500',
       icon: '👥'
     },
-    { 
-      title: 'Active Courses', 
-      value: '08', 
+    {
+      title: 'Active Courses',
+      value: data?.activeCourses || 0,
       bgColor: 'bg-purple-500',
       icon: '🟢'
     },
-    { 
-      title: 'Total Courses', 
-      value: '11', 
+    {
+      title: 'Total Courses',
+      value: data?.totalCourses || 0,
       bgColor: 'bg-orange-500',
       icon: '📊'
     },
-    { 
-      title: 'Completed Courses', 
-      value: '06', 
+    {
+      title: 'Completed Courses',
+      value: data?.completedCourses || 0,
       bgColor: 'bg-red-500',
       icon: '✅'
     },
-    { 
-      title: 'Total Earnings', 
-      value: '$486', 
+    {
+      title: 'Total Earnings',
+      value: `$${data?.totalEarnings || 0}`,
       bgColor: 'bg-teal-500',
       icon: '💰'
     },
@@ -43,8 +45,8 @@ const StatsCards = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
       {stats.map((stat, index) => (
-        <div 
-          key={index} 
+        <div
+          key={index}
           className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow duration-300"
         >
           <div className="flex items-center justify-between">
@@ -56,11 +58,11 @@ const StatsCards = () => {
               <span className="text-lg">{stat.icon}</span>
             </div>
           </div>
-          
+
           {/* Progress Bar Indicator */}
           <div className="mt-3">
             <div className="w-full bg-gray-200 rounded-full h-1.5">
-              <div 
+              <div
                 className={`${stat.bgColor} h-1.5 rounded-full`}
                 style={{ width: `${Math.random() * 70 + 30}%` }}
               ></div>

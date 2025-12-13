@@ -2,41 +2,64 @@ import React from 'react';
 import { AlertTriangle, X, Archive, Trash2 } from 'lucide-react';
 import { Spinner } from "@/components/shared/Loader";
 
-const DeleteCourseModal = ({
+const DeleteModal = ({
     isOpen,
     onClose,
-    course,          
-    onConfirmDelete,  
-    onConfirmArchive, 
+    course,
+    onConfirmDelete,
+    onConfirmArchive,
+    onConfirm, // Generic confirm
+    title, // Generic title
+    description, // Generic description
     isLoading = false
 }) => {
-    if (!isOpen || !course) return null;
+    if (!isOpen) return null;
 
-    const hasStudents = (course.totalStudents && course.totalStudents > 0) || (course.students && course.students.length > 0);
+    let modalConfig = {};
 
-    const modalConfig = hasStudents ? {
-        title: "Archive Course",
-        description: `This course has ${course.totalStudents || 0} active students. To preserve their data, we will archive it instead of deleting.`,
-        icon: Archive,
-        themeColor: "orange", 
-        bgHeader: "bg-orange-50 border-orange-100",
-        iconBg: "bg-orange-100",
-        iconColor: "text-orange-600",
-        btnColor: "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700",
-        actionText: "Archive Course",
-        action: () => onConfirmArchive(course._id)
-    } : {
-        title: "Delete Permanently",
-        description: "This course has 0 students. This action will permanently delete the course and all its groups. This cannot be undone.",
-        icon: Trash2,
-        themeColor: "red",
-        bgHeader: "bg-gradient-to-r from-red-50 to-rose-50 border-red-100",
-        iconBg: "bg-red-100",
-        iconColor: "text-red-600",
-        btnColor: "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700",
-        actionText: "Delete Permanently",
-        action: () => onConfirmDelete(course._id)
-    };
+    // Mode 1: Course Specific (Legacy)
+    if (course) {
+        const hasStudents = (course.totalStudents && course.totalStudents > 0) || (course.students && course.students.length > 0);
+
+        modalConfig = hasStudents ? {
+            title: "Archive Course",
+            description: `This course has ${course.totalStudents || 0} active students. To preserve their data, we will archive it instead of deleting.`,
+            icon: Archive,
+            themeColor: "orange",
+            bgHeader: "bg-orange-50 border-orange-100",
+            iconBg: "bg-orange-100",
+            iconColor: "text-orange-600",
+            btnColor: "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700",
+            actionText: "Archive Course",
+            action: () => onConfirmArchive(course._id)
+        } : {
+            title: "Delete Permanently",
+            description: "This course has 0 students. This action will permanently delete the course and all its groups. This cannot be undone.",
+            icon: Trash2,
+            themeColor: "red",
+            bgHeader: "bg-gradient-to-r from-red-50 to-rose-50 border-red-100",
+            iconBg: "bg-red-100",
+            iconColor: "text-red-600",
+            btnColor: "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700",
+            actionText: "Delete Permanently",
+            action: () => onConfirmDelete(course._id)
+        };
+    }
+    // Mode 2: Generic
+    else {
+        modalConfig = {
+            title: title || "Confirm Delete",
+            description: description || "Are you sure you want to delete this item? This action cannot be undone.",
+            icon: Trash2, // Default to trash
+            themeColor: "red",
+            bgHeader: "bg-gradient-to-r from-red-50 to-rose-50 border-red-100",
+            iconBg: "bg-red-100",
+            iconColor: "text-red-600",
+            btnColor: "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700",
+            actionText: "Delete",
+            action: onConfirm
+        };
+    }
 
     const Icon = modalConfig.icon;
 
@@ -62,7 +85,7 @@ const DeleteCourseModal = ({
                                     {modalConfig.title}
                                 </h2>
                                 <p className="text-sm text-gray-600 mt-1">
-                                    {hasStudents ? "Safe Action" : "Destructive Action"}
+                                    {course ? (modalConfig.title === "Archive Course" ? "Safe Action" : "Destructive Action") : "Confirm Action"}
                                 </p>
                             </div>
                         </div>
@@ -79,9 +102,11 @@ const DeleteCourseModal = ({
 
                 {/* Content */}
                 <div className="p-6">
-                    <div className="font-semibold text-gray-900 mb-2 border-l-4 pl-3 py-1" style={{ borderColor: hasStudents ? 'orange' : 'red' }}>
-                        {course.title}
-                    </div>
+                    {course && (
+                        <div className="font-semibold text-gray-900 mb-2 border-l-4 pl-3 py-1" style={{ borderColor: modalConfig.themeColor }}>
+                            {course.title}
+                        </div>
+                    )}
                     <p className="text-gray-600 leading-relaxed text-sm">
                         {modalConfig.description}
                     </p>
@@ -115,4 +140,4 @@ const DeleteCourseModal = ({
     );
 };
 
-export default DeleteCourseModal;
+export default DeleteModal;

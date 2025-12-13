@@ -133,6 +133,7 @@
 /* SCROLL BAR FOR SIDEBAR STYLE */
 ::-webkit-scrollbar {
   width: 4px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-thumb {

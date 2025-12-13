@@ -1,22 +1,29 @@
-'use client'
-import StatsCards from '@/components/DashboardComponents/teacher/StatsCards'
-import RecentCourses from '@/components/DashboardComponents/teacher/RecentCourses'
-export default function DashboardPage() {
+'use client';
+import { FullPageLoader as Loader } from '@/components/shared/Loader';
+import TeacherAnalytics from '@/components/DashboardComponents/teacher/analytics/TeacherAnalytics';
+import { useGetTeacherDashboardQuery } from '@/redux/api/endPoints/teachersApiSlice';
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
+
+const Page = () => {
+  // Initial load without params gets global/default stats
+  const { data: dashboardData, isLoading, error } = useGetTeacherDashboardQuery({});
+
+  if (isLoading) return <Loader />;
+  if (error) return <div className="text-center text-red-500 py-10">Failed to load analytics</div>;
+
   return (
-    <div className="space-y-6">
-      <StatsCards />
-      
-      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-        {/* Earnings Chart Placeholder */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Earnings by Year</h3>
-          <div className="h-64 flex items-center justify-center bg-gray-100 rounded">
-            <p className="text-gray-500">سيتم تنفيذ الرسم البياني هنا</p>
-          </div>
-        </div>
-        
-        <RecentCourses />
+    <div className="p-6 bg-gray-50/50 min-h-screen">
+      <div className="mb-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/dashboard/teacher' },
+            { label: 'Analytics' }
+          ]}
+        />
       </div>
+      <TeacherAnalytics data={dashboardData?.data} />
     </div>
-  )
-}
+  );
+};
+
+export default Page;

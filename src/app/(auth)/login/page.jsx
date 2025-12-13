@@ -65,7 +65,7 @@ function LoginContent() {
           }
           const role = user?.role;
           const dashboardPaths = {
-            admin: "/dashboard/admin/overview",
+            admin: "/dashboard/admin/analytics",
             teacher: "/dashboard/teacher/analytics",
             student: "/dashboard/student/my-learning",
             parent: "/dashboard/parent/overview",
@@ -88,7 +88,7 @@ function LoginContent() {
         oauthToastId.current = null;
       }
     })();
-  }, [searchParams, dispatch, router]); 
+  }, [searchParams, dispatch, router]);
 
   const handleLoginSubmit = async (values, { setSubmitting }) => {
     setServerError("");
