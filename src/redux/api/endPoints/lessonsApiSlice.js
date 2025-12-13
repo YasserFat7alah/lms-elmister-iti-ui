@@ -2,6 +2,9 @@ import { LESSONS_URL } from "@/constants";
 import { apiSlice } from "../apiSlice";
 
 
+const LESSONS_URL = "/api/v1/lessons"; 
+// const LESSONS_URL = "/lessons"; 
+
 export const lessonsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
         
@@ -15,7 +18,8 @@ export const lessonsApiSlice = apiSlice.injectEndpoints({
     }),
     getLessonsByGroup: builder.query({
       query: ({ groupId, page = 1, limit = 50 }) => ({
-        url: `${LESSONS_URL}/group/${groupId}`,
+        // url: `${LESSONS_URL}/group/${groupId}`,
+        url: `/lessons/group/${groupId}`,
         params: { page, limit },
       }),
       providesTags: (result) => 
