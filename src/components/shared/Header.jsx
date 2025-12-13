@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Menu, X, LogOut, LayoutDashboard, Search, User } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Search, User, ChevronDown } from "lucide-react";
 import { apiSlice } from "@/redux/api/apiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
@@ -18,6 +18,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import logo from "@/assets/images/logo.svg";
@@ -58,11 +61,14 @@ export function Header() {
     { label: "Courses", href: "/courses" },
     { label: "teachers", href: "/teachers" },
     { label: "Blog", href: "/blog" },
-    { label: "Contact us", href: "/contact" },
-    { label: "About us", href: "/about" },
   ];
 
-
+  const supportItems = [
+    { label: "Contact us", href: "/contact" },
+    { label: "About us", href: "/about" },
+    { label: "FAQ", href: "/faqs" },
+    { label: "Privacy & Policies", href: "/privacy" },
+  ];
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-200" style={{ ["--header-height"]: "4.5rem" }}>
@@ -97,6 +103,27 @@ export function Header() {
                 </Link>
               );
             })}
+
+            {/* Support Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={`text-[14px] xl:text-[15px] font-medium transition-all duration-200 relative py-1 flex items-center gap-1
+                  text-gray-600 hover:text-[#FF0055]
+                  after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#FF0055] after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left
+                `}>
+                  Support <ChevronDown className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 mt-2" align="start">
+                {supportItems.map((item) => (
+                  <DropdownMenuItem key={item.href} asChild>
+                    <Link href={item.href} className="cursor-pointer">
+                      {item.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* RIGHT SIDE ACTIONS */}
@@ -235,13 +262,28 @@ export function Header() {
                     href={item.href}
                     onClick={() => setIsOpen(false)}
                     className={`block py-3 px-4 text-base font-medium rounded-xl transition-colors
-                        ${isActive ? "bg-red-50 text-[#FF0055]" : "text-gray-700 hover:bg-gray-50"}
-                      `}
+                      ${isActive ? "bg-red-50 text-[#FF0055]" : "text-gray-700 hover:bg-gray-50"}
+                    `}
                   >
                     {item.label}
                   </Link>
                 )
               })}
+
+              {/* Support Section in Mobile */}
+              <div className="py-2">
+                <p className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase tracking-wider">Support</p>
+                {supportItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="block py-3 px-8 text-base font-medium text-gray-600 hover:bg-gray-50 rounded-xl transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
 
               <div className="border-t border-gray-100 my-2 pt-4 flex flex-col gap-3">
                 {/* Mobile Auth Buttons if not logged in */}
