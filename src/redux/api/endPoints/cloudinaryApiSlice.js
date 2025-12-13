@@ -1,6 +1,6 @@
 import { apiSlice } from '../apiSlice';
 
-const CLOUDINARY_URL = "/api/v1/cloudinary"; 
+const CLOUDINARY_URL = "/cloudinary"; 
 
 export const cloudinaryApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

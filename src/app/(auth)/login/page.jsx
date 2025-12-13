@@ -88,7 +88,7 @@ function LoginContent() {
         oauthToastId.current = null;
       }
     })();
-  }, [searchParams, dispatch, router]); // Optimized dependencies
+  }, [searchParams, dispatch, router]); 
 
   const handleLoginSubmit = async (values, { setSubmitting }) => {
     setServerError("");

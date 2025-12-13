@@ -1,10 +1,18 @@
+import { LESSONS_URL } from "@/constants";
 import { apiSlice } from "../apiSlice";
 
-const LESSONS_URL = "/api/v1/lessons"; 
 
 export const lessonsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    
+        
+    getAllMyLessons: builder.query({
+      query: () => ({
+        url: LESSONS_URL, 
+        method: 'GET',
+        params: { limit: 1000 } 
+      }),
+      providesTags: [{ type: "Lessons", id: "LIST" }],
+    }),
     getLessonsByGroup: builder.query({
       query: ({ groupId, page = 1, limit = 50 }) => ({
         url: `${LESSONS_URL}/group/${groupId}`,
@@ -93,5 +101,6 @@ export const {
   useDeleteLessonMutation,
   useMarkAttendanceMutation,
   useAddLessonMaterialMutation,
-  useDeleteLessonMaterialMutation
+  useDeleteLessonMaterialMutation,
+  useGetAllMyLessonsQuery
 } = lessonsApiSlice;

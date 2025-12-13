@@ -96,7 +96,7 @@ export default function CourseBasicInfo({ values, setFieldValue, onAddGroup }) {
               />
             </div>
 
-            <div className="flex-shrink-0 self-start">
+            {/* <div className="flex-shrink-0 self-start">
               <Button
                 type="button"
                 onClick={onAddGroup}
@@ -105,7 +105,7 @@ export default function CourseBasicInfo({ values, setFieldValue, onAddGroup }) {
                 <Plus size={16} />
                 <span className="text-sm font-medium">Add Group</span>
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
