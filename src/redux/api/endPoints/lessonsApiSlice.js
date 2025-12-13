@@ -2,7 +2,7 @@ import { LESSONS_URL } from "@/constants";
 import { apiSlice } from "../apiSlice";
 
 
-const LESSONS_URL = "/api/v1/lessons"; 
+// const LESSONS_URL = "/api/v1/lessons"; 
 // const LESSONS_URL = "/lessons"; 
 
 export const lessonsApiSlice = apiSlice.injectEndpoints({

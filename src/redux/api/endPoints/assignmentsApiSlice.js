@@ -13,6 +13,25 @@ export const assignmentsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Assignments"],
     }),
 
+    // ------------------ Update Assignment (Teacher) ------------------
+    updateAssignment: builder.mutation({
+      query: ({ assignmentId, formData }) => ({
+        url: `/assignments/${assignmentId}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["Assignments"],
+    }),
+
+    // ------------------ Delete Assignment (Teacher) ------------------
+    deleteAssignment: builder.mutation({
+      query: (assignmentId) => ({
+        url: `/assignments/${assignmentId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Assignments"],
+    }),
+
     // ------------------ Get assignments by group ------------------
     getAssignmentsByGroup: builder.query({
       query: (groupId) => ({
@@ -63,6 +82,8 @@ export const assignmentsApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useCreateAssignmentMutation,
+  useUpdateAssignmentMutation,
+  useDeleteAssignmentMutation,
   useGetAssignmentsByGroupQuery,
   useGetAssignmentsByLessonQuery,
   useGetAssignmentByIdQuery,

@@ -8,21 +8,40 @@ import { useGetLessonByIdQuery, useGetLessonsByGroupQuery } from "@/redux/api/en
 import AttendanceSheet from "@/components/teacherGroupDetails/AttendanceSheet";
 import { Spinner } from "@/components/shared/Loader";
 import LessonMaterials from "@/components/teacherGroupDetails/LessonMaterials";
+import LessonAsignment from "@/components/teacherGroupDetails/LessonAsignment";
+import { useGetAssignmentsByLessonQuery } from "@/redux/api/endPoints/assignmentsApiSlice";
+
+
 export default function LessonDetailsPage() {
   const { id: groupId, lessonId } = useParams();
-
+  //GROUP
   const { data: groupData, isLoading: groupLoading } = useGetGroupByIdQuery(groupId);
+  //LESSON IN GROUP
   const { data: lessonsData, isLoading: lessonsLoading } = useGetLessonsByGroupQuery({ groupId });
+  //LESSON DETAILS
   const { data: lessonData, isLoading: loading } = useGetLessonByIdQuery(lessonId);
+  //ASSIGNMENT BY LESSON
+  const {data : assignmentData , isLoading: assignmentsLoading} = useGetAssignmentsByLessonQuery(lessonId);
+  
   const lesson = lessonData?.data;
+  const assignment = assignmentData?.data || []
+
+  console.log(assignment , "assignments");
 
 
-  if (groupLoading || lessonsLoading) {
+  if (groupLoading || lessonsLoading || assignmentsLoading) {
     return <div className="h-screen flex items-center justify-center"><Spinner /></div>;
   }
 
   const group = groupData?.data;
+  console.log(group, "group");
   const allLessons = lessonsData?.data?.data || [];
+
+  // Add this debug log to verify
+  console.log("courseId:", group?.courseId?._id);
+  console.log("teacherId:", group?.teacherId?._id);
+  console.log("lessonId:", lessonId, "type:", typeof lessonId);
+
 
   const currentLesson = allLessons.find(l => l._id === lessonId);
 
@@ -55,12 +74,16 @@ export default function LessonDetailsPage() {
           </div>
         </div>
       </header>
-
       <main>
-        <div className="bg-white p-6 rounded-2xl border shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border shadow-sm grid grid-cols-1 md:grid-cols-2 gap-7">
           <LessonMaterials
             lessonId={lessonId}
             materials={lesson?.materials || []}
+          />
+
+          <LessonAsignment lessonId={lessonId} 
+                          // courseId={group?.courseId?._id}
+                          // teacherId={group?.teacherId?._id}
           />
         </div>
         <div className="bg-white p-6 rounded-2xl border shadow-sm">
