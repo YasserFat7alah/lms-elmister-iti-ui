@@ -1,0 +1,196 @@
+:root {
+    --outline: #392b80;
+    /* Project Main Blue */
+    --cheeks: #FF0055;
+    /* Project Main Pink */
+    --pink-light: #FEE0DE;
+    /* Light Pink background - similar to dashboard header gradient start */
+    --white: white;
+}
+
+.centered-404-container {
+    font-size: 62.5%;
+    /* Base size for rem calculations from reference */
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: var(--pink-light);
+    /* Use a gradient if preferred, but solid fits the reference */
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    /* Or keeps it clean/white like the app */
+    background: white;
+    /* Let's stick to simple or use the global background */
+}
+
+/* Reset background to transparent if we want to inherit page bg */
+.centered-404-container {
+    background: transparent;
+}
+
+.centered-404-container .error {
+    transform: scale(0.8);
+    /* Adjusted scale for visibility */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+    .centered-404-container .error {
+        transform: scale(0.6);
+    }
+}
+
+.centered-404-container .number {
+    font-weight: 900;
+    font-size: 15rem;
+    line-height: 1;
+    color: var(--outline);
+}
+
+.centered-404-container .illustration {
+    position: relative;
+    width: 12.2rem;
+    margin: 0 2.1rem;
+}
+
+.centered-404-container .circle {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 12.2rem;
+    height: 11.4rem;
+    border-radius: 50%;
+    background-color: var(--outline);
+}
+
+.centered-404-container .clip {
+    position: absolute;
+    bottom: 0.3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+    width: 12.5rem;
+    height: 13rem;
+    border-radius: 0 0 50% 50%;
+}
+
+.centered-404-container .paper {
+    position: absolute;
+    bottom: -0.3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 9.2rem;
+    height: 12.4rem;
+    border: 0.3rem solid var(--outline);
+    background-color: var(--white);
+    border-radius: 0.8rem;
+}
+
+/* The Dog-ear fold */
+.centered-404-container .paper::before {
+    content: "";
+    position: absolute;
+    top: -0.7rem;
+    right: -0.8rem;
+    width: 1.4rem;
+    height: 1rem;
+    background-color: var(--white);
+    border-bottom: 0.3rem solid var(--outline);
+    transform: rotate(45deg);
+}
+
+.centered-404-container .face {
+    position: relative;
+    margin-top: 2.3rem;
+}
+
+.centered-404-container .eyes {
+    position: absolute;
+    top: 0;
+    left: 2rem;
+    width: 4.6rem;
+    height: 0.8rem;
+}
+
+.centered-404-container .eye {
+    position: absolute;
+    bottom: 0;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background-color: var(--outline);
+    animation-name: eye;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+.centered-404-container .eye-left {
+    left: 0;
+}
+
+.centered-404-container .eye-right {
+    right: 0;
+}
+
+@keyframes eye {
+    0% {
+        height: 0.8rem;
+    }
+
+    50% {
+        height: 0.8rem;
+    }
+
+    52% {
+        height: 0.1rem;
+    }
+
+    54% {
+        height: 0.8rem;
+    }
+
+    100% {
+        height: 0.8rem;
+    }
+}
+
+.centered-404-container .rosyCheeks {
+    position: absolute;
+    top: 1.6rem;
+    width: 1rem;
+    height: 0.2rem;
+    border-radius: 50%;
+    background-color: var(--cheeks);
+}
+
+.centered-404-container .rosyCheeks-left {
+    left: 1.4rem;
+}
+
+.centered-404-container .rosyCheeks-right {
+    right: 1.4rem;
+}
+
+.centered-404-container .mouth {
+    position: absolute;
+    top: 3.1rem;
+    left: 50%;
+    width: 1.6rem;
+    height: 0.2rem;
+    border-radius: 0.1rem;
+    transform: translateX(-50%);
+    background-color: var(--outline);
+}
+
+.centered-404-container .text {
+    font-weight: 300;
+    color: var(--outline);
+    font-size: 1.8rem;
+    text-align: center;
+    margin-top: 2rem;
+}
