@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 import { useGetCoursesQuery, useDeleteCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
 import { toast } from "react-hot-toast";
-import CourseDetailsModal from "@/components/teacherCreateCourse/CourseDetailsModal";
+import CourseDetailsModal from "@/components/teacherCreateCourse/courseDetailsModal";
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -130,8 +130,8 @@ export default function MyCoursesPage() {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === tab
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
                   }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}

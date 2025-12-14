@@ -1,23 +1,16 @@
+"use client";
 import ActiveSubscriptions from '@/components/DashboardComponents/parent/mychildComponent/ActiveSubscriptions';
 import BackBtn from '@/components/DashboardComponents/parent/mychildComponent/BackBtn';
-import { mockCourses } from '@/data/mockCourses';
-import { children } from '@/data/parentData';
-import Link from 'next/link';
+import { useGetSubscriptionsQuery } from '@/redux/api/endPoints/childrenApiSlice';
 import React from 'react'
-import { IoReturnUpBack } from 'react-icons/io5';
 
 const page = () => {
 
-  // Calculate total monthly fee
-  const totalMonthlyFee = children.reduce((sum, child) => {
-    const childTotal = child.enrolledCourses.reduce((childSum, enrolled) => {
-      const course = mockCourses.find((c) => c.id === enrolled.courseId);
-      return childSum + (course?.pricing?.price ?? 0);
-    }, 0);
-    return sum + childTotal;
-  }, 0);
+  const { data: subscriptionsData, isLoading, isError } = useGetSubscriptionsQuery();
 
-  const totalSubscriptions = children.reduce((sum, child) => sum + child.enrolledCourses.length, 0);
+  const totalMonthlyFee = subscriptionsData?.data?.totalMonthlyFee || 0;
+  const totalSubscriptions = subscriptionsData?.data?.totalSubscriptions || 0;
+  const childrenSubscriptions = subscriptionsData?.data?.children || [];
 
   return (
     <div className="space-y-4">
@@ -25,11 +18,28 @@ const page = () => {
       {/* ____________BANNER___________ */}
       <div className="bg-white border  rounded-2xl p-8  shadow-lg">
         <p className="font-medium opacity-90">Total Monthly Fee</p>
-        <h2 className="text-4xl font-semibold mt-2 text-[#FF0055]">{totalMonthlyFee.toLocaleString()} <sub className="font-medium">EGP</sub></h2>
-        <p className="mt-3 opacity-90 text-gray-600">{totalSubscriptions} active subscriptions</p>
+        <h2 className="text-4xl font-semibold mt-2 text-[#FF0055]">
+          {isLoading ? (
+            <span className="animate-pulse bg-gray-200 h-10 w-32 inline-block rounded"></span>
+          ) : (
+            totalMonthlyFee.toLocaleString()
+          )}
+          <sub className="font-medium ml-1">USD</sub>
+        </h2>
+        <p className="mt-3 opacity-90 text-gray-600">
+          {isLoading ? "Loading..." : `${totalSubscriptions} active subscriptions`}
+        </p>
       </div>
       {/* ______________________________ */}
-      <ActiveSubscriptions />
+      <ActiveSubscriptions
+        data={childrenSubscriptions}
+        isLoading={isLoading}
+      />
+      {isError && (
+        <div className="text-center text-red-500 mt-4">
+          Failed to load subscriptions. Please try refreshing.
+        </div>
+      )}
     </div>
   )
 }

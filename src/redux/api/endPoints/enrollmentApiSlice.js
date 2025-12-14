@@ -41,6 +41,31 @@ export const enrollmentApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Enrollment'],
         }),
+        getEnrollmentsByStudent: builder.query({
+            query: (studentId) => ({
+                url: `${ENROLLMENT_URL}/student/${studentId}`,
+                method: 'GET',
+            }),
+            transformResponse: (response) => {
+                // Handle API response structure: { success: true, data: enrollments }
+                return response?.data || response?.enrollments || [];
+            },
+            providesTags: ['Enrollment'],
+        }),
+        cancelEnrollment: builder.mutation({
+            query: (enrollmentId) => ({
+                url: `${ENROLLMENT_URL}/${enrollmentId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Enrollment', 'Children'],
+        }),
+        renewEnrollment: builder.mutation({
+            query: (enrollmentId) => ({
+                url: `${ENROLLMENT_URL}/${enrollmentId}/renew`,
+                method: 'PATCH',
+            }),
+            invalidatesTags: ['Enrollment', 'Children'],
+        }),
     }),
 });
 
@@ -49,5 +74,8 @@ export const {
     useGetMyEnrollmentsQuery,
     useGetAllEnrollmentsQuery,
     useDeleteEnrollmentMutation,
-    useUpdateEnrollmentStatusMutation
+    useUpdateEnrollmentStatusMutation,
+    useGetEnrollmentsByStudentQuery,
+    useCancelEnrollmentMutation,
+    useRenewEnrollmentMutation
 } = enrollmentApiSlice;
