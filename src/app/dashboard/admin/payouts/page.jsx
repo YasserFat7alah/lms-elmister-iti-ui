@@ -6,6 +6,7 @@ import { useGetAdminPayoutsQuery, useUpdatePayoutStatusMutation } from '@/redux/
 import { Spinner } from '@/components/shared/Loader';
 import { toast } from 'react-hot-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 const AdminPayoutsPage = () => {
   const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'pending', 'approved', 'paid', 'rejected'
@@ -29,10 +30,14 @@ const AdminPayoutsPage = () => {
 
   return (
     <div className="px-6 space-y-6">
-      <HeaderAdmin
-        title="Payout Requests"
-        description="Manage teacher withdrawal requests and process payments."
-      />
+      <div className="mb-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/dashboard/admin' },
+            { label: 'Payouts' }
+          ]}
+        />
+      </div>
 
       {/* Filter */}
       <div className="flex justify-end">

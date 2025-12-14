@@ -13,6 +13,7 @@ import { useGetMyGroupsQuery } from "@/redux/api/endPoints/groupsApiSlice";
 import { useGetLessonsByGroupQuery } from "@/redux/api/endPoints/lessonsApiSlice";
 import { format, isWithinInterval, parse, isPast } from "date-fns";
 import { cn } from "@/lib/utils";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 export default function LiveSessionsPage() {
     const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -80,12 +81,12 @@ export default function LiveSessionsPage() {
     return (
         <div className="max-w-7xl mx-auto p-6 space-y-8 min-h-screen pb-20">
 
-            <div>
-                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                    <Radio className="text-red-600 animate-pulse" /> Live Sessions
-                </h1>
-                <p className="text-gray-500 mt-1">Join your interactive online classes.</p>
-            </div>
+            <Breadcrumbs
+                items={[
+                    { label: 'Dashboard', href: '/dashboard/student' },
+                    { label: 'Live Sessions' }
+                ]}
+            />
 
             <div className="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-hide">
                 {myGroups.map((group) => {

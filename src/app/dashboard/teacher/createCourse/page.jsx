@@ -4,13 +4,14 @@ import { useState } from "react";
 import { Formik, Form, FieldArray } from "formik";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { Users, CheckCircle2, Lock, Edit3, Calendar, DollarSign, Plus } from "lucide-react"; 
+import { Users, CheckCircle2, Lock, Edit3, Calendar, DollarSign, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MediaUploader from "@/components/teacherCreateCourse/MediaUploader";
 import GroupModal from "@/components/teacherCreateCourse/GroupModal";
 import { useCreateCourseMutation, useUpdateCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
 import { useCreateGroupMutation } from "@/redux/api/endPoints/groupsApiSlice";
 import CourseBasicInfo from "@/components/teacherCreateCourse/CourseBasicInfo";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 const DAY_MAP_TO_BACKEND = {
   Saturday: "sat",
@@ -97,7 +98,7 @@ export default function CreateCoursePage() {
         subject: values.subject,
         gradeLevel: values.gradeLevel,
         courseLanguage: values.courseLanguage,
-        status: "draft", 
+        status: "draft",
         tags: values.tags,
         thumbnail: cleanThumbnail,
         video: cleanVideo,
@@ -132,7 +133,7 @@ export default function CreateCoursePage() {
       if (actionType === "publish") {
         await updateCourse({
           courseId: newCourseId,
-          data: { title: values.title, status: "in-review" }, 
+          data: { title: values.title, status: "in-review" },
         }).unwrap();
       }
 
@@ -150,7 +151,12 @@ export default function CreateCoursePage() {
     <div className="min-h-screen bg-gray-50">
       <header className="">
         <div className="max-w-7xl px-6 lg:px-8 py-1">
-          <h1 className="text-2xl lg:text-3xl font-semibold text-gray-800">Create New Course</h1>
+          <Breadcrumbs
+            items={[
+              { label: 'Dashboard', href: '/dashboard/teacher' },
+              { label: 'Create Course' }
+            ]}
+          />
         </div>
       </header>
 
@@ -168,7 +174,7 @@ export default function CreateCoursePage() {
             video: null,
             groups: [],
           }}
-          onSubmit={() => {}}
+          onSubmit={() => { }}
         >
           {({ values, setFieldValue }) => (
             <>
@@ -176,7 +182,7 @@ export default function CreateCoursePage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   <section className="lg:col-span-2">
                     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6" style={{ minHeight: "calc(100vh - 360px)" }}>
-                      <CourseBasicInfo values={values} setFieldValue={setFieldValue} onAddGroup={() => {}} />
+                      <CourseBasicInfo values={values} setFieldValue={setFieldValue} onAddGroup={() => { }} />
                     </div>
                   </section>
 
@@ -221,8 +227,8 @@ export default function CreateCoursePage() {
                         Course groups {values.groups.length > 0 && `(${values.groups.length})`}
                       </h2>
                     </div>
-                    <Button 
-                      type="button" 
+                    <Button
+                      type="button"
                       onClick={() => handleOpenGroupModal()}
                       className="bg-pink-600 text-white  border border-blue-200 "
                     >

@@ -7,6 +7,7 @@ import { Shield, } from "lucide-react";
 import Linechart from "@/components/DashboardComponents/admin/overviewComponents/LineChart";
 import DashboardState from "@/components/DashboardComponents/admin/overviewComponents/DashboardState";
 import HeaderAdmin from "@/components/DashboardComponents/admin/HeaderAdmin";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 import { useGetDashboardStatsQuery } from "@/redux/api/endPoints/adminApiSlice";
 import { Spinner } from "@/components/shared/Loader";
@@ -23,9 +24,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6 p-6 min-h-screen">
+      <Breadcrumbs
+        items={[
+          { label: 'Dashboard', href: '/dashboard/admin' },
+          { label: 'Analytics' }
+        ]}
+      />
 
-      {/* Header Section */}
-      <HeaderAdmin title="Admin Control Panel" description=" Manage and monitor your platform" />
       {/* Dashboard State Section */}
       <DashboardState stats={stats} />
 

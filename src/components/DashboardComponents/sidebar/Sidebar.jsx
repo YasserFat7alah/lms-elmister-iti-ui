@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { MdHomeWork } from "react-icons/md";
+import { Calendar } from "lucide-react";
 
 const ROLE_LINKS = {
   student: [
@@ -36,7 +37,6 @@ const ROLE_LINKS = {
     { label: "create Course", href: "/dashboard/teacher/createCourse", icon: Wallet },
     { label: "student Schedule", href: "/dashboard/teacher/schedule", icon: Megaphone },
     { label: "Groups", href: "/dashboard/teacher/groups", icon: FileText },
-    // { label: "Create Assignments", href: "/dashboard/teacher/create-assighnment", icon: MdHomeWork },
     { label: "Quiz", href: "/dashboard/teacher/quizzes", icon: FileQuestion },
     { label: "Quiz Results", href: "/dashboard/teacher/quiz-results", icon: ClipboardCheck },
     { label: "Payouts", href: "/dashboard/teacher/payouts", icon: CreditCard },
@@ -47,9 +47,8 @@ const ROLE_LINKS = {
     { label: "Overview", href: "/dashboard/parent/overview", icon: LayoutDashboard },
     { label: "Profile", href: "/dashboard/parent/profile", icon: User },
     { label: "My Children", href: "/dashboard/parent/children", icon: Baby, exact: true },
-    { label: "My Children schedule", href: "/dashboard/parent/schedule", icon: Baby, exact: true },
-    { label: "Teachers", href: "/dashboard/parent/teachers", icon: Users },
-    { label: "Payments", href: "/dashboard/parent/payments", icon: CreditCard },
+    { label: "My Children schedule", href: "/dashboard/parent/schedule", icon: Calendar, exact: true },
+    { label: "Subscriptions", href: "/dashboard/parent/subscriptions", icon: CreditCard },
     { label: "Messages", href: "/dashboard/parent/messages", icon: MessageSquare },
     { label: "Notifications", href: "/dashboard/parent/notifications", icon: IoMdNotificationsOutline }
   ],

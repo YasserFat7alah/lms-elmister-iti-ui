@@ -5,10 +5,18 @@ import React from 'react'
 import { PlusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import Breadcrumbs from '@/components/shared/Breadcrumbs'
 
 const page = () => {
   return (
     <div className="space-y-6">
+      <Breadcrumbs
+        items={[
+          { label: 'Dashboard', href: '/dashboard/parent' },
+          { label: 'Your Children' }
+        ]}
+      />
+
       <div className='flex items-center justify-between'>
         <div className="flex items-center gap-4">
           <h4 className='font-extrabold text-2xl bg-gradient-to-r from-[#392b80] to-[#6a5acd] bg-clip-text text-transparent'>Your Children</h4>

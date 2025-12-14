@@ -19,6 +19,7 @@ import {
 import { useGetMyGroupsQuery } from "@/redux/api/endPoints/groupsApiSlice";
 import { useGetLessonsByGroupQuery } from "@/redux/api/endPoints/lessonsApiSlice";
 import { format } from "date-fns";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 const FOLDER_COLORS = [
   "bg-blue-100 text-blue-600",
@@ -118,22 +119,17 @@ export default function StudentMaterialsPage() {
     <div className="space-y-6 max-w-7xl pb-10 p-6">
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            {selectedGroup ? (
-              <>
-                <span className="text-gray-400 cursor-pointer hover:text-gray-600" onClick={handleBack}>Materials</span>
-                <ChevronRight size={20} className="text-gray-400" />
-                <span className="text-[#FF0055]">{selectedGroup.courseName}</span>
-              </>
-            ) : (
-              "Study Materials"
-            )}
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">
-            {selectedGroup ? "Browse and download course resources." : "Access your groups and learning resources."}
-          </p>
-        </div>
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/dashboard/student' },
+            ...(selectedGroup ? [
+              { label: 'Materials', href: '#' },
+              { label: selectedGroup.courseName }
+            ] : [
+              { label: 'Materials' }
+            ])
+          ]}
+        />
 
         <div className="relative w-full md:w-80">
           <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/shared/Loader";
 import { useGetAllGroupsQuery } from "@/redux/api/endPoints/groupsApiSlice";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 export default function GroupsDirectoryPage() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -54,10 +55,10 @@ export default function GroupsDirectoryPage() {
     if (!schedule || !Array.isArray(schedule) || schedule.length === 0) {
       return "No Schedule";
     }
-    
+
     const days = schedule
       .map(s => {
-        if (!s.day) return ""; 
+        if (!s.day) return "";
         return s.day.charAt(0).toUpperCase() + s.day.slice(1, 3);
       })
       .filter(Boolean);
@@ -82,12 +83,12 @@ export default function GroupsDirectoryPage() {
   return (
     <div className="min-h-screen bg-gray-50/50 p-6 space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Groups</h1>
-          <p className="text-gray-500 mt-1">
-            Overview of all your active batches ({groups.length}).
-          </p>
-        </div>
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/dashboard/teacher' },
+            { label: 'My Groups' }
+          ]}
+        />
 
         <div className="relative w-full md:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -146,12 +147,12 @@ export default function GroupsDirectoryPage() {
                       </span>
                     </div>
                   </div>
-                  
-                   {group.startingDate && (
+
+                  {group.startingDate && (
                     <div className="text-xs text-gray-400 pl-6">
-                        Start: {new Date(group.startingDate).toLocaleDateString()}
+                      Start: {new Date(group.startingDate).toLocaleDateString()}
                     </div>
-                   )}
+                  )}
                 </div>
 
                 <div className="p-4 pt-0 mt-auto">
@@ -175,10 +176,10 @@ export default function GroupsDirectoryPage() {
             You don't have any active groups matching your search.
           </p>
           <div className="mt-6 flex gap-3">
-             <Button variant="outline" onClick={() => refetch()}>Refresh List</Button>
-             <Link href="/dashboard/teacher/createCourse">
-                <Button>Create New Course</Button>
-             </Link>
+            <Button variant="outline" onClick={() => refetch()}>Refresh List</Button>
+            <Link href="/dashboard/teacher/createCourse">
+              <Button>Create New Course</Button>
+            </Link>
           </div>
         </div>
       )}

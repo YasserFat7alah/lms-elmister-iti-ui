@@ -13,6 +13,7 @@ import {
 } from "@/redux/api/endPoints/newsletterApiSlice";
 import { toast } from "react-hot-toast";
 import { Spinner } from "@/components/shared/Loader";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin';
 
@@ -104,12 +105,15 @@ const page = () => {
   return (
     <div className="space-y-6 p-6 min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Header */}
-      <HeaderAdmin
-        title="NewsLetter Support"
-        description="Manage and send newsletters to your subscribers"
-      >
+      <div className="flex items-start justify-between gap-4">
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/dashboard/admin' },
+            { label: 'Newsletter' }
+          ]}
+        />
         <AddNewsLetterBtn onOpenPopup={handleAddNew} />
-      </HeaderAdmin>
+      </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-6">

@@ -6,7 +6,7 @@ const Breadcrumbs = ({ items = [], className = "" }) => {
     if (items.length === 0) return null;
 
     return (
-        <nav className={`flex items-center space-x-2 text-sm text-gray-500 font-medium bg-white/50 px-4 py-2 rounded-full shadow-sm backdrop-blur-sm ${className}`}>
+        <nav className={`inline-flex items-center space-x-2 text-sm text-gray-500 font-medium bg-white/50 px-4 py-2 rounded-full shadow-sm backdrop-blur-sm ${className}`}>
             <Link href="/" className="hover:text-[#FF0055] transition-colors flex items-center gap-1">
                 <Home size={14} />
                 <span>Home</span>

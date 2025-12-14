@@ -4,17 +4,18 @@ import React, { useState, useMemo } from 'react';
 import AssignmentCard from '@/components/DashboardComponents/student/assignments/AssignmentCard';
 import { SearchBar } from '@/components/DashboardComponents/student/assignments/SearchBar';
 import { useGetStudentAssignmentsQuery } from '@/redux/api/endPoints/assignmentsApiSlice';
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 export default function AssignmentsPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
   // ------------------ Fetch student assignments from API ------------------
-  const { data: assignments = {} , isLoading, isError } = useGetStudentAssignmentsQuery();
+  const { data: assignments = {}, isLoading, isError } = useGetStudentAssignmentsQuery();
 
   // ------------------ Merge submissions if needed ------------------
   // Assuming `assignments` from API already contains submission info if available
-const data = useMemo(() => assignments?.data || [], [assignments]);
+  const data = useMemo(() => assignments?.data || [], [assignments]);
 
   // ------------------ Filter Logic ------------------
   const filteredData = useMemo(() => {
@@ -23,7 +24,7 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
     let tabFiltered = data.filter(item => {
       const { status } = getAssignmentStatus(item, item.submission);
 
-      switch(activeTab) {
+      switch (activeTab) {
         case 'todo': return status === STATUS.TODO;
         case 'completed': return status === STATUS.SUBMITTED || status === STATUS.GRADED || status === STATUS.OVERDUE_SUBMITTED;
         case 'missing': return status === STATUS.LATE || status === STATUS.MISSED;
@@ -63,10 +64,12 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
 
   return (
     <div className="py-8 max-w-5xl mx-auto bg-gray-50 min-h-screen">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">My Assignments</h1>
-        <p className="text-gray-500 mt-2">Manage your coursework and track your deadlines.</p>
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: 'Dashboard', href: '/dashboard/student' },
+          { label: 'My Assignments' }
+        ]}
+      />
 
       {/* --- FILTER & SEARCH SECTION --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
@@ -76,11 +79,10 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                activeTab === tab.id 
-                ? 'bg-[#FF0055] text-white shadow-md' 
-                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === tab.id
+                  ? 'bg-[#FF0055] text-white shadow-md'
+                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+                }`}
             >
               {tab.label}
             </button>
@@ -88,10 +90,10 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
         </div>
 
         {/* Search Bar */}
-        <SearchBar 
-          value={searchTerm} 
-          onChange={setSearchTerm} 
-          placeholder="Search assignments by title or course..." 
+        <SearchBar
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search assignments by title or course..."
         />
       </div>
 
@@ -99,19 +101,19 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
       <div className="space-y-4">
         {filteredData.length > 0 ? (
           filteredData.map(item => (
-            <AssignmentCard 
-              key={item._id} 
-              assignment={item} 
-              submission={item.submission} 
+            <AssignmentCard
+              key={item._id}
+              assignment={item}
+              submission={item.submission}
             />
           ))
         ) : (
           <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
             <p className="text-gray-400">
-                {searchTerm 
-                    ? `No assignments found matching "${searchTerm}" in the selected category.`
-                    : "No assignments found for this filter."
-                }
+              {searchTerm
+                ? `No assignments found matching "${searchTerm}" in the selected category.`
+                : "No assignments found for this filter."
+              }
             </p>
           </div>
         )}

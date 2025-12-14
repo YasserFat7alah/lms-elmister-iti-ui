@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FiClock } from "react-icons/fi";
 import { HiBellAlert } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -27,10 +28,15 @@ const Page = () => {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-[#392b80]">Notifications</h1>
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/dashboard/parent' },
+            { label: 'Notifications' }
+          ]}
+        />
 
         {/*  Badge stays for 3s then disappears */}
         {showBadge && unreadCount > 0 && (
@@ -43,16 +49,16 @@ const Page = () => {
       {/* List Container */}
       <div className="rounded-2xl bg-white shadow-lg border overflow-hidden">
         {notifications.map(item => (
-          <div 
-            key={item.id} 
+          <div
+            key={item.id}
             className={`flex items-start gap-3 p-5 border-b transition 
               ${item.read ? "bg-white" : "bg-blue-50"}
             `}
           >
             {/* Icon */}
             <div className="mt-1">
-              <HiBellAlert 
-                className={`w-6 h-6 ${item.read ? "text-gray-400" : "text-blue-600"}`} 
+              <HiBellAlert
+                className={`w-6 h-6 ${item.read ? "text-gray-400" : "text-blue-600"}`}
               />
             </div>
 

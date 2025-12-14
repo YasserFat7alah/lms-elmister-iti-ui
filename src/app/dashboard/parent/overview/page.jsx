@@ -13,6 +13,7 @@ import { FullPageLoader } from "@/components/shared/Loader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 import { Users, CreditCard, DollarSign } from 'lucide-react';
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 const StatCard = ({ title, value, icon: Icon, bgColor, iconColor }) => (
   <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
@@ -52,6 +53,14 @@ const Page = () => {
 
   return (
     <div className="space-y-10 p-4 max-w-7xl mx-auto">
+      {/* Breadcrumb */}
+      <Breadcrumbs
+        items={[
+          { label: 'Dashboard', href: '/dashboard/parent' },
+          { label: 'Overview' }
+        ]}
+      />
+
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-gradient-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
         <div>

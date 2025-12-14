@@ -1,11 +1,12 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import Chat from '@/components/DashboardComponents/chat/Chat'
+// import Chat from '@/components/DashboardComponents/chat/Chat'
 import { useSearchParams } from 'next/navigation';
 import { mockTeachers } from '@/data/mockTeacher';
 
 import { Suspense } from "react";
 import { Spinner } from "@/components/shared/Loader";
+import ChatComponent from '@/components/DashboardComponents/chat/ChatComponent';
 
 const MessagesContent = () => {
 
@@ -37,7 +38,7 @@ const MessagesContent = () => {
 
   return (
     <div className="-m-4 md:-mx-6 md:-my-3">
-      <Chat
+      <ChatComponent
         selectedTeacher={selectedTeacher}
         teachers={teachers}
         setSelectedTeacher={setSelectedTeacher}

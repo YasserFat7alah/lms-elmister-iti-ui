@@ -12,6 +12,7 @@ import { Spinner } from "@/components/shared/Loader";
 import { useGetCoursesQuery, useDeleteCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
 import { toast } from "react-hot-toast";
 import CourseDetailsModal from "@/components/teacherCreateCourse/courseDetailsModal";
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -85,10 +86,12 @@ export default function MyCoursesPage() {
       />
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Courses</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage your curriculum, track status, and update content.</p>
-        </div>
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/dashboard/teacher' },
+            { label: 'My Courses' }
+          ]}
+        />
         <Link href="/dashboard/teacher/createCourse">
           <Button className="bg-[#FF4667] hover:bg-[#ff2e53] text-white gap-2">
             <Plus size={18} /> Create New Course
@@ -130,8 +133,8 @@ export default function MyCoursesPage() {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === tab
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
                   }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}

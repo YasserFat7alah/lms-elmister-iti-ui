@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from 'yup';
 import { Upload, FileText, Calendar, Award, CheckCircle } from 'lucide-react';
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 
 const CreateAssignmentForm = () => {
@@ -15,12 +16,12 @@ const CreateAssignmentForm = () => {
   const { data: groups, isLoading: isGroupsLoading, isError: isGroupsError } = useGetMyGroupsQuery();
 
   const allGroups = Array.isArray(groups?.data)
-  ? groups.data
-  : Array.isArray(groups?.groups)
-  ? groups.groups
-  : [];
+    ? groups.data
+    : Array.isArray(groups?.groups)
+      ? groups.groups
+      : [];
 
-  
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [selectedGroupForLessons, setSelectedGroupForLessons] = useState(null);
@@ -74,13 +75,13 @@ const CreateAssignmentForm = () => {
 
   // Fetch lessons when a group is selected and assignment type is 'lesson'
   const { data: lessonsData, isLoading: isLessonsLoading, isError } = useGetLessonsByGroupQuery(
-  { groupId: formik.values.selectedGroupId, page: 1, limit: 50 },
-  { skip: !formik.values.selectedGroupId }
-);
+    { groupId: formik.values.selectedGroupId, page: 1, limit: 50 },
+    { skip: !formik.values.selectedGroupId }
+  );
 
-const allLessons = lessonsData?.data?.data || [];
+  const allLessons = lessonsData?.data?.data || [];
 
-console.log(allLessons);
+  console.log(allLessons);
 
 
   // Reset targetId if selectedGroupId changes
@@ -88,7 +89,7 @@ console.log(allLessons);
     formik.setFieldValue('targetId', '');
   }, [formik.values.selectedGroupId]);
 
-//   Update selected group for lessons when user selects a group
+  //   Update selected group for lessons when user selects a group
   useEffect(() => {
     if (formik.values.selectedGroupId) {
       setSelectedGroupForLessons(formik.values.selectedGroupId);
@@ -101,12 +102,12 @@ console.log(allLessons);
     formData.append('description', formik.values.description);
     formData.append('totalGrade', formik.values.totalGrade);
     formData.append('dueDate', formik.values.dueDate);
-    
+
     // Late submission settings
     if (formik.values.allowLateSubmission) {
-        formData.append('allowLateSubmission', true);
-        formData.append('maxLateDays', formik.values.maxLateDays);
-        formData.append('latePenaltyPerDay', formik.values.latePenaltyPerDay);
+      formData.append('allowLateSubmission', true);
+      formData.append('maxLateDays', formik.values.maxLateDays);
+      formData.append('latePenaltyPerDay', formik.values.latePenaltyPerDay);
     }
 
     // Only send lesson ID
@@ -141,7 +142,7 @@ console.log(allLessons);
     e.preventDefault();
     formik.handleSubmit();
   };
-  
+
   // Determine the selected target for the modal
   const selectedTarget = allLessons.find((l) => l._id === formik.values.targetId);
 
@@ -149,7 +150,12 @@ console.log(allLessons);
     <>
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Create New Assignment</h1>
+          <Breadcrumbs
+            items={[
+              { label: 'Dashboard', href: '/dashboard/teacher' },
+              { label: 'Create Assignment' }
+            ]}
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Form Section */}
@@ -239,13 +245,13 @@ console.log(allLessons);
                       disabled={!formik.values.selectedGroupId || isLessonsLoading || allLessons.length === 0}
                     >
                       <option value="">
-                        {!formik.values.selectedGroupId 
-                          ? 'Select a group first...' 
-                          : isLessonsLoading 
-                          ? 'Loading Lessons...' 
-                          : allLessons.length === 0 
-                          ? 'No lessons available for this group' 
-                          : 'Select a lesson...'}
+                        {!formik.values.selectedGroupId
+                          ? 'Select a group first...'
+                          : isLessonsLoading
+                            ? 'Loading Lessons...'
+                            : allLessons.length === 0
+                              ? 'No lessons available for this group'
+                              : 'Select a lesson...'}
                       </option>
                       {allLessons.map((lesson) => (
                         <option key={lesson._id} value={lesson._id}>

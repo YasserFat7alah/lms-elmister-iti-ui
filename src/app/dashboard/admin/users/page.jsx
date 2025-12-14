@@ -5,6 +5,7 @@ import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin';
 import { useGetAllUsersQuery } from '@/redux/api/endPoints/usersApiSlice';
 import UserStateCards from '@/components/DashboardComponents/admin/users/UserStateCards';
 import { Spinner } from '@/components/shared/Loader';
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 
 const page = () => {
@@ -30,7 +31,14 @@ const page = () => {
 
   return (
     <div className="px-4">
-      <HeaderAdmin title=" User Management" description="Manage all platform users and their roles" />
+      <div className="mb-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Dashboard', href: '/dashboard/admin' },
+            { label: 'Users' }
+          ]}
+        />
+      </div>
       <UserStateCards users={users} parents={parents} teachers={teachers} students={students} admins={admins} />
       <UsersTabs users={users} parents={parents} teachers={teachers} students={students} admins={admins} />
     </div>
