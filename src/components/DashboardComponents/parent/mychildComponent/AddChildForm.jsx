@@ -2,45 +2,59 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import React, { useState } from "react";
-import { User, Mail, Phone, Calendar, Users } from "lucide-react";
+import { User, Mail, Phone, Calendar, Users, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCreateChildMutation } from "@/redux/api/endPoints/childrenApiSlice";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
+import { GRADE_LEVELS } from "@/lib/constants";
 
 const AddChildForm = () => {
+  const router = useRouter();
+  const [createChild, { isLoading: isCreating }] = useCreateChildMutation();
+
   const [initialData, setInitialData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
-    username: "",
+    password: "",
+    grade: "",
     phone: "",
-    age: "",
-    dateOfBirth: "",
-    gender: "",
+    gender: "male",
+    notes: "",
   });
 
   const schema = Yup.object({
-    firstName: Yup.string().required("First name is required"),
-    lastName: Yup.string().required("Last name is required"),
+    name: Yup.string().min(2, "Name must be at least 2 characters").required("Name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    username: Yup.string().required("Username is required"),
-    phone: Yup.string().required("Phone is required"),
-    age: Yup.number().required("Age is required").positive().integer(),
-    dateOfBirth: Yup.date().required("Date of birth is required"),
-    gender: Yup.string().required("Gender is required"),
+    password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
+    grade: Yup.string().oneOf(GRADE_LEVELS, "Please select a valid grade").required("Grade is required"),
+    phone: Yup.string().optional(),
+    gender: Yup.string().oneOf(["male", "female"], "Gender must be male or female").required("Gender is required"),
+    notes: Yup.string().max(500, "Notes must be at most 500 characters").optional(),
   });
 
-  const handleSubmit = (values, { resetForm }) => {
-    console.log("Submitted Data:", values);
-    setInitialData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      username: "",
-      phone: "",
-      age: "",
-      dateOfBirth: "",
-      gender: "",
-    });
-    resetForm();
+  const handleSubmit = async (values, { resetForm, setSubmitting }) => {
+    try {
+      const response = await createChild(values).unwrap();
+      toast.success("Child created successfully!");
+      resetForm();
+      setInitialData({
+        name: "",
+        email: "",
+        password: "",
+        grade: "",
+        phone: "",
+        gender: "male",
+        notes: "",
+      });
+      // Redirect to children page after successful creation
+      setTimeout(() => {
+        router.push("/dashboard/parent/children");
+      }, 1500);
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to create child. Please try again.");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -66,53 +80,28 @@ const AddChildForm = () => {
             {({ errors, touched }) => (
               <Form className="p-6 sm:p-8 space-y-6">
 
-                {/* First + Last Name */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      First Name
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Field
-                        name="firstName"
-                        className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
-                          errors.firstName && touched.firstName
-                            ? "border-red-300"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                        placeholder="Ahmed"
-                      />
-                    </div>
-                    {errors.firstName && touched.firstName && (
-                      <p className="mt-2 text-sm font-medium text-red-600">
-                        {errors.firstName}
-                      </p>
-                    )}
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Field
+                      name="name"
+                      className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
+                        errors.name && touched.name
+                          ? "border-red-300"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      placeholder="Ahmed Mohamed"
+                    />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Last Name
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Field
-                        name="lastName"
-                        className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
-                          errors.lastName && touched.lastName
-                            ? "border-red-300"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                        placeholder="Mohamed"
-                      />
-                    </div>
-                    {errors.lastName && touched.lastName && (
-                      <p className="mt-2 text-sm font-medium text-red-600">
-                        {errors.lastName}
-                      </p>
-                    )}
-                  </div>
+                  {errors.name && touched.name && (
+                    <p className="mt-2 text-sm font-medium text-red-600">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
 
                 {/* Email */}
@@ -140,97 +129,79 @@ const AddChildForm = () => {
                   )}
                 </div>
 
-                {/* Username */}
+                {/* Password */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Username
+                    Password
                   </label>
-                  <div className="relative">
-                    <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <Field
-                      name="username"
-                      className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
-                        errors.username && touched.username
-                          ? "border-red-300"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                      placeholder="ahmed123"
-                    />
-                  </div>
-                  {errors.username && touched.username && (
+                  <Field
+                    name="password"
+                    type="password"
+                    className={`w-full px-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
+                      errors.password && touched.password
+                        ? "border-red-300"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                    placeholder="At least 8 characters"
+                  />
+                  {errors.password && touched.password && (
                     <p className="mt-2 text-sm font-medium text-red-600">
-                      {errors.username}
+                      {errors.password}
                     </p>
                   )}
                 </div>
 
-                {/* Phone + Age */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Phone
-                    </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Field
-                        name="phone"
-                        className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
-                          errors.phone && touched.phone
-                            ? "border-red-300"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                        placeholder="(+20) 00-0000-0000"
-                      />
-                    </div>
-                    {errors.phone && touched.phone && (
-                      <p className="mt-2 text-sm font-medium text-red-600">
-                        {errors.phone}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Age
-                    </label>
-                    <Field
-                      name="age"
-                      type="number"
-                      className={`w-full px-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
-                        errors.age && touched.age
-                          ? "border-red-300"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                      placeholder="12"
-                    />
-                    {errors.age && touched.age && (
-                      <p className="mt-2 text-sm font-medium text-red-600">
-                        {errors.age}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Date of Birth */}
+                {/* Grade */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Date of Birth
+                    Grade Level
                   </label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                    <BookOpen className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                     <Field
-                      name="dateOfBirth"
-                      type="date"
-                      className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
-                        errors.dateOfBirth && touched.dateOfBirth
+                      as="select"
+                      name="grade"
+                      className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 appearance-none cursor-pointer ${
+                        errors.grade && touched.grade
                           ? "border-red-300"
                           : "border-gray-200 hover:border-gray-300"
                       }`}
+                    >
+                      <option value="">Select grade</option>
+                      {GRADE_LEVELS.map((grade) => (
+                        <option key={grade} value={grade}>
+                          Grade {grade}
+                        </option>
+                      ))}
+                    </Field>
+                  </div>
+                  {errors.grade && touched.grade && (
+                    <p className="mt-2 text-sm font-medium text-red-600">
+                      {errors.grade}
+                    </p>
+                  )}
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Phone (Optional)
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Field
+                      name="phone"
+                      className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
+                        errors.phone && touched.phone
+                          ? "border-red-300"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      placeholder="(+20) 00-0000-0000"
                     />
                   </div>
-                  {errors.dateOfBirth && touched.dateOfBirth && (
+                  {errors.phone && touched.phone && (
                     <p className="mt-2 text-sm font-medium text-red-600">
-                      {errors.dateOfBirth}
+                      {errors.phone}
                     </p>
                   )}
                 </div>
@@ -249,7 +220,6 @@ const AddChildForm = () => {
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
-                    <option value="">Select gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                   </Field>
@@ -260,12 +230,36 @@ const AddChildForm = () => {
                   )}
                 </div>
 
+                {/* Notes */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Notes (Optional)
+                  </label>
+                  <Field
+                    as="textarea"
+                    name="notes"
+                    rows="3"
+                    className={`w-full px-4 py-2.5 bg-gray-50 border-2 rounded-lg transition-all focus:outline-none focus:bg-white focus:border-blue-500 ${
+                      errors.notes && touched.notes
+                        ? "border-red-300"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                    placeholder="Any additional notes about your child..."
+                  />
+                  {errors.notes && touched.notes && (
+                    <p className="mt-2 text-sm font-medium text-red-600">
+                      {errors.notes}
+                    </p>
+                  )}
+                </div>
+
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  className="w-full mt-8 bg-gradient-to-r from-[#392b80] to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
+                  disabled={isCreating}
+                  className="w-full mt-8 bg-gradient-to-r from-[#392b80] to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Register Child
+                  {isCreating ? "Creating..." : "Register Child"}
                 </Button>
 
               </Form>

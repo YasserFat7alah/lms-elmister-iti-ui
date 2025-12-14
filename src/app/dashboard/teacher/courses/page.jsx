@@ -1,21 +1,16 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+
+import { useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import {
-  Plus, Search, Edit3, Trash2, BookOpen, Users, Calendar, Filter, CheckCircle2, Eye,
-  ChevronLeft, ChevronRight
+import { 
+  Plus, Search, Edit3, Trash2, BookOpen, Users, Calendar, Filter, CheckCircle2, Loader2, Eye
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
-import { 
-  useGetCoursesQuery, 
-  useDeleteCourseMutation, 
-  useUpdateCourseMutation 
-} from "@/redux/api/endPoints/coursesApiSlice";
+import { useGetCoursesQuery, useDeleteCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
 import { toast } from "react-hot-toast";
-import DeleteModal from "@/components/shared/DeleteModal"; 
 import CourseDetailsModal from "@/components/teacherCreateCourse/courseDetailsModal";
 
 const StatusBadge = ({ status }) => {
@@ -26,94 +21,55 @@ const StatusBadge = ({ status }) => {
     archived: "bg-gray-100 text-gray-700 border-gray-200",
   };
 
+  const labels = {
+    published: "Published",
+    "in-review": "In Review",
+    draft: "Draft",
+    archived: "Archived",
+  };
+  
   const normalizedStatus = status === 'inReview' ? 'in-review' : status;
 
   return (
     <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${styles[normalizedStatus] || styles.draft}`}>
-      {normalizedStatus}
+      {labels[normalizedStatus] || status}
     </span>
   );
 };
 
 export default function MyCoursesPage() {
   const { userInfo } = useSelector((state) => state.auth);
-const [selectedCourse, setSelectedCourse] = useState(null);
-  const [activeTab, setActiveTab] = useState("all");
+  
+  const [activeTab, setActiveTab] = useState("all"); 
   const [searchTerm, setSearchTerm] = useState("");
-  const [courseToDelete, setCourseToDelete] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null); 
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6; 
+  const queryParams = userInfo?._id ? { teacherId: userInfo._id } : {};
 
-  const teacherId = useMemo(() => {
-    if (userInfo?.accessToken) {
-      try {
-        const tokenParts = userInfo.accessToken.split('.');
-        if (tokenParts.length === 3) {
-          const payload = JSON.parse(atob(tokenParts[1]));
-          return payload.id || payload._id;
-        }
-      } catch (e) {
-      }
-    }
-    return userInfo?.user?._id || userInfo?._id;
-  }, [userInfo]);
+  const { data: coursesResponse, isLoading, refetch } = useGetCoursesQuery(queryParams, {
+    refetchOnMountOrArgChange: true 
+  });
+  
+  const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
 
-  const queryParams = {
-    teacherId,         
-    page: currentPage,  
-    limit: itemsPerPage
-  };
+  const courses = coursesResponse?.data || coursesResponse?.courses || [];
 
-  if (activeTab !== "all") {
-      queryParams.status = activeTab === 'in-review' ? 'inReview' : activeTab;
-  }
-
-  if (searchTerm) {
-      queryParams.title = searchTerm; 
-  }
-
-  const { data: apiResponse, isLoading, refetch } = useGetCoursesQuery(queryParams, {
-    skip: !teacherId, 
-    refetchOnMountOrArgChange: true
+  const filteredCourses = courses.filter((course) => {
+    const status = course.status === 'inReview' ? 'in-review' : course.status;
+    const matchesTab = activeTab === "all" ? true : status === activeTab;
+    const matchesSearch = course.title?.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesTab && matchesSearch;
   });
 
-  const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
-  const [updateCourse, { isLoading: isUpdating }] = useUpdateCourseMutation();
-
-  const courses = apiResponse?.data || []; 
-  const totalPages = apiResponse?.pages || 1;
-  const totalItems = apiResponse?.total || 0;
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeTab, searchTerm]);
-
-  const handleConfirmDelete = async (id) => {
+  const handleDelete = async (id) => {
+    if (confirm("Are you sure you want to delete/archive this course?")) {
       try {
         await deleteCourse(id).unwrap();
-        toast.success("Course deleted permanently");
-        setCourseToDelete(null);
-        refetch();
+        toast.success("Course processed successfully");
+        refetch(); 
       } catch (err) {
-        toast.error(err?.data?.message || "Failed to delete course");
+        toast.error("Failed to process request");
       }
-  };
-
-  const handleConfirmArchive = async (id) => {
-      try {
-          await updateCourse({ courseId: id, data: { status: 'archived' } }).unwrap();
-          toast.success("Course moved to archive");
-          setCourseToDelete(null);
-          refetch();
-      } catch (err) {
-          toast.error(err?.data?.message || "Failed to archive course");
-      }
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
     }
   };
 
@@ -121,20 +77,11 @@ const [selectedCourse, setSelectedCourse] = useState(null);
 
   return (
     <div className="p-6 min-h-screen bg-gray-50/50 space-y-6">
-
-      <CourseDetailsModal
-        isOpen={!selectedCourse}
-        onClose={() => setSelectedCourse(null)}
-        course={selectedCourse}
-      />
-
-      <DeleteModal
-        isOpen={!!courseToDelete}
-        onClose={() => setCourseToDelete(null)}
-        course={courseToDelete}
-        onConfirmDelete={handleConfirmDelete}
-        onConfirmArchive={handleConfirmArchive}
-        isLoading={isDeleting || isUpdating}
+      
+      <CourseDetailsModal 
+        isOpen={!!selectedCourse} 
+        onClose={() => setSelectedCourse(null)} 
+        course={selectedCourse} 
       />
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -151,11 +98,27 @@ const [selectedCourse, setSelectedCourse] = useState(null);
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><BookOpen size={24} /></div>
-          <div>
-            <p className="text-gray-500 text-xs font-bold uppercase">Total Results</p>
-            <h3 className="text-2xl font-bold">{totalItems}</h3>
-          </div>
+           <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><BookOpen size={24}/></div>
+           <div>
+             <p className="text-gray-500 text-xs font-bold uppercase">Total Courses</p>
+             <h3 className="text-2xl font-bold">{courses.length}</h3>
+           </div>
+        </div>
+        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
+           <div className="p-3 bg-green-50 text-green-600 rounded-lg"><CheckCircle2 size={24}/></div>
+           <div>
+             <p className="text-gray-500 text-xs font-bold uppercase">Published</p>
+             <h3 className="text-2xl font-bold">{courses.filter(c => c.status === 'published').length}</h3>
+           </div>
+        </div>
+        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
+           <div className="p-3 bg-purple-50 text-purple-600 rounded-lg"><Users size={24}/></div>
+           <div>
+             <p className="text-gray-500 text-xs font-bold uppercase">Total Students</p>
+             <h3 className="text-2xl font-bold">
+               {courses.reduce((acc, curr) => acc + (curr.totalStudents || 0), 0)}
+             </h3>
+           </div>
         </div>
       </div>
 
@@ -166,10 +129,11 @@ const [selectedCourse, setSelectedCourse] = useState(null);
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === tab
-                  ? "bg-white text-gray-900 shadow-sm"
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                  activeTab === tab 
+                  ? "bg-white text-gray-900 shadow-sm" 
                   : "text-gray-500 hover:text-gray-700"
-                  }`}
+                }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
               </button>
@@ -178,9 +142,9 @@ const [selectedCourse, setSelectedCourse] = useState(null);
 
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-            <input
-              type="text"
-              placeholder="Search title..."
+            <input 
+              type="text" 
+              placeholder="Search courses..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF4667]"
@@ -188,8 +152,7 @@ const [selectedCourse, setSelectedCourse] = useState(null);
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto min-h-[400px]">
+        <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-500">
               <tr>
@@ -202,16 +165,17 @@ const [selectedCourse, setSelectedCourse] = useState(null);
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {courses.length > 0 ? (
-                courses.map((course) => (
+              {filteredCourses.length > 0 ? (
+                filteredCourses.map((course) => (
                   <tr key={course._id} className="hover:bg-gray-50/80 transition">
+                    
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="h-12 w-16 rounded-lg overflow-hidden bg-gray-200 shrink-0 border border-gray-100">
                           {course.thumbnail?.url ? (
                             <img src={course.thumbnail.url} alt="" className="h-full w-full object-cover" />
                           ) : (
-                            <div className="h-full w-full flex items-center justify-center text-gray-400"><BookOpen size={16} /></div>
+                            <div className="h-full w-full flex items-center justify-center text-gray-400"><BookOpen size={16}/></div>
                           )}
                         </div>
                         <div>
@@ -233,8 +197,8 @@ const [selectedCourse, setSelectedCourse] = useState(null);
                     </td>
 
                     <td className="px-6 py-4">
-                      <p className="text-gray-900 font-medium">{course.subject}</p>
-                      <p className="text-xs text-gray-500">{course.gradeLevel}</p>
+                        <p className="text-gray-900 font-medium">{course.subject}</p>
+                        <p className="text-xs text-gray-500">{course.gradeLevel}</p>
                     </td>
 
                     <td className="px-6 py-4 text-xs text-gray-500">
@@ -246,9 +210,10 @@ const [selectedCourse, setSelectedCourse] = useState(null);
 
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button
+                        
+                        <button 
                           onClick={() => setSelectedCourse(course)}
-                          className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition"
+                          className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition" 
                           title="View Details"
                         >
                           <Eye size={18} />
@@ -260,17 +225,23 @@ const [selectedCourse, setSelectedCourse] = useState(null);
                           </button>
                         </Link>
 
-                        {(course.status === 'draft' || course.status === 'archived' || course.status === 'in-review' || course.status === 'inReview' || course.status === 'published') ? (
-                          <button
-                            onClick={() => setCourseToDelete(course)}
-                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                        {(course.status === 'draft' || course.status === 'archived' || course.status === 'in-review' || course.status === 'inReview') ? (
+                          <button 
+                            onClick={() => handleDelete(course._id)}
+                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition" 
                             title="Archive / Delete"
+                            disabled={isDeleting}
                           >
-                            <Trash2 size={18} />
+                            {isDeleting ? <Loader2 className="animate-spin" size={18}/> : <Trash2 size={18} />}
                           </button>
-                        ) : null}
+                        ) : (
+                           <button disabled className="p-2 text-gray-200 cursor-not-allowed" title="Cannot delete published course">
+                            <Trash2 size={18} />
+                           </button>
+                        )}
                       </div>
                     </td>
+
                   </tr>
                 ))
               ) : (
@@ -281,7 +252,7 @@ const [selectedCourse, setSelectedCourse] = useState(null);
                         <Filter size={32} />
                       </div>
                       <p className="font-semibold">No courses found</p>
-                      <p className="text-sm">Try changing filters.</p>
+                      <p className="text-sm">Try changing filters or create a new one.</p>
                     </div>
                   </td>
                 </tr>
@@ -289,60 +260,6 @@ const [selectedCourse, setSelectedCourse] = useState(null);
             </tbody>
           </table>
         </div>
-
-        {totalPages > 1 && (
-          <div className="px-6 py-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-gray-500">
-              Page <span className="font-medium">{currentPage}</span> of{" "}
-              <span className="font-medium">{totalPages}</span> (Total: {totalItems})
-            </p>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="h-8 px-3"
-              >
-                <ChevronLeft size={16} /> Previous
-              </Button>
-              
-              <div className="hidden sm:flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => {
-                    if (totalPages > 10 && Math.abs(currentPage - (i + 1)) > 2 && i !== 0 && i !== totalPages - 1) {
-                         if (Math.abs(currentPage - (i + 1)) === 3) return <span key={i} className="px-1 text-gray-400">...</span>;
-                         return null;
-                    }
-                    return (
-                        <button
-                            key={i + 1}
-                            onClick={() => handlePageChange(i + 1)}
-                            className={`w-8 h-8 rounded-md text-xs font-medium transition-colors ${
-                                currentPage === i + 1 
-                                ? "bg-[#FF4667] text-white" 
-                                : "hover:bg-gray-100 text-gray-600"
-                            }`}
-                        >
-                            {i + 1}
-                        </button>
-                    )
-                })}
-              </div>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="h-8 px-3"
-              >
-                Next <ChevronRight size={16} />
-              </Button>
-            </div>
-          </div>
-        )}
-
       </div>
     </div>
   );
