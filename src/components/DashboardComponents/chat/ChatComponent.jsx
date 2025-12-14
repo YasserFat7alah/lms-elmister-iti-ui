@@ -448,7 +448,7 @@ const ChatComponent = () => {
                     {selectedConversation ? (
                         <>
                             {/* Chat Header */}
-                            <div className="p-4 border-b border-gray-200 bg-gray-50">
+                            <div className="p-4 py-5 border-b border-gray-200 bg-gray-50">
                                 {(() => {
                                     const otherParticipant = selectedConversation.participants?.find(
                                         p => {
@@ -505,7 +505,7 @@ const ChatComponent = () => {
                                         type="text"
                                         value={messageText}
                                         onChange={(e) => setMessageText(e.target.value)}
-                                        onKeyPress={(e) => {
+                                        onKeyDown={(e) => {
                                             if (e.key === 'Enter' && !e.shiftKey) {
                                                 e.preventDefault();
                                                 handleSendMessage(e);
