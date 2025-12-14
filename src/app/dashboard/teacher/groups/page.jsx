@@ -99,7 +99,7 @@ export default function GroupsDirectoryPage() {
                   </p>
                 </div>
 
-                <div className="p-5 space-y-3 flex-grow">
+                <div className="p-5 space-y-3 grow">
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <div className="flex items-center gap-2">
                       <Users size={16} className="text-gray-400" />

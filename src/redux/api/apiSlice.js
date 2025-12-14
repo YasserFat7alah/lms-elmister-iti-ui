@@ -7,7 +7,7 @@ const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
-  credentials: "include", 
+  credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.userInfo?.accessToken;
     if (token) {
@@ -19,41 +19,41 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   await mutex.waitForUnlock();
-  
+
   let result = await baseQuery(args, api, extraOptions);
 
   const url = typeof args === 'string' ? args : args.url;
 
   if (
     (result?.error?.status === 401 || result?.error?.status === 403) &&
-    !url.includes("/login") && 
+    !url.includes("/login") &&
     !url.includes("/register") &&
-    !url.includes("/refresh-token") 
+    !url.includes("/refresh-token")
   ) {
     if (!mutex.isLocked()) {
-      const release = await mutex.acquire(); 
-      
+      const release = await mutex.acquire();
+
       try {
         console.warn("Token expired. Refreshing logic started...");
 
         const refreshResult = await baseQuery(
-          { url: `${USERS_URL}/refresh-token`, method: "POST" }, 
+          { url: `${USERS_URL}/refresh-token`, method: "POST" },
           api,
           extraOptions
         );
 
         if (refreshResult?.data) {
           console.log("Token refreshed successfully inside Mutex!");
-          
+
           const responseData = refreshResult.data.data || refreshResult.data;
           const { user, accessToken } = responseData;
 
           if (accessToken) {
             api.dispatch(setCredentials({ user, accessToken }));
-            
+
             result = await baseQuery(args, api, extraOptions);
           } else {
-             api.dispatch(logout());
+            api.dispatch(logout());
           }
         } else {
           console.error("Refresh failed. Logging out.");
@@ -74,6 +74,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["User", "Courses", "Groups","Lessons"],
+  tagTypes: ["User", "Users", "Courses", "Groups", "Lessons", "Teachers", "Children", "Conversation", "Messages"],
   endpoints: (builder) => ({}),
 });

@@ -250,7 +250,7 @@ const TicketsTable = () => {
 
         <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
           {/* Table Header */}
-          <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
+          <div className="bg-linear-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
               
@@ -506,7 +506,7 @@ const TicketsTable = () => {
             )}
 
             {sortedData.length > 0 ? (
-              <div className="space-y-3 p-3 grid grid-cols-1 sm:grid-cols-2 sm:grid-cols-2 gap-3">
+              <div className="space-y-3 p-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {sortedData.map((ticket) => (
                   <Card
                     key={ticket.id}
@@ -550,12 +550,12 @@ const TicketsTable = () => {
                       {/* Ticket Details */}
                       <div className="space-y-2 pl-10">
                         <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <Mail className="w-4 h-4 text-gray-400 shrink-0" />
                           <span className="truncate">{ticket.email}</span>
                         </div>
                         
                         <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <Phone className="w-4 h-4 text-gray-400 shrink-0" />
                           <span>{ticket.phone}</span>
                         </div>
 
