@@ -1,4 +1,5 @@
 'use client';
+import { BASE_URL, SOCKET_URL } from '@/constants';
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import io from 'socket.io-client';
@@ -41,12 +42,12 @@ export const SocketProvider = ({ children }) => {
       userId,
       userName,
       userRole,
-      apiUrl: process.env.NEXT_PUBLIC_API_URL,
-      socketUrl: process.env.NEXT_PUBLIC_SOCKET_URL
+      apiUrl: BASE_URL,
+      socketUrl: SOCKET_URL
     });
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || (apiUrl ? new URL(apiUrl).origin : 'http://localhost:5000');
+    const apiUrl = BASE_URL;
+    const socketUrl = SOCKET_URL || (apiUrl ? new URL(apiUrl).origin : 'http://localhost:5000');
 
     // If we already have a socket with same token and url, keep it
     if (socketRef.current) {

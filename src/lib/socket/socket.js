@@ -1,11 +1,12 @@
+import { BASE_URL, SOCKET_URL } from "@/constants";
 import { io } from "socket.io-client";
 
 let socket;
 
 export const connectSocket = (token) => {
     if (!socket) {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || (apiUrl ? new URL(apiUrl).origin : undefined);
+        const apiUrl = BASE_URL;
+        const socketUrl = SOCKET_URL || (apiUrl ? new URL(apiUrl).origin : undefined);
         socket = io(socketUrl, {
             auth: { token },
             transports: ["websocket"],
