@@ -30,6 +30,96 @@ const RecietPopup = ({ subscription, isOpen, onClose, onStatusChange }) => {
     setNewStatus("");
   };
 
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Receipt - ${subscription.invoice}</title>
+          <style>
+            @media print { 
+              body { margin: 0; padding: 20px; } 
+              .no-print { display: none; }
+            }
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; padding: 40px; }
+            .receipt-container { 
+                background: white; 
+                width: 100%; 
+                max-width: 700px; 
+                padding: 40px; 
+                border: 1px solid #ddd; 
+                box-shadow: 0 0 10px rgba(0,0,0,0.05); 
+                margin: 0 auto;
+                box-sizing: border-box;
+            }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #392b80; padding-bottom: 15px; }
+            .logo { font-size: 22px; font-weight: bold; color: #392b80; margin-bottom: 5px; }
+            .invoice-title { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #666; }
+            .section { margin-bottom: 20px; }
+            .section-title { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #392b80; border-bottom: 1px solid #eee; padding-bottom: 3px; margin-bottom: 10px; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; }
+            .label { font-weight: bold; color: #555; }
+            .value { text-align: right; color: #333; }
+            .status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; background: #eee; }
+            .footer { margin-top: 30px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="receipt-container">
+            <div class="header">
+              <div class="logo">ELMISTER LMS</div>
+              <div class="invoice-title">Official Receipt</div>
+              <p style="font-size: 12px; color: #666; margin-top: 5px;">Invoice #${subscription.invoice}</p>
+            </div>
+
+          <div class="section">
+            <div class="section-title">Subscription Details</div>
+            <div class="row"><span class="label">Status</span> <span class="value status-badge">${subscription.status}</span></div>
+            <div class="row"><span class="label">Payment Date</span> <span class="value">${subscription.paidAt}</span></div>
+            <div class="row"><span class="label">Expiry Date</span> <span class="value">${subscription.endAt}</span></div>
+            <div class="row"><span class="label">Subscription ID</span> <span class="value">${subscription.realSubscriptionId}</span></div>
+            <div class="row"><span class="label">Transaction ID</span> <span class="value">${subscription.transactionId}</span></div>
+            <div class="row"><span class="label" style="font-size: 1.1em; color: #392b80;">Amount Paid</span> <span class="value" style="font-size: 1.1em; fontWeight: bold;">${subscription.amount}</span></div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Student Information</div>
+            <div class="row"><span class="label">Name</span> <span class="value">${subscription.studentName}</span></div>
+            <div class="row"><span class="label">Email</span> <span class="value">${subscription.studentEmail}</span></div>
+            <div class="row"><span class="label">Username</span> <span class="value">${subscription.studentUsername}</span></div>
+            <div class="row"><span class="label">ID</span> <span class="value">${subscription.studentId}</span></div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Parent Information</div>
+            <div class="row"><span class="label">Name</span> <span class="value">${subscription.parent}</span></div>
+            <div class="row"><span class="label">Email</span> <span class="value">${subscription.parentEmail}</span></div>
+            <div class="row"><span class="label">ID</span> <span class="value">${subscription.parentId}</span></div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Course Information</div>
+            <div class="row"><span class="label">Course & Group</span> <span class="value">${subscription.courseGroup}</span></div>
+            <div class="row"><span class="label">Teacher</span> <span class="value">${subscription.teacher}</span></div>
+            <div class="row"><span class="label">Teacher Email</span> <span class="value">${subscription.teacherEmail}</span></div>
+          </div>
+
+          <div class="footer">
+            <p>Thank you for learning with us!</p>
+            <p>Generated on ${new Date().toLocaleString()}</p>
+          </div>
+          </div>
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   return (
     <div
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
@@ -77,6 +167,18 @@ const RecietPopup = ({ subscription, isOpen, onClose, onStatusChange }) => {
                 {subscription.studentName}
               </p>
               <p>
+                <span className="font-semibold text-gray-900">Email:</span>{" "}
+                {subscription.studentEmail}
+              </p>
+              <p>
+                <span className="font-semibold text-gray-900">Username:</span>{" "}
+                {subscription.studentUsername}
+              </p>
+              <p>
+                <span className="font-semibold text-gray-900">ID:</span>{" "}
+                <span className="text-xs">{subscription.studentId}</span>
+              </p>
+              <p>
                 <span className="font-semibold text-gray-900">Parent:</span>{" "}
                 {subscription.parent}
               </p>
@@ -89,18 +191,18 @@ const RecietPopup = ({ subscription, isOpen, onClose, onStatusChange }) => {
               Course Information
             </h3>
             <div className="flex  justify-between gap-4 text-gray-700">
-                <div className=" ">
-                    <p>
-                        <span className="font-semibold text-gray-900">
-                            Course & Group :
-                        </span>{" "}
-                        {subscription.courseGroup}
-                    </p>
-                    <p>
-                        <span className="font-semibold text-gray-900">Teacher:</span>{" "}
-                        {subscription.teacher}
-                    </p>
-                </div>
+              <div className=" ">
+                <p>
+                  <span className="font-semibold text-gray-900">
+                    Course & Group :
+                  </span>{" "}
+                  {subscription.courseGroup}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-900">Teacher:</span>{" "}
+                  {subscription.teacher}
+                </p>
+              </div>
               {/* Status Section */}
               <div className="flex  justify-end">
                 {isEditingStatus ? (
@@ -136,13 +238,12 @@ const RecietPopup = ({ subscription, isOpen, onClose, onStatusChange }) => {
                 ) : (
                   <div className="flex items-center gap-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        subscription.status === "active"
-                          ? "bg-green-100 text-green-700"
-                          : subscription.status === "pending"
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${subscription.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : subscription.status === "pending"
                           ? "bg-yellow-100 text-yellow-700"
                           : "bg-red-100 text-red-700"
-                      }`}
+                        }`}
                     >
                       {subscription.status.toUpperCase()}
                     </span>
@@ -204,7 +305,10 @@ const RecietPopup = ({ subscription, isOpen, onClose, onStatusChange }) => {
             Close
           </button>
 
-          <button className="flex-1 px-4 py-3 bg-gradient-to-r from-[#392b80] to-indigo-600 text-white rounded-xl font-semibold hover:from-[#392b80]/90 hover:to-indigo-700 transition-all hover:shadow-xl">
+          <button
+            onClick={handlePrint}
+            className="flex-1 px-4 py-3 bg-gradient-to-r from-[#392b80] to-indigo-600 text-white rounded-xl font-semibold hover:from-[#392b80]/90 hover:to-indigo-700 transition-all hover:shadow-xl"
+          >
             Print Receipt
           </button>
         </div>

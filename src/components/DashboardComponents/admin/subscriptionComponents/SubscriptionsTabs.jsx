@@ -29,13 +29,29 @@ const SubscriptionsTabs = () => {
         return enrollments.map((e) => ({
             id: e._id,
             studentName: e.student?.name || "Unknown",
+            studentEmail: e.student?.email || "N/A",
+            studentUsername: e.student?.username || "N/A",
+            studentId: e.student?._id || "N/A",
             courseGroup: `${e.group?.courseId?.title || "Course"} - ${e.group?.title || "Group"}`,
+            // Teacher Details
             teacher: e.teacher?.name || "Unknown",
+            teacherEmail: e.teacher?.email || "N/A",
+            teacherId: e.teacher?._id || "N/A",
+
+            // Parent Details
             parent: e.parent?.name || "Unknown",
+            parentEmail: e.parent?.email || "N/A",
+            parentId: e.parent?._id || "N/A",
+
+            // Financials
             status: e.status || "active",
             paidAt: e.currentPeriodStart ? new Date(e.currentPeriodStart).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A",
             endAt: e.currentPeriodEnd ? new Date(e.currentPeriodEnd).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A",
             invoice: e.lastInvoiceId || (e.charges && e.charges.length > 0 ? e.charges[e.charges.length - 1].invoiceId : "N/A"),
+            amount: e.charges && e.charges.length > 0 ? `$${e.charges[e.charges.length - 1].amount}` : "N/A",
+            transactionId: e.charges && e.charges.length > 0 ? e.charges[e.charges.length - 1].invoiceId : (e.lastInvoiceId || "N/A"),
+            realSubscriptionId: e.subscriptionId || "N/A",
+
             invoiceUrl: e.lastInvoiceUrl || null,
             // Flattened structure for RecietPopup
             student: e.student,

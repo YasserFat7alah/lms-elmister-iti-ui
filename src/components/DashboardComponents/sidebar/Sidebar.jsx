@@ -38,7 +38,7 @@ const ROLE_LINKS = {
     // { label: "Create Assignments", href: "/dashboard/teacher/create-assighnment", icon: MdHomeWork },
     { label: "Quiz", href: "/dashboard/teacher/quizzes", icon: FileQuestion },
     { label: "Quiz Results", href: "/dashboard/teacher/quiz-results", icon: ClipboardCheck },
-    { label: "Payout", href: "/dashboard/teacher/payout", icon: CreditCard },
+    { label: "Payouts", href: "/dashboard/teacher/payouts", icon: CreditCard },
     { label: "Messages", href: "/dashboard/teacher/messages", icon: MessageSquare },
   ],
 
