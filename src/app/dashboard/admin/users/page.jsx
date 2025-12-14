@@ -9,7 +9,7 @@ import { Spinner } from '@/components/shared/Loader';
 
 const page = () => {
 
-  const { data, isLoading, isError } = useGetAllUsersQuery();
+  const { data, isLoading, isError } = useGetAllUsersQuery({ limit: 1000 });
 
   //  Access the data from API response
   const users = data?.data?.users?.data?.users || [];

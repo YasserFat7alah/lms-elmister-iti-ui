@@ -1,21 +1,26 @@
-"use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
-import { Users, GraduationCap, Search, Trash2, Edit, Mail, Phone, ChevronUp, ChevronDown } from "lucide-react";
-import { MdAlternateEmail } from "react-icons/md";
-import { MdAdminPanelSettings } from "react-icons/md";
+import { Users, GraduationCap, Search, Mail, Phone, ChevronUp, ChevronDown, Eye, Trash2 } from "lucide-react";
+import { MdAlternateEmail, MdAdminPanelSettings } from "react-icons/md";
 import { FaUserTie } from "react-icons/fa";
-import EditUserPopup from "./EditUserPopup "; // Note the space in filename
-import ConfirmDeletePopUp from "./ConfirmDeletePopUp";
-import ViewUserPopup from "./ViewUserPopup "; // Note the space in filename
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// import EditUserPopup from "./EditUserPopup "; // Unused now
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
+// import ViewUserPopup from "./ViewUserPopup "; // Unused if using onUserClick
 
-const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteConfirm, setDeleteConfirm, isBulkDelete, setIsBulkDelete, onEdit, onDelete }) => {
-  const [editUser, setEditUser] = useState(null);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [viewUserId, setViewUserId] = useState(null);
-  const [isViewOpen, setIsViewOpen] = useState(false);
-  const [clickTimeout, setClickTimeout] = useState(null);
+const UserFilteritionTable = ({
+  filtered,
+  setSelectedRows,
+  selectedRows,
+  // deleteConfirm, setDeleteConfirm, isBulkDelete, setIsBulkDelete, // Unused
+  onEdit,
+  onDelete, // Unused
+  onUserClick,
+  onRowDoubleClick
+}) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [statusConfirm, setStatusConfirm] = useState(null);
+  const clickTimeoutRef = useRef(null);
 
   const handleSort = (key) => {
     let direction = 'asc';
@@ -45,6 +50,9 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
       } else if (sortConfig.key === 'gender') {
         aValue = a.gender?.toLowerCase() || '';
         bValue = b.gender?.toLowerCase() || '';
+      } else if (sortConfig.key === 'status') {
+        aValue = a.status?.toLowerCase() || 'active';
+        bValue = b.status?.toLowerCase() || 'active';
       } else {
         aValue = a[sortConfig.key];
         bValue = b[sortConfig.key];
@@ -70,7 +78,6 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
   };
 
   const toggleRowSelection = (id) => {
-    // If in selection mode or starting it
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     );
@@ -84,76 +91,98 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
     }
   };
 
-  const handleRowClick = (user) => {
-    if (selectedRows.length > 0) {
-      // If selection mode is active, single click toggles selection
-      toggleRowSelection(user.id);
-    } else {
-      // Normal mode: Wait for double click, if no double click, open view
-      if (clickTimeout) {
-        clearTimeout(clickTimeout);
-        setClickTimeout(null);
-      }
-
-      const timeout = setTimeout(() => {
-        setViewUserId(user.id);
-        setIsViewOpen(true);
-        setClickTimeout(null);
-      }, 250);
-      setClickTimeout(timeout);
+  const handleRowSingleClick = (user) => {
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
     }
+
+    clickTimeoutRef.current = setTimeout(() => {
+      onUserClick(user.id);
+      clickTimeoutRef.current = null;
+    }, 250);
   };
 
-  const handleRowDoubleClick = (user) => {
-    if (clickTimeout) {
-      clearTimeout(clickTimeout);
-      setClickTimeout(null);
+  const handleRowDoubleClickInternal = (user) => {
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
     }
-    // Double click toggles selection (Starts selection mode if not active)
     toggleRowSelection(user.id);
   };
 
-  const handleDeleteClick = (e, user) => {
-    e.stopPropagation();
-    setIsBulkDelete(false);
-    setDeleteConfirm(user);
-  };
-
-
-
-  const confirmDelete = () => {
-    if (isBulkDelete) {
-      onDelete(selectedRows);
-      setSelectedRows([]);
-    } else if (deleteConfirm) {
-      onDelete(deleteConfirm.id);
+  const handleStatusChange = (status, user) => {
+    if (status === 'suspended' || status === 'blocked') {
+      setStatusConfirm({ status, user });
+    } else {
+      onEdit({ ...user, status });
     }
-    setDeleteConfirm(null);
-    setIsBulkDelete(false);
   };
 
-  const cancelDelete = () => {
-    setDeleteConfirm(null);
-    setIsBulkDelete(false);
+  const handleDeleteClick = (user) => {
+    setStatusConfirm({ status: 'delete', user });
   };
 
-  const handleEditClick = (e, user) => {
-    e.stopPropagation();
-    setEditUser(user);
-    setIsEditOpen(true);
+  const confirmStatusChange = () => {
+    if (statusConfirm) {
+      if (statusConfirm.status === 'delete') {
+        onDelete(statusConfirm.user.id);
+      } else {
+        onEdit({ ...statusConfirm.user, status: statusConfirm.status });
+      }
+      setStatusConfirm(null);
+    }
   };
 
-  const handleSaveEdit = (updatedUser) => {
-    onEdit(updatedUser);
-    setIsEditOpen(false);
-    setEditUser(null);
+  const getConfirmationConfig = () => {
+    if (!statusConfirm) return {};
+    const { status, user } = statusConfirm;
+
+    switch (status) {
+      case 'suspended':
+        return {
+          title: "Suspend User",
+          message: "Are you sure you want to suspend this user?",
+          description: `This will restrict ${user.name}'s access to the platform.`,
+          confirmText: "Suspend",
+          theme: "warning"
+        };
+      case 'blocked':
+        return {
+          title: "Block User",
+          message: "Are you sure you want to block this user from accessing the website?",
+          description: `This will permanently block ${user.name} from logging in.`,
+          confirmText: "Block",
+          theme: "danger"
+        };
+      case 'active':
+        return {
+          title: "Activate User",
+          message: "Are you sure you want to activate this user?",
+          description: `${user.name} will regain full access to the platform.`,
+          confirmText: "Activate",
+          theme: "success"
+        };
+      case 'delete':
+        return {
+          title: "Delete User",
+          message: "Are you sure you want to delete this user?",
+          description: `This action is irreversible. All data associated with ${user.name} (profile, courses, enrollments) will be permanently removed.`,
+          confirmText: "Delete Permanently",
+          theme: "danger"
+        };
+      default:
+        return {};
+    }
   };
+
+  const modalConfig = getConfirmationConfig();
 
   return (
     <>
       {/* Desktop Table View */}
-      <Card className="hidden lg:block shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
+      <Card className="hidden lg:block border border-gray-100 bg-white rounded-2xl overflow-hidden">
+        <div className="overflow-x-auto min-h-[400px]">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
@@ -185,6 +214,7 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     {getSortIcon('email')}
                   </div>
                 </th>
+                {/* Contact removed or kept? Keeping as "Contact" was there */}
                 <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   Contact
                 </th>
@@ -206,6 +236,16 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     {getSortIcon('gender')}
                   </div>
                 </th>
+                {/* Status Column */}
+                <th
+                  className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={() => handleSort('status')}
+                >
+                  <div className="flex items-center gap-1">
+                    Status
+                    {getSortIcon('status')}
+                  </div>
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   Actions
                 </th>
@@ -218,8 +258,8 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     key={user.id}
                     className={`transition-colors cursor-pointer ${selectedRows.includes(user.id) ? "bg-[#FF0055]/10" : "hover:bg-gray-50"
                       }`}
-                    onClick={() => handleRowClick(user)}
-                    onDoubleClick={() => handleRowDoubleClick(user)}
+                    onClick={() => handleRowSingleClick(user)}
+                    onDoubleClick={() => handleRowDoubleClickInternal(user)}
                   >
                     <td className="pl-4 py-3">
                       {selectedRows.length > 0 && (
@@ -235,13 +275,17 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${user.role === "parent" ? "bg-purple-500"
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden ${user.role === "parent" ? "bg-purple-500"
                             : user.role === "teacher" ? "bg-green-500"
                               : user.role === "admin" ? "bg-red-500"
                                 : "bg-orange-500"
                             }`}
                         >
-                          {user.name.charAt(0)}
+                          {user.avatar?.url ? (
+                            <img src={user.avatar.url} alt={user.name} className="w-full h-full object-cover" />
+                          ) : (
+                            user.name.charAt(0)
+                          )}
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
@@ -290,17 +334,45 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     <td className="hidden lg:table-cell px-4 py-3 text-sm text-gray-600 whitespace-nowrap capitalize">
                       {user.gender}
                     </td>
+
+                    {/* Status Dropdown */}
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <Select
+                        value={user.status || 'active'}
+                        onValueChange={(val) => handleStatusChange(val, user)}
+                      >
+                        <SelectTrigger className={`w-[110px] h-8 text-xs font-semibold rounded-full border-none focus:ring-0 focus:ring-offset-0 ${(user.status || 'active') === 'active' ? 'bg-green-100 text-green-700' :
+                          (user.status) === 'suspended' ? 'bg-orange-100 text-orange-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active" className="text-green-600 font-medium">Active</SelectItem>
+                          <SelectItem value="suspended" className="text-orange-600 font-medium">Suspended</SelectItem>
+                          <SelectItem value="blocked" className="text-red-600 font-medium">Blocked</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+
+                    {/* Actions */}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={(e) => handleEditClick(e, user)}
-                          className="p-2 text-[#FF0055] hover:bg-[#FF0055]/10 rounded-lg transition-colors group"
-                          title="Edit User"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onUserClick(user.id);
+                          }}
+                          className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors group"
+                          title="View User"
                         >
-                          <Edit className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                          <Eye className="w-4 h-4 group-hover:scale-110 transition-transform" />
                         </button>
                         <button
-                          onClick={(e) => handleDeleteClick(e, user)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(user);
+                          }}
                           className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors group"
                           title="Delete User"
                         >
@@ -312,7 +384,7 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center">
+                  <td colSpan="8" className="px-6 py-12 text-center">
                     <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                     <p className="text-gray-500">No users found</p>
                   </td>
@@ -343,7 +415,7 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
             {sortedData.map((user) => (
               <Card
                 key={user.id}
-                className={`p-4 shadow-lg border rounded-xl transition-all cursor-pointer ${selectedRows.includes(user.id)
+                className={`p-4 shadow-sm border rounded-xl transition-all cursor-pointer ${selectedRows.includes(user.id)
                   ? "bg-[#FF0055]/10 border-[#FF0055]"
                   : "bg-white border-gray-200"
                   }`}
@@ -361,13 +433,17 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                         onClick={(e) => e.stopPropagation()}
                       />
                       <div
-                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg ${user.role === "parent" ? "bg-purple-500"
+                        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg overflow-hidden ${user.role === "parent" ? "bg-purple-500"
                           : user.role === "teacher" ? "bg-green-500"
                             : user.role === "admin" ? "bg-red-500"
                               : "bg-orange-500"
                           }`}
                       >
-                        {user.name.charAt(0)}
+                        {user.avatar?.url ? (
+                          <img src={user.avatar.url} alt={user.name} className="w-full h-full object-cover" />
+                        ) : (
+                          user.name.charAt(0)
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-base font-bold text-gray-900 truncate">{user.name}</p>
@@ -415,21 +491,47 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
                     </div>
                   </div>
 
+                  {/* Status Control in Mobile */}
+                  <div className="pl-14 sm:pl-16 pt-2" onClick={(e) => e.stopPropagation()}>
+                    <Select
+                      value={user.status || 'active'}
+                      onValueChange={(val) => handleStatusChange(val, user)}
+                    >
+                      <SelectTrigger className={`w-full h-8 text-xs font-semibold rounded-lg border-none focus:ring-0 focus:ring-offset-0 ${(user.status || 'active') === 'active' ? 'bg-green-100 text-green-700' :
+                        (user.status) === 'suspended' ? 'bg-orange-100 text-orange-700' :
+                          'bg-red-100 text-red-700'
+                        }`}>
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active" className="text-green-600 font-medium">Active</SelectItem>
+                        <SelectItem value="suspended" className="text-orange-600 font-medium">Suspended</SelectItem>
+                        <SelectItem value="blocked" className="text-red-600 font-medium">Blocked</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   {/* Action Buttons */}
                   <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
                     <button
-                      onClick={(e) => handleEditClick(e, user)}
-                      className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 text-[#FF0055] bg-[#FF0055]/10 hover:bg-[#FF0055]/20 rounded-lg transition-colors font-medium text-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onUserClick(user.id);
+                      }}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 text-blue-500 bg-blue-50/50 hover:bg-blue-100 rounded-lg transition-colors font-medium text-sm"
                     >
-                      <Edit className="w-4 h-4" />
-                      <span className="hidden sm:inline">Edit</span>
+                      <Eye className="w-4 h-4" />
+                      <span>View</span>
                     </button>
                     <button
-                      onClick={(e) => handleDeleteClick(e, user)}
-                      className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors font-medium text-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteClick(user);
+                      }}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 text-red-500 bg-red-50/50 hover:bg-red-100 rounded-lg transition-colors font-medium text-sm"
                     >
                       <Trash2 className="w-4 h-4" />
-                      <span className="hidden sm:inline">Delete</span>
+                      <span>Delete</span>
                     </button>
                   </div>
                 </div>
@@ -444,32 +546,15 @@ const UserFilteritionTable = ({ filtered, setSelectedRows, selectedRows, deleteC
         )}
       </div>
 
-      {/* Edit User Popup */}
-      <EditUserPopup
-        isOpen={isEditOpen}
-        user={editUser}
-        onClose={() => {
-          setIsEditOpen(false);
-          setEditUser(null);
-        }}
-        onSave={handleSaveEdit}
-      />
-
-      {isViewOpen && (
-        <ViewUserPopup
-          userId={viewUserId}
-          onClose={() => setIsViewOpen(false)}
-        />
-      )}
-
-      {/* Confirm Delete Popup */}
-      <ConfirmDeletePopUp
-        isOpen={!!deleteConfirm}
-        onConfirm={confirmDelete}
-        onCancel={cancelDelete}
-        isBulk={isBulkDelete}
-        selectedCount={selectedRows.length}
-        userName={deleteConfirm?.name}
+      <ConfirmationModal
+        isOpen={!!statusConfirm}
+        onClose={() => setStatusConfirm(null)}
+        onConfirm={confirmStatusChange}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        description={modalConfig.description}
+        confirmText={modalConfig.confirmText}
+        theme={modalConfig.theme}
       />
     </>
   );

@@ -17,9 +17,9 @@ export default function FormikInput({ label, ...props }) {
           meta.touched && meta.error && "border-red-500 focus-visible:ring-red-500"
         )}
       />
-      {meta.touched && meta.error ? (
-        <div className="text-xs text-red-500 font-medium">{meta.error}</div>
-      ) : null}
+      <div className="text-xs text-red-500 font-medium min-h-[1.25rem]">
+        {meta.touched && meta.error ? meta.error : ""}
+      </div>
     </div>
   );
 }

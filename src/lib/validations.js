@@ -35,6 +35,10 @@ export const signupSchema = Yup.object().shape({
     .integer("Age must be an integer")
     .required("Age is required"),
 
+  gender: Yup.string()
+    .oneOf(["male", "female"], "Invalid gender")
+    .required("Gender is required"),
+
   gradeLevel: Yup.string().when("role", {
     is: "student",
     then: (schema) => schema.required("Grade Level is required for students"),
@@ -69,7 +73,7 @@ export const loginSchema = Yup.object().shape({
 export const changePasswordSchema = Yup.object({
   currentPassword: Yup.string()
     .required("Current password is required"),
-  newPassword:  Yup.string()
+  newPassword: Yup.string()
     .matches(
       passwordRules,
       "Password must contain at least 8 characters, one uppercase letter, and one number"

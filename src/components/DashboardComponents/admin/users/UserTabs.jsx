@@ -8,7 +8,10 @@ import BulkBtn from "../BulkBtn";
 import { FaUserTie } from "react-icons/fa";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UserDetailModal from "./UserDetailModal";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 import { useDeleteUserMutation, useUpdateUserMutation } from "@/redux/api/endPoints/usersApiSlice";
+
+import { toast } from "react-hot-toast";
 
 const UsersTabs = ({ users, parents, teachers, students, admins }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,11 +52,14 @@ const UsersTabs = ({ users, parents, teachers, students, admins }) => {
       if (Array.isArray(idOrIds)) {
         await Promise.all(idOrIds.map(id => deleteUser(id).unwrap()));
         setSelectedRows([]);
+        toast.success("User(s) deleted successfully");
       } else {
         await deleteUser(idOrIds).unwrap();
+        toast.success("User deleted successfully");
       }
     } catch (error) {
       console.error("Failed to delete user:", error);
+      toast.error(error?.data?.message || "Failed to delete user. Please check if they have associated data.");
     }
   };
 
@@ -87,7 +93,7 @@ const UsersTabs = ({ users, parents, teachers, students, admins }) => {
   };
 
   return (
-    <div className="space-y-6 py-6 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+    <div className="space-y-6 pt-6 bg-gradient-to-br from-gray-50 to-white min-h-screen">
       {/* ________________________________Tabs______________________ */}
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex flex-col md:flex-row flex-wrap justify-between items-center gap-4 h-auto w-full bg-white border border-gray-200 p-4 rounded-xl">
@@ -284,6 +290,27 @@ const UsersTabs = ({ users, parents, teachers, students, admins }) => {
           />
         </TabsContent>
       </Tabs>
+
+      {/* Bulk Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={!!deleteConfirm}
+        onClose={() => {
+          setDeleteConfirm(null);
+          setIsBulkDelete(false);
+        }}
+        onConfirm={async () => {
+          if (selectedRows.length > 0) {
+            await handleDelete(selectedRows);
+          }
+          setDeleteConfirm(null);
+          setIsBulkDelete(false);
+        }}
+        title="Delete Selected Users"
+        message={`Are you sure you want to delete ${selectedRows.length} selected user(s)?`}
+        description="This action is irreversible. All data associated with these users will be permanently removed."
+        confirmText="Delete Selected"
+        theme="danger"
+      />
 
       {/* Detailed View Modal */}
       <UserDetailModal

@@ -31,9 +31,9 @@ export default function FormikPassword({ label, ...props }) {
           {show ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>
-      {meta.touched && meta.error ? (
-        <div className="text-xs text-red-500 font-medium mt-1">{meta.error}</div>
-      ) : null}
+      <div className="text-xs text-red-500 font-medium mt-1 min-h-[1.25rem]">
+        {meta.touched && meta.error ? meta.error : ""}
+      </div>
     </div>
   );
 }

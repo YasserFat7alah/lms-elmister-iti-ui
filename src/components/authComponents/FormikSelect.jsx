@@ -28,15 +28,15 @@ const FormikSelect = ({ label, name, options, placeholder, ...props }) => {
       <Label htmlFor={name} className={meta.touched && meta.error ? "text-red-500" : ""}>
         {label}
       </Label>
-      
-      <Select 
-        onValueChange={handleValueChange} 
+
+      <Select
+        onValueChange={handleValueChange}
         onOpenChange={handleOpenChange}
         defaultValue={field.value}
         value={field.value}
       >
-        <SelectTrigger 
-          id={name} 
+        <SelectTrigger
+          id={name}
           className={meta.touched && meta.error ? "border-red-500" : ""}
         >
           <SelectValue placeholder={placeholder} />
@@ -50,9 +50,9 @@ const FormikSelect = ({ label, name, options, placeholder, ...props }) => {
         </SelectContent>
       </Select>
 
-      {meta.touched && meta.error && (
-        <span className="text-sm text-red-500">{meta.error}</span>
-      )}
+      <div className="text-sm text-red-500 min-h-[1.25rem]">
+        {meta.touched && meta.error ? meta.error : ""}
+      </div>
     </div>
   );
 };

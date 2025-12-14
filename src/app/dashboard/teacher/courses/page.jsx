@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 import { useGetCoursesQuery, useDeleteCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
 import { toast } from "react-hot-toast";
-import CourseDetailsModal from "@/components/teacherCreateCourse/courseDetailsModal";
+import CourseDetailsModal from "@/components/teacherCreateCourse/CourseDetailsModal";
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -73,6 +73,13 @@ export default function MyCoursesPage() {
     }
   };
 
+  const calculateStudents = (course) => {
+    if (course.groups && course.groups.length > 0) {
+      return course.groups.reduce((sum, group) => sum + (group.studentsCount || 0), 0);
+    }
+    return course.totalStudents || 0;
+  };
+
   if (isLoading) return <div className="h-screen flex items-center justify-center"><Spinner /></div>;
 
   return (
@@ -84,39 +91,64 @@ export default function MyCoursesPage() {
         course={selectedCourse}
       />
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Courses</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage your curriculum, track status, and update content.</p>
+      {/* Header with Teacher Profile */}
+      <div className="bg-white p-6 rounded-2xl border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-100">
+            {userInfo?.avatar?.url ? (
+              <img src={userInfo.avatar.url} alt={userInfo.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-[#FF4667] text-white text-xl font-bold">
+                {userInfo?.name?.charAt(0) || "T"}
+              </div>
+            )}
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 leading-tight">Welcome, {userInfo?.name?.split(" ")[0]}! 👋</h1>
+            <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+              <span className="font-medium text-gray-700">{userInfo?.email}</span>
+              <span className="text-gray-300">|</span>
+              <span>Manage your curriculum & students</span>
+            </p>
+          </div>
         </div>
         <Link href="/dashboard/teacher/createCourse">
-          <Button className="bg-[#FF4667] hover:bg-[#ff2e53] text-white gap-2">
-            <Plus size={18} /> Create New Course
+          <Button className="bg-[#FF4667] hover:bg-[#ff2e53] text-white gap-2 h-12 px-6 rounded-xl shadow-lg shadow-[#FF4667]/20 transition-all hover:scale-[1.02]">
+            <Plus size={20} strokeWidth={2.5} /> Create New Course
           </Button>
         </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><BookOpen size={24} /></div>
+        <div className="bg-white p-6 rounded-2xl border border-blue-100 shadow-sm flex items-center gap-5 relative overflow-hidden group hover:shadow-md transition-all">
+          <div className="absolute right-0 top-0 p-8 opacity-5">
+            <BookOpen size={100} />
+          </div>
+          <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform duration-300"><BookOpen size={28} /></div>
           <div>
-            <p className="text-gray-500 text-xs font-bold uppercase">Total Courses</p>
-            <h3 className="text-2xl font-bold">{courses.length}</h3>
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Courses</p>
+            <h3 className="text-3xl font-black text-gray-900">{courses.length}</h3>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-green-50 text-green-600 rounded-lg"><CheckCircle2 size={24} /></div>
+        <div className="bg-white p-6 rounded-2xl border border-green-100 shadow-sm flex items-center gap-5 relative overflow-hidden group hover:shadow-md transition-all">
+          <div className="absolute right-0 top-0 p-8 opacity-5">
+            <CheckCircle2 size={100} />
+          </div>
+          <div className="p-4 bg-green-50 text-green-600 rounded-2xl group-hover:scale-110 transition-transform duration-300"><CheckCircle2 size={28} /></div>
           <div>
-            <p className="text-gray-500 text-xs font-bold uppercase">Published</p>
-            <h3 className="text-2xl font-bold">{courses.filter(c => c.status === 'published').length}</h3>
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Published</p>
+            <h3 className="text-3xl font-black text-gray-900">{courses.filter(c => c.status === 'published').length}</h3>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-xl border shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-purple-50 text-purple-600 rounded-lg"><Users size={24} /></div>
+        <div className="bg-white p-6 rounded-2xl border border-purple-100 shadow-sm flex items-center gap-5 relative overflow-hidden group hover:shadow-md transition-all">
+          <div className="absolute right-0 top-0 p-8 opacity-5">
+            <Users size={100} />
+          </div>
+          <div className="p-4 bg-purple-50 text-purple-600 rounded-2xl group-hover:scale-110 transition-transform duration-300"><Users size={28} /></div>
           <div>
-            <p className="text-gray-500 text-xs font-bold uppercase">Total Students</p>
-            <h3 className="text-2xl font-bold">
-              {courses.reduce((acc, curr) => acc + (curr.totalStudents || 0), 0)}
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Students</p>
+            <h3 className="text-3xl font-black text-gray-900">
+              {courses.reduce((acc, curr) => acc + calculateStudents(curr), 0)}
             </h3>
           </div>
         </div>
@@ -130,8 +162,8 @@ export default function MyCoursesPage() {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === tab
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
                   }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
@@ -191,7 +223,7 @@ export default function MyCoursesPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
                         <Users size={16} className="text-gray-400" />
-                        <span className="font-semibold text-gray-700">{course.totalStudents || 0}</span>
+                        <span className="font-semibold text-gray-700">{calculateStudents(course)}</span>
                       </div>
                     </td>
 
