@@ -25,6 +25,7 @@ const ROLE_LINKS = {
     { label: "live-sessions", href: "/dashboard/student/live-sessions", icon: Award },
     { label: "Assignments", href: "/dashboard/student/assignments", icon: FileText },
     { label: "Study Material", href: "/dashboard/student/materials", icon: FileQuestion },
+    { label: "Messages", href: "/dashboard/student/messages", icon: MessageSquare },
     { label: "Subscription History", href: "/dashboard/student/orders", icon: ShoppingBag },
   ],
 
@@ -71,6 +72,7 @@ const ROLE_LINKS = {
     {
       group: "Support",
       items: [
+        { label: "Messages", href: "/dashboard/admin/messages", icon: MessageSquare },
         { label: "Tickets", href: "/dashboard/admin/tickets", icon: MessageSquare },
         { label: "Newsletter", href: "/dashboard/admin/newsletter", icon: Mail },
       ],

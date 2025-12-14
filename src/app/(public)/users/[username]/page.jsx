@@ -1,7 +1,8 @@
 'use client'
-import React, { Suspense } from 'react'
+import React, { Suspense, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
+import { useSelector } from 'react-redux';
 import {
     useGetUserByUsernameQuery,
     useGetPublicCoursesQuery
@@ -9,15 +10,20 @@ import {
 import { Spinner } from "@/components/shared/Loader";
 import SectionHeader from '@/components/shared/SectionHeader';
 import CoursesList from '@/components/coursesComponent/CoursesList';
+import ReviewsSection from '@/components/coursesComponent/courseDetails/ReviewsSection';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Video, Calendar, MapPin, GraduationCap, Clock, Award, BookOpen, Facebook, Twitter, Linkedin, Instagram, Youtube, User, CheckCircle, ChevronLeft, ChevronRight, Filter, Mail, Shield, Phone } from "lucide-react";
-import { useState } from 'react';
-
-import ReviewsSection from '@/components/coursesComponent/courseDetails/ReviewsSection';
+import { 
+    Video, Calendar, MapPin, GraduationCap, Clock, Award, BookOpen, 
+    Facebook, Twitter, Linkedin, Instagram, Youtube, User, CheckCircle, 
+    ChevronLeft, ChevronRight, Filter, Mail, Shield, Phone 
+} from "lucide-react";
 
 const ProfileSidebar = ({ user, reviews }) => {
+    const router = useRouter();
+    const { userInfo } = useSelector((state) => state.auth);
+
     const {
         name, username, avatar, role,
         averageRating, totalRatings,
@@ -26,6 +32,35 @@ const ProfileSidebar = ({ user, reviews }) => {
 
     const initials = name ? name.substring(0, 2).toUpperCase() : "U";
     const joinDate = createdAt ? new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : null;
+
+    // Check if user is logged in
+    const isLoggedIn = !!userInfo?.user;
+    const currentUserRole = userInfo?.user?.role;
+    const currentUserId = userInfo?.user?._id || userInfo?.user?.id;
+    const targetUserId = user._id || user.id;
+
+    // Don't show message button if viewing own profile
+    const isOwnProfile = currentUserId === targetUserId;
+
+    // Handle message button click
+    const handleMessageClick = () => {
+        if (!isLoggedIn) {
+            // Redirect to login with return URL
+            router.push(`/login?returnUrl=/profile/${username}`);
+            return;
+        }
+
+        // Route to appropriate dashboard messages page based on current user's role
+        const dashboardRoutes = {
+            'parent': `/dashboard/parent/messages?receiverId=${targetUserId}`,
+            'teacher': `/dashboard/teacher/messages?receiverId=${targetUserId}`,
+            'admin': `/dashboard/admin/messages?receiverId=${targetUserId}`,
+            'student': `/dashboard/student/messages?receiverId=${targetUserId}`
+        };
+
+        const route = dashboardRoutes[currentUserRole] || `/dashboard/messages?receiverId=${targetUserId}`;
+        router.push(route);
+    };
 
     return (
         <div className="flex flex-col gap-6">
@@ -72,7 +107,6 @@ const ProfileSidebar = ({ user, reviews }) => {
 
                         return (
                             <Badge variant="outline" className={`capitalize px-3 py-1 flex items-center gap-1.5 ${badgeClass}`}>
-                                {/* Better icon rendering: Just the icon */}
                                 {RoleIcon && <RoleIcon size={14} />}
                                 {role}
                             </Badge>
@@ -87,13 +121,23 @@ const ProfileSidebar = ({ user, reviews }) => {
                 </div>
 
                 <div className="w-full z-10 flex flex-col gap-4">
-                    <Button
-                        onClick={() => window.location.href = `mailto:${user.email}`}
-                        className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200 flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                        <Mail size={18} />
-                        Message {name.split(' ')[0]}
-                    </Button>
+                    {/* MESSAGE BUTTON - Only show if not own profile */}
+                    {!isOwnProfile && (
+                        <Button
+                            onClick={handleMessageClick}
+                            className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200 flex items-center justify-center gap-2 cursor-pointer transition-all hover:shadow-lg"
+                        >
+                            <Mail size={18} />
+                            {isLoggedIn ? `Message ${name.split(' ')[0]}` : 'Login to Message'}
+                        </Button>
+                    )}
+
+                    {/* Show message if viewing own profile */}
+                    {isOwnProfile && (
+                        <div className="w-full px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-center">
+                            <p className="text-sm text-blue-700 font-medium">This is your profile</p>
+                        </div>
+                    )}
 
                     <div className="h-px bg-gray-100 w-full" />
 
@@ -137,8 +181,6 @@ const ProfileSidebar = ({ user, reviews }) => {
 
             {/* 2. Stats */}
             <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col gap-6">
-
-                {/* Stats */}
                 <div className="flex flex-col gap-3">
                     <h3 className="font-bold text-gray-900 flex items-center gap-2">
                         <Award size={18} className="text-purple-500" />
@@ -303,9 +345,7 @@ const UserProfileContent = () => {
     const [gradeLevel, setGradeLevel] = useState('');
 
     // 2. Fetch User's Courses (only if user exists and is teacher)
-    // We assume backend supports teacherId filter
-    // Only fetch if we have user._id
-    const teacherId = user?._id || user?.id; // Robust extraction
+    const teacherId = user?._id || user?.id;
 
     // Construct Query Params
     const queryParams = {
@@ -340,8 +380,6 @@ const UserProfileContent = () => {
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
-
-
             {/* Main Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
@@ -367,19 +405,18 @@ const UserProfileContent = () => {
                                             value={gradeLevel}
                                             onChange={(e) => {
                                                 setGradeLevel(e.target.value);
-                                                setPage(1); // Reset page on filter change
+                                                setPage(1);
                                             }}
                                             className="pl-9 pr-8 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer hover:bg-gray-50 transition-colors"
                                         >
                                             <option value="">All Grades</option>
-                                            {/* Populate dynamically if available, else static fallback can be used */}
                                             {coursesData?.filters?.gradeLevels?.map((g) => (
                                                 <option key={g} value={g}>Grade {g}</option>
                                             ))}
                                         </select>
                                     </div>
 
-                                    {/* Pagination Controls - Only show if necessary */}
+                                    {/* Pagination Controls */}
                                     {coursesData?.pages > 1 && (
                                         <div className="flex items-center bg-white rounded-lg border border-gray-200 p-1">
                                             <button
@@ -411,7 +448,6 @@ const UserProfileContent = () => {
                             ) : courses.length > 0 ? (
                                 <CoursesList
                                     courses={courses}
-                                    // We hide pagination here for simplicity, showing top 100
                                     currentPage={1}
                                     totalPages={1}
                                     onPageChange={() => { }}

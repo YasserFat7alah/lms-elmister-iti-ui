@@ -26,7 +26,7 @@ const MessagesContent = () => {
   }, [teacherId]);
 
 
-  
+
 
   const handleSelectTeacher = (teacher) => {
     setSelectedTeacher(teacher);
@@ -36,14 +36,14 @@ const MessagesContent = () => {
   };
 
   return (
-  <div className="-m-4 md:-mx-6 md:-my-3"> 
-    <Chat
-      selectedTeacher={selectedTeacher}
-      teachers={teachers}
-      setSelectedTeacher={setSelectedTeacher}
-      handleSelectTeacher={handleSelectTeacher}
-    />
-  </div>
+    <div className="-m-4 md:-mx-6 md:-my-3">
+      <Chat
+        selectedTeacher={selectedTeacher}
+        teachers={teachers}
+        setSelectedTeacher={setSelectedTeacher}
+        handleSelectTeacher={handleSelectTeacher}
+      />
+    </div>
   );
 };
 

@@ -258,9 +258,13 @@ const TicketsTable = () => {
 
         <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
           {/* Table Header */}
-          <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
+          <div className="bg-linear-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-              <div></div>
+              <div>
+
+              </div>
+
+              {/* Search and Bulk Actions */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
                 <div className="w-full sm:w-auto">
                   <BulkBtn
@@ -269,11 +273,13 @@ const TicketsTable = () => {
                     label="newsletter selected"
                   />
                 </div>
+
+                {/* Search */}
                 <div className="relative w-full sm:w-72">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search tickets..."
+                    placeholder="Search newsletters..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-9 pr-3 py-2.5 border bg-white border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#392b80]/20 focus:border-[#392b80] transition-all text-sm"
@@ -443,11 +449,11 @@ const TicketsTable = () => {
                       {/* Details */}
                       <div className="space-y-2 pl-10">
                         <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <Mail className="w-4 h-4 text-gray-400 shrink-0" />
                           <span className="truncate">{ticket.email}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          <Phone className="w-4 h-4 text-gray-400 shrink-0" />
                           <span>{ticket.phone}</span>
                         </div>
 

@@ -16,3 +16,4 @@ export const LESSONS_URL = "/lessons";
 export const COURSES_URL = '/courses';
 export const GROUPS_URL = '/groups';
 export const COMMENTS_URL = '/comments';
+export const CHAT_URL = '/chat';

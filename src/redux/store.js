@@ -1,11 +1,14 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { apiSlice } from './api/apiSlice';
+import { chatApiSlice } from './api/endPoints/chatApiSlice';
 import authReducer from './slices/authSlice';
+import chatReducer from './slices/chatSlice';
 import notificationReducer from './slices/notificationSlice';
 
 const appReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
   auth: authReducer,
+  chat: chatReducer,
   notifications: notificationReducer
 });
 
