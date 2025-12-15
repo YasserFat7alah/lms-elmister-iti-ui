@@ -10,11 +10,11 @@ export default function AssignmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   // ------------------ Fetch student assignments from API ------------------
-  const { data: assignments = {} , isLoading, isError } = useGetStudentAssignmentsQuery();
+  const { data: assignments = {}, isLoading, isError } = useGetStudentAssignmentsQuery();
 
   // ------------------ Merge submissions if needed ------------------
   // Assuming `assignments` from API already contains submission info if available
-const data = useMemo(() => assignments?.data || [], [assignments]);
+  const data = useMemo(() => assignments?.data || [], [assignments]);
 
   // ------------------ Filter Logic ------------------
   const filteredData = useMemo(() => {
@@ -23,7 +23,7 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
     let tabFiltered = data.filter(item => {
       const { status } = getAssignmentStatus(item, item.submission);
 
-      switch(activeTab) {
+      switch (activeTab) {
         case 'todo': return status === STATUS.TODO;
         case 'completed': return status === STATUS.SUBMITTED || status === STATUS.GRADED || status === STATUS.OVERDUE_SUBMITTED;
         case 'missing': return status === STATUS.LATE || status === STATUS.MISSED;
@@ -76,11 +76,10 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                activeTab === tab.id 
-                ? 'bg-[#FF0055] text-white shadow-md' 
-                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === tab.id
+                  ? 'bg-[#FF0055] text-white shadow-md'
+                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+                }`}
             >
               {tab.label}
             </button>
@@ -88,10 +87,10 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
         </div>
 
         {/* Search Bar */}
-        <SearchBar 
-          value={searchTerm} 
-          onChange={setSearchTerm} 
-          placeholder="Search assignments by title or course..." 
+        <SearchBar
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search assignments by title or course..."
         />
       </div>
 
@@ -99,19 +98,19 @@ const data = useMemo(() => assignments?.data || [], [assignments]);
       <div className="space-y-4">
         {filteredData.length > 0 ? (
           filteredData.map(item => (
-            <AssignmentCard 
-              key={item._id} 
-              assignment={item} 
-              submission={item.submission} 
+            <AssignmentCard
+              key={item._id}
+              assignment={item}
+              submission={item.submission}
             />
           ))
         ) : (
           <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
             <p className="text-gray-400">
-                {searchTerm 
-                    ? `No assignments found matching "${searchTerm}" in the selected category.`
-                    : "No assignments found for this filter."
-                }
+              {searchTerm
+                ? `No assignments found matching "${searchTerm}" in the selected category.`
+                : "No assignments found for this filter."
+              }
             </p>
           </div>
         )}

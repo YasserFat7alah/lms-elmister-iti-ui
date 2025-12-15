@@ -7,12 +7,12 @@ import { apiSlice } from "../apiSlice";
 
 export const lessonsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-        
+
     getAllMyLessons: builder.query({
-      query: () => ({
-        url: LESSONS_URL, 
+      query: (params) => ({
+        url: LESSONS_URL,
         method: 'GET',
-        params: { limit: 1000 } 
+        params: { limit: 1000, ...params }
       }),
       providesTags: [{ type: "Lessons", id: "LIST" }],
     }),
@@ -22,9 +22,9 @@ export const lessonsApiSlice = apiSlice.injectEndpoints({
         url: `/lessons/group/${groupId}`,
         params: { page, limit },
       }),
-      providesTags: (result) => 
-        result 
-          ? [{ type: "Lessons", id: "LIST" }] 
+      providesTags: (result) =>
+        result
+          ? [{ type: "Lessons", id: "LIST" }]
           : [{ type: "Lessons", id: "LIST" }],
     }),
 
@@ -32,7 +32,7 @@ export const lessonsApiSlice = apiSlice.injectEndpoints({
       query: (data) => ({
         url: LESSONS_URL,
         method: "POST",
-        body: data, 
+        body: data,
       }),
       invalidatesTags: [{ type: "Lessons", id: "LIST" }],
     }),
@@ -59,7 +59,7 @@ export const lessonsApiSlice = apiSlice.injectEndpoints({
 
 
 
-        addLessonMaterial: builder.mutation({
+    addLessonMaterial: builder.mutation({
       query: ({ lessonId, data }) => ({
         url: `${LESSONS_URL}/${lessonId}/materials`,
         method: "POST",
@@ -76,22 +76,22 @@ export const lessonsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: (result, error, arg) => [{ type: "Lessons", id: arg.lessonId }],
     }),
 
-getLessonById: builder.query({
-  query: (id) => `${LESSONS_URL}/${id}`,
-  providesTags: (result, error, id) => [{ type: "Lessons", id }], 
-}),
+    getLessonById: builder.query({
+      query: (id) => `${LESSONS_URL}/${id}`,
+      providesTags: (result, error, id) => [{ type: "Lessons", id }],
+    }),
 
 
 
-markAttendance: builder.mutation({
+    markAttendance: builder.mutation({
       query: ({ lessonId, attendance }) => ({
         url: `${LESSONS_URL}/${lessonId}/attendance`,
         method: "POST",
-        body: { attendance }, 
+        body: { attendance },
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "Lessons", id: arg.lessonId },
-        { type: "Lessons", id: "LIST" } 
+        { type: "Lessons", id: "LIST" }
       ],
     }),
   }),

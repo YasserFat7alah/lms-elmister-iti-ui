@@ -21,12 +21,12 @@ export default function LessonDetailsPage() {
   //LESSON DETAILS
   const { data: lessonData, isLoading: loading } = useGetLessonByIdQuery(lessonId);
   //ASSIGNMENT BY LESSON
-  const {data : assignmentData , isLoading: assignmentsLoading} = useGetAssignmentsByLessonQuery(lessonId);
-  
+  const { data: assignmentData, isLoading: assignmentsLoading } = useGetAssignmentsByLessonQuery(lessonId);
+
   const lesson = lessonData?.data;
   const assignment = assignmentData?.data || []
 
-  console.log(assignment , "assignments");
+  console.log(assignment, "assignments");
 
 
   if (groupLoading || lessonsLoading || assignmentsLoading) {
@@ -81,9 +81,9 @@ export default function LessonDetailsPage() {
             materials={lesson?.materials || []}
           />
 
-          <LessonAsignment lessonId={lessonId} 
-                          // courseId={group?.courseId?._id}
-                          // teacherId={group?.teacherId?._id}
+          <LessonAsignment lessonId={lessonId}
+          // courseId={group?.courseId?._id}
+          // teacherId={group?.teacherId?._id}
           />
         </div>
         <div className="bg-white p-6 rounded-2xl border shadow-sm">

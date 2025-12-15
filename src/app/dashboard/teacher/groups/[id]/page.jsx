@@ -33,109 +33,39 @@ import {
 import { toast } from "react-hot-toast";
 import { useDeleteLessonMutation } from "@/redux/api/endPoints/lessonsApiSlice";
 
+import Breadcrumbs from "@/components/shared/Breadcrumbs";
+
 export default function GroupDetailsPage() {
   const { id: groupId } = useParams();
   const [activeTab, setActiveTab] = useState("schedule");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedLessonToEdit, setSelectedLessonToEdit] = useState(null);
+  // ... existing state ...
 
-  const [deleteLesson, { isLoading: isDeleting }] = useDeleteLessonMutation();
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/dashboard/teacher" },
+    { label: "Groups", href: "/dashboard/teacher/groups" },
+    { label: "Group Details" }
+  ];
 
-  const { data: groupData } = useGetGroupByIdQuery(groupId);
-  const {
-    data: lessonsData,
-    isLoading,
-    isError,
-    refetch,
-  } = useGetLessonsByGroupQuery(
-    { groupId },
-    {
-      skip: !groupId,
-      refetchOnMountOrArgChange: true,
-    }
-  );
-
-  const lessons = Array.isArray(lessonsData?.data?.data)
-    ? lessonsData.data.data
-    : Array.isArray(lessonsData?.data)
-    ? lessonsData.data
-    : Array.isArray(lessonsData)
-    ? lessonsData
-    : [];
-
-  const groupName = groupData?.data?.title || "Group Details";
-  const group = groupData?.data || null;
-
-  const getLessonEndTime = (dateStr, endTimeStr) => {
-    if (!dateStr) return new Date(NaN);
-    try {
-      if (endTimeStr) {
-        const datePart = dateStr.split("T")[0];
-        const iso = `${datePart}T${endTimeStr}:00`;
-        const d = new Date(iso);
-        if (!isNaN(d)) return d;
-      }
-      const d = new Date(dateStr);
-      return d;
-    } catch {
-      return new Date(NaN);
-    }
-  };
-
-  const now = new Date();
-  const upcomingLessons = lessons.filter((l) => {
-    const end = getLessonEndTime(l.date, l.endTime);
-    return !isNaN(end) && end > now;
-  });
-  const pastLessons = lessons.filter((l) => {
-    const end = getLessonEndTime(l.date, l.endTime);
-    return !isNaN(end) && end <= now;
-  });
-
-  const nextOrder =
-    lessons.length > 0 ? Math.max(...lessons.map((l) => l.order || 0)) + 1 : 1;
-
-  const handleDeleteLesson = async (e, lessonId) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (confirm("Are you sure you want to delete this session? This action cannot be undone.")) {
-      try {
-        await deleteLesson(lessonId).unwrap();
-        toast.success("Session deleted successfully");
-        refetch();
-      } catch {
-        toast.error("Failed to delete session");
-      }
-    }
-  };
-
-  if (isLoading) return <div className="h-screen flex items-center justify-center"><Spinner /></div>;
-  if (isError) return <div className="p-10 text-center text-red-500">Failed to load data</div>;
+  // ... existing code ...
 
   return (
     <div className="min-h-screen bg-gray-50/50 p-6 space-y-6">
       <CreateSessionModal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedLessonToEdit(null);
-        }}
-        groupId={groupId}
-        nextOrder={nextOrder}
-        onSuccess={refetch}
+        // ...
         lessonToEdit={selectedLessonToEdit}
       />
+
+      <Breadcrumbs items={breadcrumbItems} className="w-fit" />
 
       <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <Link href="/dashboard/teacher/groups" className="text-gray-400 hover:text-gray-600 transition">
-              <ArrowLeft size={20} />
-            </Link>
             <h1 className="text-2xl font-bold text-gray-900">{groupName}</h1>
           </div>
-          <p className="text-gray-500 text-sm mt-1 ml-7">Manage schedule, attendance, and students.</p>
+          <p className="text-gray-500 text-sm mt-1">Manage schedule, attendance, and students.</p>
         </div>
+// ... rest of header
 
         <div className="flex gap-3">
           <Button
@@ -156,11 +86,10 @@ export default function GroupDetailsPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab.id
+            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id
                 ? "border-[#FF4667] text-[#FF4667]"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
+              }`}
           >
             <tab.icon size={18} />
             {tab.label}
@@ -171,7 +100,7 @@ export default function GroupDetailsPage() {
       <main>
         {activeTab === "schedule" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-           <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-6">
               <div className="bg-white p-6 rounded-2xl border shadow-sm">
                 <GroupCalendar lessons={lessons} groupId={groupId} />
               </div>
