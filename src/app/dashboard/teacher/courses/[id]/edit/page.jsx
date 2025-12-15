@@ -33,7 +33,7 @@ const DAY_MAP_TO_BACKEND = {
   Wednesday: "wed",
   Thursday: "thu",
   Friday: "fri",
-};
+}
 const DAY_MAP_FROM_BACKEND = { sat: "Saturday", sun: "Sunday", mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday" };
 
 export default function EditCoursePage() {

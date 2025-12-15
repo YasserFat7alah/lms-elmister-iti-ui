@@ -44,7 +44,7 @@ export default function CreateSessionModal({ isOpen, onClose, groupId: propGroup
     date: "",
     startTime: "",
     endTime: "",
-    type: "offline", // 1. عدلناها هنا (كانت center)
+    type: "offline", 
     meetingLink: "", 
     location: "",
     groupId: propGroupId || "",
@@ -86,7 +86,7 @@ useEffect(() => {
           date: lessonToEdit.date ? new Date(lessonToEdit.date).toISOString().split("T")[0] : "",
           startTime: lessonToEdit.startTime || "",
           endTime: lessonToEdit.endTime || "",
-          type: lessonToEdit.type || "offline", // 2. وهنا كمان
+          type: lessonToEdit.type || "offline", 
           meetingLink: lessonToEdit.meetingLink || "",
           location: lessonToEdit.location || "",
           groupId: lessonToEdit.groupId?._id || lessonToEdit.groupId || "", 
@@ -99,7 +99,7 @@ useEffect(() => {
           date: new Date().toISOString().split("T")[0],
           startTime: "12:00",
           endTime: "14:00",
-          type: "offline", // 3. وهنا كمان
+          type: "offline", 
           meetingLink: "",
           location: "",
           groupId: propGroupId || "", 
@@ -108,7 +108,6 @@ useEffect(() => {
     }
   }, [isOpen, isEditMode, lessonToEdit, propGroupId]);
 
-  // دالة التحقق من التضارب
   const checkTimeConflict = () => {
     if (!formData.date || !formData.startTime || !formData.endTime) return false;
 
@@ -158,7 +157,6 @@ useEffect(() => {
     try {
       const dataToSend = { ...formData };
       
-      // 4. هنا بنشيك على offline بدل center
       if (formData.type === 'offline') {
         delete dataToSend.meetingLink;
       } else {
@@ -247,7 +245,6 @@ useEffect(() => {
               >
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {/* 5. غيرنا القيمة هنا عشان الباك إند يقبلها */}
                   <SelectItem value="offline">Center (Offline)</SelectItem>
                   <SelectItem value="online">Online</SelectItem>
                 </SelectContent>
@@ -255,7 +252,6 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* 6. غيرنا الشرط هنا كمان */}
           {formData.type === 'online' ? (
             <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
               <Label className="text-blue-600">Meeting Link</Label>

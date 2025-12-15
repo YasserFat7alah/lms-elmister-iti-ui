@@ -151,7 +151,6 @@ export default function GroupDetailsPage() {
         {[
           { id: "schedule", label: "Schedule & Lessons", icon: CalendarDays },
           { id: "students", label: "Students", icon: Users },
-          { id: "settings", label: "Group Settings", icon: BookOpen },
         ].map((tab) => (
           <button
             key={tab.id}
