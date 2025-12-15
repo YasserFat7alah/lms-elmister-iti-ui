@@ -25,12 +25,12 @@ export default function DashboardLayout({ children }) {
       const isTeacherRoute = pathname?.startsWith("/dashboard/teacher");
       const isCompleteProfileRoute = pathname === "/completeProfile";
       
-      if (isTeacherRoute && !isCompleteProfileRoute && user.role === "teacher") {
-        if (!isTeacherProfileComplete(user)) {
-          router.replace("/completeProfile");
-        }
-      }
-    }
+    //   if (isTeacherRoute && !isCompleteProfileRoute && user.role === "teacher") {
+    //     if (!isTeacherProfileComplete(user)) {
+    //       router.replace("/completeProfile");
+    //     }
+    //   }
+     }
   }, [isMounted, userInfo, pathname, router]);
 
   if (!isMounted || !userInfo) {

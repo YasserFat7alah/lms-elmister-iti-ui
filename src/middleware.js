@@ -19,7 +19,7 @@ export function middleware(request) {
 
   if ((token || refreshToken) && isAuthPath && !oauthCallbackPathAllowed) {
     if (role === "admin") return NextResponse.redirect(new URL("/dashboard/admin/dashboard", request.url));
-    if (role === "teacher") return NextResponse.redirect(new URL("/completeProfile", request.url)); 
+    if (role === "teacher") return NextResponse.redirect(new URL("/dashboard/teacher/analytics", request.url)); 
     if (role === "student") return NextResponse.redirect(new URL("/dashboard/student/my-learning", request.url));
     if (role === "parent") return NextResponse.redirect(new URL("/dashboard/parent/overview", request.url));
     
