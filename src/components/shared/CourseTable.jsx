@@ -7,7 +7,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { 
   MapPin, Video, Clock, Calendar as CalendarIcon, 
   Plus, ChevronLeft, ChevronRight, RotateCcw,
-  LayoutGrid, LayoutList 
+  LayoutGrid, LayoutList, CheckCircle2
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -19,19 +19,21 @@ import {
 import { toast } from "react-hot-toast";
 
 import { useGetAllMyLessonsQuery, useCreateLessonMutation } from "@/redux/api/endPoints/lessonsApiSlice";
-import { useGetAllGroupsQuery } from "@/redux/api/endPoints/groupsApiSlice";
+import { useGetMyGroupsQuery } from "@/redux/api/endPoints/groupsApiSlice"; 
 import CreateSessionModal from '../teacherGroupDetails/CreateSessionModal';
 
 const localizer = momentLocalizer(moment);
 
 const dayMap = { "sun": 0, "mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6 };
 
+// ألوان الحصص النشطة
 const getPastelColors = (groupId) => {
     const palettes = [
-      { bg: '#F3E8FF', border: '#A855F7', text: '#6B21A8' },
-      { bg: '#FCE7F3', border: '#EC4899', text: '#9D174D' }, 
-      { bg: '#D1FAE5', border: '#10B981', text: '#047857' }, 
-      { bg: '#FFEDD5', border: '#F97316', text: '#C2410C' }, 
+      { bg: '#F3E8FF', border: '#A855F7', text: '#6B21A8' }, // Purple
+      { bg: '#FCE7F3', border: '#EC4899', text: '#9D174D' }, // Pink
+      { bg: '#E0F2FE', border: '#0EA5E9', text: '#0369A1' }, // Blue
+      { bg: '#D1FAE5', border: '#10B981', text: '#047857' }, // Green
+      { bg: '#FFEDD5', border: '#F97316', text: '#C2410C' }, // Orange
     ];
     let hash = 0;
     const str = (groupId || 'default').toString();
@@ -78,6 +80,9 @@ const generateGhostEvents = (groups, existingLessons, currentDate) => {
                 const startDateTime = moment(`${dateStr} ${scheduleSlot.time || scheduleSlot.startTime}`, 'YYYY-MM-DD HH:mm').toDate();
                 const endDateTime = moment(startDateTime).add(2, 'hours').toDate();
 
+                // 🔥 فحص هل التاريخ عدى ولا لأ للجوست برضو
+                const isPast = moment(endDateTime).isBefore(moment());
+
                 ghostEvents.push({
                     id: `ghost-${group._id}-${dateStr}`,
                     title: group.title,
@@ -89,13 +94,15 @@ const generateGhostEvents = (groups, existingLessons, currentDate) => {
                         groupTitle: group.title,
                         type: group.type,
                         startTime: scheduleSlot.time || scheduleSlot.startTime,
-                        endTime: "00:00",
+                        endTime: moment(endDateTime).format('HH:mm'),
                         bgColor: colors.bg,
                         borderColor: colors.border,
                         textColor: colors.text,
                         location: group.location,
                         meetingLink: group.link,
-                        isGhost: true
+                        isGhost: true,
+                        userRole: 'student',
+                        isPast: isPast // ✅ Flag للحصص المنتهية
                     }
                 });
             }
@@ -106,7 +113,6 @@ const generateGhostEvents = (groups, existingLessons, currentDate) => {
   });
   return ghostEvents;
 };
-
 
 const CustomToolbar = ({ label, onNavigate, onView, view, onAddEvent, canAdd }) => {
   return (
@@ -147,15 +153,16 @@ const CustomToolbar = ({ label, onNavigate, onView, view, onAddEvent, canAdd }) 
   );
 };
 
+// 🔥 تعديل: إضافة منطق الـ Disabled واللون الرمادي
 const EventDetailCard = ({ event }) => {
     const { title, resource } = event;
-    const { type, location, meetingLink, userRole, groupTitle, isGhost } = resource;
+    const { type, location, meetingLink, userRole, groupTitle, isGhost, isPast } = resource;
     
     const timeStr = `${moment(event.start).format('h:mm A')} - ${moment(event.end).format('h:mm A')}`;
     const dateStr = moment(event.start).format('dddd, D MMMM YYYY');
 
     const handleJoin = () => {
-       if(isGhost) return; 
+       if(isGhost || isPast) return; // ممنوع الدخول لو وهمية أو انتهت
        let url = type === 'online' ? meetingLink : location;
        if (!url) return;
        if (type !== 'online') { url = `https://maps.google.com/?q=${encodeURIComponent(url)}`; } 
@@ -163,17 +170,23 @@ const EventDetailCard = ({ event }) => {
        window.open(url, '_blank');
     };
 
+    const showActionBtn = (!isGhost || userRole === 'student' || userRole === 'parent');
+
     return (
       <div className="w-[300px] font-sans">
         <div className="p-4 space-y-4">
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="font-bold text-lg text-gray-900 leading-tight">
-                  {title} {isGhost && <span className="text-[10px] text-gray-400 font-normal">(Planned)</span>}
+              <h3 className={`font-bold text-lg leading-tight ${isPast ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                  {title} {isGhost && !isPast && <span className="text-[10px] text-gray-400 font-normal no-underline">(Planned)</span>}
               </h3>
-              <p className="text-xs font-semibold text-[#FF0055] bg-pink-50 px-2 py-1 rounded-md mt-1 inline-block">{groupTitle}</p>
+              <p className={`text-xs font-semibold px-2 py-1 rounded-md mt-1 inline-block ${isPast ? 'bg-gray-100 text-gray-500' : 'text-[#FF0055] bg-pink-50'}`}>
+                  {groupTitle}
+              </p>
             </div>
-            <div className={`p-2 rounded-lg ${type === 'online' ? 'bg-blue-50 text-blue-500' : 'bg-orange-50 text-orange-500'}`}>{type === 'online' ? <Video size={18} /> : <MapPin size={18} />}</div>
+            <div className={`p-2 rounded-lg ${isPast ? 'bg-gray-100 text-gray-400' : (type === 'online' ? 'bg-blue-50 text-blue-500' : 'bg-orange-50 text-orange-500')}`}>
+                {type === 'online' ? <Video size={18} /> : <MapPin size={18} />}
+            </div>
           </div>
           <div className="space-y-3 pt-2">
             <div className="flex items-center gap-3 text-sm text-gray-600"><CalendarIcon className="w-4 h-4 text-gray-400" /><span>{dateStr}</span></div>
@@ -183,37 +196,54 @@ const EventDetailCard = ({ event }) => {
           <div className="flex items-center justify-between pt-2 border-t border-gray-50">
               <div className="flex -space-x-2">{[1,2,3].map(i => (<Avatar key={i} className="w-6 h-6 border-2 border-white"><AvatarFallback className="text-[9px] bg-gray-200">ST</AvatarFallback></Avatar>))}<div className="w-6 h-6 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[9px] text-gray-500">+5</div></div>
               
-              {!isGhost && (userRole === 'student' || userRole === 'teacher') && (
-                  <Button onClick={handleJoin} size="sm" className="bg-[#FF0055] hover:bg-pink-700 text-white text-xs h-8 px-4 rounded-lg shadow-md shadow-pink-100">{type === 'online' ? 'Join' : 'Map'}</Button>
+              {showActionBtn && (
+                  <Button 
+                    onClick={handleJoin} 
+                    size="sm" 
+                    // 🔥 الزرار Disabled لو الحصة انتهت أو وهمية (لغير الطلاب)
+                    disabled={isGhost || isPast} 
+                    className={`text-white text-xs h-8 px-4 rounded-lg shadow-md ${isPast ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-[#FF0055] hover:bg-pink-700 shadow-pink-100'}`}
+                  >
+                     {isPast ? 'Ended' : (type === 'online' ? 'Join' : 'Map')}
+                  </Button>
               )}
-              {isGhost && <span className="text-xs text-gray-400 italic">Upcoming</span>}
+              {isGhost && !isPast && <span className="text-xs text-gray-400 italic">Upcoming</span>}
           </div>
         </div>
       </div>
     );
 };
 
+// 🔥 تعديل: ستايل الحصص في الجدول (اللون الرمادي للمنتهي)
 const CustomEvent = ({ event }) => {
   const { title, resource, isGhost } = event;
-  const { start, end } = event;
+  const { start, end, isPast } = event.resource; // isPast جاي من الـ resource
   const { bgColor, borderColor, textColor } = resource;
+
+  // الألوان لو الحصة منتهية
+  const finalBg = isPast ? '#F3F4F6' : (isGhost ? '#f9fafb' : bgColor);
+  const finalBorder = isPast ? '#D1D5DB' : (isGhost ? '#9ca3af' : borderColor);
+  const finalText = isPast ? '#6B7280' : (isGhost ? '#374151' : textColor);
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <div 
-          className={`h-full w-full p-1.5 rounded-md border-l-[4px] cursor-pointer transition-all flex flex-col justify-start relative group overflow-hidden ${isGhost ? 'opacity-70 border-dashed bg-gray-50' : ''}`}
-          style={{ backgroundColor: isGhost ? '#f9fafb' : bgColor, borderLeftColor: isGhost ? '#9ca3af' : borderColor }}
+          className={`h-full w-full p-1.5 rounded-md border-l-[4px] cursor-pointer transition-all flex flex-col justify-start relative group overflow-hidden ${isGhost ? 'opacity-70 border-dashed' : ''} ${isPast ? 'grayscale-[0.5]' : ''}`}
+          style={{ backgroundColor: finalBg, borderLeftColor: finalBorder }}
         >
-          {isGhost && <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-gray-400" />}
-          <div className="hidden md:block text-[10px] font-bold uppercase tracking-wide mb-0.5 opacity-70" style={{ color: isGhost ? '#6b7280' : textColor }}>
+          {isGhost && !isPast && <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-gray-400" />}
+          
+          <div className="hidden md:block text-[10px] font-bold uppercase tracking-wide mb-0.5 opacity-70" style={{ color: isPast ? '#9CA3AF' : (isGhost ? '#6b7280' : textColor) }}>
             {resource.groupTitle}
           </div>
-          <div className="text-[10px] md:text-xs font-bold leading-tight truncate" style={{ color: isGhost ? '#374151' : textColor }}>
+          
+          <div className={`text-[10px] md:text-xs font-bold leading-tight truncate ${isPast ? 'line-through decoration-gray-400' : ''}`} style={{ color: finalText }}>
             {title}
           </div>
-          <div className="hidden md:flex items-center gap-1 text-[10px] font-medium mt-auto" style={{ color: isGhost ? '#6b7280' : textColor }}>
-            <Clock size={10} />
+          
+          <div className="hidden md:flex items-center gap-1 text-[10px] font-medium mt-auto" style={{ color: isPast ? '#9CA3AF' : (isGhost ? '#6b7280' : textColor) }}>
+            {isPast ? <CheckCircle2 size={10} /> : <Clock size={10} />}
             <span>{moment(start).format('h:mm')} - {moment(end).format('h:mm A')}</span>
           </div>
         </div>
@@ -227,17 +257,22 @@ const CustomEvent = ({ event }) => {
 
 const MonthEvent = ({ event }) => {
     const { title, resource, isGhost } = event;
+    const { isPast } = resource;
     const { bgColor, borderColor, textColor } = resource;
+
+    const finalBg = isPast ? '#F3F4F6' : (isGhost ? '#f3f4f6' : bgColor);
+    const finalBorder = isPast ? '#D1D5DB' : (isGhost ? '#9ca3af' : borderColor);
+    const finalText = isPast ? '#6B7280' : (isGhost ? '#4b5563' : textColor);
   
     return (
       <Popover>
         <PopoverTrigger asChild>
           <div 
-            className={`flex items-center gap-1.5 px-1.5 py-0.5 rounded cursor-pointer hover:opacity-80 transition-all w-full overflow-hidden ${isGhost ? 'opacity-60' : ''}`}
-            style={{ backgroundColor: isGhost ? '#f3f4f6' : bgColor }}
+            className={`flex items-center gap-1.5 px-1.5 py-0.5 rounded cursor-pointer hover:opacity-80 transition-all w-full overflow-hidden ${isGhost ? 'opacity-60' : ''} ${isPast ? 'bg-gray-100' : ''}`}
+            style={{ backgroundColor: finalBg }}
           >
-            <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: isGhost ? '#9ca3af' : borderColor }} />
-            <span className="text-[10px] font-semibold truncate leading-tight" style={{ color: isGhost ? '#4b5563' : textColor }}>
+            <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: finalBorder }} />
+            <span className={`text-[10px] font-semibold truncate leading-tight ${isPast ? 'line-through text-gray-400' : ''}`} style={{ color: finalText }}>
               {title}
             </span>
           </div>
@@ -274,13 +309,9 @@ export default function WeeklySchedule() {
 
   const { data: lessonsData, refetch } = useGetAllMyLessonsQuery(undefined, { refetchOnMountOrArgChange: true });
   
-  const { data: groupsData } = useGetAllGroupsQuery(
-      role === 'teacher' ? { teacherId: teacherId } : {}, 
-      { 
-        skip: (role !== 'teacher' && role !== 'admin') || !teacherId,
-        refetchOnMountOrArgChange: true
-      } 
-  );
+  const { data: groupsData } = useGetMyGroupsQuery(undefined, { 
+    refetchOnMountOrArgChange: true
+  });
 
   const [createLesson] = useCreateLessonMutation();
 
@@ -294,11 +325,18 @@ export default function WeeklySchedule() {
       const dateStr = moment(dateVal).format('YYYY-MM-DD');
       const colors = getPastelColors(lesson.groupId?._id || lesson.groupId);
 
+      // تحديد وقت البداية والنهاية
+      const start = moment(`${dateStr} ${lesson.startTime}`, 'YYYY-MM-DD HH:mm').toDate();
+      const end = moment(`${dateStr} ${lesson.endTime}`, 'YYYY-MM-DD HH:mm').toDate();
+      
+      // 🔥 حساب هل الحصة انتهت؟
+      const isPast = moment(end).isBefore(moment());
+
       return {
         id: lesson._id,
         title: lesson.title,
-        start: moment(`${dateStr} ${lesson.startTime}`, 'YYYY-MM-DD HH:mm').toDate(),
-        end: moment(`${dateStr} ${lesson.endTime}`, 'YYYY-MM-DD HH:mm').toDate(),
+        start: start,
+        end: end,
         isGhost: false,
         resource: {
           ...lesson,
@@ -306,13 +344,15 @@ export default function WeeklySchedule() {
           groupTitle: lesson.groupId?.title,
           bgColor: colors.bg,
           borderColor: colors.border,
-          textColor: colors.text
+          textColor: colors.text,
+          isPast: isPast // ✅ Flag
         }
       };
     }).filter(Boolean);
 
     let allEvents = [...realEvents];
-    if ((role === 'teacher' || role === 'admin') && rawGroups.length > 0) {
+    
+    if (rawGroups.length > 0) {
         const ghosts = generateGhostEvents(rawGroups, rawLessons, currentDate);
         allEvents = [...allEvents, ...ghosts];
     }
@@ -337,7 +377,7 @@ export default function WeeklySchedule() {
                 title: `Session: ${ghost.title}`, 
                 date: moment(ghost.start).format('YYYY-MM-DD'),
                 startTime: ghost.resource.startTime,
-                endTime: "16:00", 
+                endTime: moment(ghost.end).format('HH:mm'),
                 type: ghost.resource.type || 'online',
                 groupId: ghost.resource.groupId,
                 location: ghost.resource.location,

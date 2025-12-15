@@ -200,22 +200,23 @@ export default function MyCoursesPage() {
                 filteredCourses.map((course) => (
                   <tr key={course._id} className="hover:bg-gray-50/80 transition">
 
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-12 w-16 rounded-lg overflow-hidden bg-gray-200 shrink-0 border border-gray-100">
-                          {course.thumbnail?.url ? (
-                            <img src={course.thumbnail.url} alt="" className="h-full w-full object-cover" />
-                          ) : (
-                            <div className="h-full w-full flex items-center justify-center text-gray-400"><BookOpen size={16} /></div>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900 line-clamp-1 max-w-[200px]">{course.title}</p>
-                          <p className="text-xs text-gray-400">{course.language || course.courseLanguage}</p>
-                        </div>
-                      </div>
-                    </td>
-
+<td className="px-6 py-4">
+  <Link href={`/dashboard/teacher/courses/${course._id}`} className="block">
+    <div className="flex items-center gap-3 cursor-pointer group">
+      <div className="h-12 w-16 rounded-lg overflow-hidden bg-gray-200 shrink-0 border border-gray-100 group-hover:border-[#FF4667] transition-colors">
+        {course.thumbnail?.url ? (
+          <img src={course.thumbnail.url} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <div className="h-full w-full flex items-center justify-center text-gray-400"><BookOpen size={16} /></div>
+        )}
+      </div>
+      <div>
+        <p className="font-bold text-gray-900 line-clamp-1 max-w-[200px] group-hover:text-[#FF4667] transition-colors">{course.title}</p>
+        <p className="text-xs text-gray-400">{course.language || course.courseLanguage}</p>
+      </div>
+    </div>
+  </Link>
+</td>
                     <td className="px-6 py-4">
                       <StatusBadge status={course.status} />
                     </td>

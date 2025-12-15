@@ -127,8 +127,10 @@ export default function LessonMaterials({ lessonId, materials = [] }) {
             </div>
           ))
         ) : (
-          <div className="text-center py-8 text-gray-400 border-2 border-dashed rounded-xl">
-            No materials added yet.
+          <div className="text-center py-12 text-gray-400 border-2 border-dashed rounded-xl bg-gray-50">
+            <FileText size={48} className="mx-auto mb-3 opacity-30" />
+            <p className="font-medium">No Materials yet</p>
+            <p className="text-sm mt-1">Click "Add Materials" to create one</p>
           </div>
         )}
       </div>
