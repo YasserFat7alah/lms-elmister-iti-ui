@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Formik, Form } from "formik";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -15,11 +15,10 @@ import FormikPassword from "@/components/authComponents/FormikPassword";
 import FormikSelect from "@/components/authComponents/FormikSelect";
 import FormikPhoneInput from "@/components/authComponents/FormikPhoneInput";
 import Image from "next/image";
-// import logo from "@/assets/images/logo.png"; // Removed
 import { BASE_URL, USERS_URL_DATA } from "@/constants";
-// import LogoLoader from "@/components/shared/LogoLoader"; // Removed
 
-export default function CompleteProfileOrSignUp() {
+// 1. الدالة الأساسية (بدون export default)
+function SignUpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useDispatch();
@@ -42,7 +41,7 @@ export default function CompleteProfileOrSignUp() {
     age: "",
     gender: "male",
     phone: "",
-    role: defaultRole, // Set implicitly based on query param or default to "parent"
+    role: defaultRole,
   });
 
   useEffect(() => {
@@ -74,7 +73,7 @@ export default function CompleteProfileOrSignUp() {
           age: user.age ? String(user.age) : prev.age,
           gender: user.gender || prev.gender,
           phone: user.phone || prev.phone,
-          role: defaultRole, // Always use query param role or default to "parent" (implicit)
+          role: defaultRole,
         }));
 
         setLoadingSession(false);
@@ -90,7 +89,6 @@ export default function CompleteProfileOrSignUp() {
     setServerError("");
     try {
       const { confirmPassword, ...rest } = values;
-      // Role is set implicitly: use query param role or default to "parent"
       const payload = { ...rest, role: defaultRole };
       if (payload.age) payload.age = Number(payload.age);
 
@@ -102,7 +100,7 @@ export default function CompleteProfileOrSignUp() {
       const role = user?.role;
       const map = {
         admin: "/dashboard/admin/dashboard",
-        teacher: "/completeProfile", // Teachers must complete profile first
+        teacher: "/completeProfile",
         student: "/dashboard/student/my-learning",
         parent: "/dashboard/parent/overview",
       };
@@ -122,7 +120,7 @@ export default function CompleteProfileOrSignUp() {
         phone: values.phone,
         age: values.age ? Number(values.age) : undefined,
         gender: values.gender,
-        role: defaultRole, // Use implicit role from query param or default to "parent"
+        role: defaultRole,
       };
 
       const res = await fetch(`${BASE_URL}/auth/complete-profile`, {
@@ -159,8 +157,6 @@ export default function CompleteProfileOrSignUp() {
   if (loadingSession) {
     return <FullPageLoader message="Checking session..." />;
   }
-
-  const btnPrimary = "inline-flex items-center gap-2 px-4 py-2 h-10 rounded-md bg-gradient-to-r from-[#FF4667] to-[#FF0055] text-white font-medium shadow-sm";
 
   return (
     <div className="h-screen overflow-hidden lg:grid lg:grid-cols-2">
@@ -217,8 +213,6 @@ export default function CompleteProfileOrSignUp() {
 
                 <FormikPhoneInput label="Phone Number" name="phone" placeholder="+20..." />
 
-                {/* Role is set implicitly based on query param or defaults to "parent" - included in form values but not displayed */}
-
                 {!isOauthSession && (
                   <div className="grid grid-cols-1 gap-2">
                     <FormikPassword label="Password" name="password" />
@@ -260,5 +254,14 @@ export default function CompleteProfileOrSignUp() {
         </div>
       </div>
     </div>
+  );
+}
+
+// 2. الجزء الأخير: تغليف الصفحة بـ Suspense وحل مشكلة الـ Build
+export default function CompleteProfileOrSignUp() {
+  return (
+    <Suspense fallback={<FullPageLoader message="Loading..." />}>
+      <SignUpContent />
+    </Suspense>
   );
 }
