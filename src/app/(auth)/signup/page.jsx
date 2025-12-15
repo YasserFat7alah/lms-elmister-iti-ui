@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Formik, Form } from "formik";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { signupSchema } from "@/lib/validations";
 import { useRegisterMutation } from "@/redux/api/endPoints/usersApiSlice";
@@ -13,6 +13,7 @@ import { Spinner, FullPageLoader } from "@/components/shared/Loader";
 import FormikInput from "@/components/authComponents/FormikInput";
 import FormikPassword from "@/components/authComponents/FormikPassword";
 import FormikSelect from "@/components/authComponents/FormikSelect";
+import FormikPhoneInput from "@/components/authComponents/FormikPhoneInput";
 import Image from "next/image";
 // import logo from "@/assets/images/logo.png"; // Removed
 import { BASE_URL, USERS_URL_DATA } from "@/constants";
@@ -20,12 +21,19 @@ import { BASE_URL, USERS_URL_DATA } from "@/constants";
 
 export default function CompleteProfileOrSignUp() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useDispatch();
   const [register, { isLoading: isRegistering }] = useRegisterMutation();
 
   const [serverError, setServerError] = useState("");
   const [loadingSession, setLoadingSession] = useState(true);
   const [isOauthSession, setIsOauthSession] = useState(false);
+  
+  // Get role from query params, default to "parent"
+  const roleFromQuery = searchParams.get("role");
+  const validRoles = ["admin", "teacher", "parent", "student"];
+  const defaultRole = validRoles.includes(roleFromQuery) ? roleFromQuery : "parent";
+  
   const [initialValues, setInitialValues] = useState({
     name: "",
     email: "",
@@ -34,7 +42,7 @@ export default function CompleteProfileOrSignUp() {
     age: "",
     gender: "male",
     phone: "",
-    role: "parent",
+    role: defaultRole, // Set implicitly based on query param or default to "parent"
   });
 
   useEffect(() => {
@@ -66,7 +74,7 @@ export default function CompleteProfileOrSignUp() {
           age: user.age ? String(user.age) : prev.age,
           gender: user.gender || prev.gender,
           phone: user.phone || prev.phone,
-          role: user.role || prev.role,
+          role: defaultRole, // Always use query param role or default to "parent" (implicit)
         }));
 
         setLoadingSession(false);
@@ -82,7 +90,8 @@ export default function CompleteProfileOrSignUp() {
     setServerError("");
     try {
       const { confirmPassword, ...rest } = values;
-      const payload = { ...rest, role: values.role || "parent" };
+      // Role is set implicitly: use query param role or default to "parent"
+      const payload = { ...rest, role: defaultRole };
       if (payload.age) payload.age = Number(payload.age);
 
       const res = await register(payload).unwrap();
@@ -93,7 +102,7 @@ export default function CompleteProfileOrSignUp() {
       const role = user?.role;
       const map = {
         admin: "/dashboard/admin/dashboard",
-        teacher: "/dashboard/teacher/analytics",
+        teacher: "/completeProfile", // Teachers must complete profile first
         student: "/dashboard/student/my-learning",
         parent: "/dashboard/parent/overview",
       };
@@ -113,7 +122,7 @@ export default function CompleteProfileOrSignUp() {
         phone: values.phone,
         age: values.age ? Number(values.age) : undefined,
         gender: values.gender,
-        role: values.role,
+        role: defaultRole, // Use implicit role from query param or default to "parent"
       };
 
       const res = await fetch(`${BASE_URL}/auth/complete-profile`, {
@@ -177,12 +186,14 @@ export default function CompleteProfileOrSignUp() {
 
           <div className="grid gap-1 text-center mb-4">
             <h1 className="text-2xl font-bold">
-              {isOauthSession ? "Complete your profile" : "Create your account"}
+              {isOauthSession ? "Complete your profile" : defaultRole === "teacher" ? "Become an Instructor" : "Create your account"}
             </h1>
             <p className="text-xs text-muted-foreground">
               {isOauthSession
                 ? "We got your Google info. Please complete the missing fields."
-                : "Sign up to get started."}
+                : defaultRole === "teacher" 
+                  ? "Join our teaching community and start sharing your knowledge."
+                  : "Sign up to get started."}
             </p>
           </div>
 
@@ -204,7 +215,9 @@ export default function CompleteProfileOrSignUp() {
                   />
                 </div>
 
-                <FormikInput label="Phone Number" name="phone" placeholder="+20..." />
+                <FormikPhoneInput label="Phone Number" name="phone" placeholder="+20..." />
+
+                {/* Role is set implicitly based on query param or defaults to "parent" - included in form values but not displayed */}
 
                 {!isOauthSession && (
                   <div className="grid grid-cols-1 gap-2">

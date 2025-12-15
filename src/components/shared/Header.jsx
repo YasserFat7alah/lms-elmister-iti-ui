@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu, X, LogOut, LayoutDashboard, Search, User } from "lucide-react";
@@ -8,8 +8,10 @@ import { apiSlice } from "@/redux/api/apiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlice";
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
+import { useGetPublicCoursesQuery, useGetPublicTeachersQuery } from "@/redux/api/endPoints/publicApiSlice";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -20,13 +22,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-import logo from "@/assets/images/logo.svg";
 import { FiLogIn, FiUserPlus } from "react-icons/fi";
+import { Spinner } from "@/components/shared/Loader";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  // Search State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const searchContainerRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -35,9 +45,63 @@ export function Header() {
   const { userInfo } = useSelector((state) => state.auth);
   const [logoutApiCall] = useLogoutApiMutation();
 
+  // Debounce Logic
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500); // 500ms debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+  // Search Queries - First page only, max 5 results
+  const { data: coursesData, isFetching: isFetchingCourses } = useGetPublicCoursesQuery(
+    { search: debouncedSearchTerm, page: 1, limit: 5 },
+    { skip: !debouncedSearchTerm }
+  );
+
+  const { data: teachersData, isFetching: isFetchingTeachers } = useGetPublicTeachersQuery(
+    { search: debouncedSearchTerm, page: 1, limit: 5 },
+    { skip: !debouncedSearchTerm }
+  );
+
+  const isSearching = isFetchingCourses || isFetchingTeachers;
+  const courses = coursesData?.data || [];
+  const teachers = teachersData?.data?.users || [];
+  const coursesTotal = coursesData?.total || 0;
+  const teachersTotal = teachersData?.total || 0;
+  const hasResults = courses.length > 0 || teachers.length > 0;
+
   useEffect(() => {
     setIsMounted(true);
+
+    // Close search results on outside click
+    const handleClickOutside = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setShowResults(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      setShowResults(true);
+    } else {
+      setShowResults(false);
+    }
+  }, [debouncedSearchTerm]);
+
+  // Focus input when search is expanded
+  useEffect(() => {
+    if (isSearchExpanded && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchExpanded]);
 
   const user = isMounted ? userInfo?.user : null;
 
@@ -53,6 +117,30 @@ export function Header() {
 
   const getInitials = (name) => (name ? name.substring(0, 1).toUpperCase() : "U");
 
+  const clearSearch = () => {
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
+    setShowResults(false);
+  };
+
+  const handleSearchBlur = (e) => {
+    // Don't close if clicking on search results
+    if (searchContainerRef.current && searchContainerRef.current.contains(e.relatedTarget)) {
+      return;
+    }
+    // Close if search is empty - use setTimeout to allow click events to fire first
+    setTimeout(() => {
+      if (!searchTerm && searchContainerRef.current && !searchContainerRef.current.contains(document.activeElement)) {
+        setIsSearchExpanded(false);
+        setShowResults(false);
+      }
+    }, 200);
+  };
+
+  const handleSearchExpand = () => {
+    setIsSearchExpanded(true);
+  };
+
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
@@ -61,8 +149,6 @@ export function Header() {
     { label: "Contact us", href: "/contact" },
     { label: "About us", href: "/about" },
   ];
-
-
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-200" style={{ ["--header-height"]: "4.5rem" }}>
@@ -76,7 +162,7 @@ export function Header() {
             </Link>
           </div>
 
-          {/* DESKTOP NAV LINKS (Centered-ish) */}
+          {/* DESKTOP NAV LINKS */}
           <div className="hidden lg:flex items-center gap-5 xl:gap-10 shrink-0">
             {navItems.filter(item => item.label !== "Blog").map((item) => {
               const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
@@ -103,15 +189,158 @@ export function Header() {
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
 
             {/* SEARCH BAR (Desktop) */}
-            <div className="hidden lg:flex relative w-full lg:max-w-[140px] xl:max-w-[260px] transition-all duration-300 focus-within:max-w-[300px]">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search..."
-                className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-full leading-5 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-[#FF0055] focus:border-[#FF0055] text-sm transition-all shadow-sm hover:bg-white truncate"
-              />
+            <div className="hidden lg:block relative" ref={searchContainerRef}>
+              {!isSearchExpanded ? (
+                <button
+                  onClick={handleSearchExpand}
+                  className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+                  aria-label="Open search"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
+              ) : (
+                <div className="relative w-full max-w-[300px] transition-all duration-300 ease-in-out animate-in slide-in-from-right fade-in">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-gray-400" />
+                    </div>
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      placeholder="Search for courses, teachers"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onFocus={() => { if (debouncedSearchTerm) setShowResults(true); }}
+                      onBlur={handleSearchBlur}
+                      className="block w-full pl-9 pr-8 py-2 border border-gray-200 rounded-full leading-5 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-[#FF0055] focus:border-[#FF0055] text-sm transition-all shadow-sm hover:bg-white"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={clearSearch}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      >
+                        {isSearching ? <Spinner size={14} /> : <X className="h-4 w-4" />}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* SEARCH RESULTS OVERLAY */}
+                  {showResults && debouncedSearchTerm && (
+                    <div className="absolute top-full mt-2 w-[500px] -right-10 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                      <div className="flex h-[400px]">
+                        {/* Courses Column */}
+                        <div className="flex-1 overflow-y-auto border-r border-gray-100 p-2">
+                          <h3 className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider sticky top-0 bg-white/95 backdrop-blur-sm z-10 flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                            Courses ({coursesTotal})
+                          </h3>
+                          <div className="space-y-1">
+                            {isFetchingCourses ? (
+                              <div className="p-4 text-center text-sm text-gray-500">Loading courses...</div>
+                            ) : courses.length > 0 ? (
+                              courses.map(course => (
+                                <Link
+                                  key={course._id}
+                                  href={`/courses/${course._id}`}
+                                  className="block p-2 hover:bg-gray-50 rounded-lg transition-colors group"
+                                  onClick={() => setShowResults(false)}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="relative w-10 h-10 rounded-md overflow-hidden bg-gray-100 shrink-0">
+                                      {course.thumbnail?.url ? (
+                                        <Image src={course.thumbnail.url} alt={course.title} fill className="object-cover" />
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">N/A</div>
+                                      )}
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium text-gray-900 group-hover:text-[#FF0055] line-clamp-2 leading-snug">
+                                        {course.title}
+                                      </p>
+                                      <p className="text-xs text-gray-500 mt-0.5">{course.teacher?.name}</p>
+                                    </div>
+                                  </div>
+                                </Link>
+                              ))
+                            ) : (
+                              <div className="p-4 text-center text-sm text-gray-400">No courses found</div>
+                            )}
+                          </div>
+
+                          {/* View All Courses Link - Only show if total exceeds limit */}
+                          {coursesTotal > 5 && (
+                            <div className="border-t border-gray-100 p-2">
+                              <Link
+                                href={`/courses?search=${encodeURIComponent(debouncedSearchTerm)}`}
+                                className="block text-center text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline py-1.5 rounded-md hover:bg-blue-50 transition-colors"
+                                onClick={() => setShowResults(false)}
+                              >
+                                ...View All Courses
+                              </Link>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Teachers Column */}
+                        <div className="flex-1 overflow-y-auto p-2">
+                          <h3 className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider sticky top-0 bg-white/95 backdrop-blur-sm z-10 flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF0055]"></span>
+                            Teachers ({teachersTotal})
+                          </h3>
+                          <div className="space-y-1">
+                            {isFetchingTeachers ? (
+                              <div className="p-4 text-center text-sm text-gray-500">Loading teachers...</div>
+                            ) : teachers.length > 0 ? (
+                              teachers.map(teacher => {
+                                // Use username if available, otherwise fall back to _id
+                                const userIdentifier = teacher.username || teacher._id;
+                                return (
+                                  <Link
+                                    key={teacher._id}
+                                    href={`/users/${userIdentifier}`}
+                                    className="block p-2 hover:bg-gray-50 rounded-lg transition-colors group"
+                                    onClick={() => setShowResults(false)}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <Avatar className="h-8 w-8 border border-gray-100">
+                                        <AvatarImage src={teacher.avatar?.url} />
+                                        <AvatarFallback>{getInitials(teacher.name)}</AvatarFallback>
+                                      </Avatar>
+                                      <div>
+                                        <p className="text-sm font-medium text-gray-900 group-hover:text-[#FF0055]">
+                                          {teacher.name}
+                                        </p>
+                                        <p className="text-xs text-gray-500 truncate max-w-[120px]">
+                                          {teacher.subjects?.[0] || teacher.bio?.substring(0, 20) || 'Instructor'}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </Link>
+                                );
+                              })
+                            ) : (
+                              <div className="p-4 text-center text-sm text-gray-400">No teachers found</div>
+                            )}
+                          </div>
+
+                          {/* View All Teachers Link - Only show if total exceeds limit */}
+                          {teachersTotal > 5 && (
+                            <div className="border-t border-gray-100 p-2">
+                              <Link
+                                href={`/teachers?search=${encodeURIComponent(debouncedSearchTerm)}`}
+                                className="block text-center text-xs font-medium text-[#FF0055] hover:text-[#D90045] hover:underline py-1.5 rounded-md hover:bg-pink-50 transition-colors"
+                                onClick={() => setShowResults(false)}
+                              >
+                                ...View All Teachers
+                              </Link>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* SEARCH ICON (Mobile) */}
@@ -122,24 +351,27 @@ export function Header() {
               <Search size={20} />
             </button>
 
-            {/* MOBILE SEARCH OVERLAY */}
+            {/* MOBILE SEARCH OVERLAY (Simplified for mobile) */}
             <div
-              className={`absolute inset-0 bg-white z-50 flex items-center px-4 transition-all duration-300 ease-in-out ${isMobileSearchOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
+              className={`absolute inset-0 bg-white z-50 flex flex-col px-4 pt-4 transition-all duration-300 ease-in-out ${isMobileSearchOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
                 }`}
             >
-              <div className="relative w-full flex items-center gap-2">
+              <div className="relative w-full flex items-center gap-2 mb-4">
                 <Search className="h-5 w-5 text-gray-400 absolute left-3" />
                 <input
                   type="text"
-                  placeholder="Search..."
-                  // Auto-focus when opened logic can be handled via ref or simple autoFocus if re-rendered
+                  placeholder="Search for courses, teachers"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   autoFocus
                   className="w-full pl-10 pr-10 py-2 border border-gray-200 rounded-full bg-gray-50 focus:outline-none focus:ring-1 focus:ring-[#FF0055]"
                 />
-                <button onClick={() => setIsMobileSearchOpen(false)} className="p-2 text-gray-500 hover:text-gray-700">
+                <button onClick={() => { setIsMobileSearchOpen(false); clearSearch(); }} className="p-2 text-gray-500 hover:text-gray-700">
                   <X size={20} />
                 </button>
               </div>
+
+              {/* Mobile Results could go here if requested, but maintaining simple layout for now per user request focused on nav bar */}
             </div>
 
             {/* AUTH / PROFILE */}
@@ -165,19 +397,24 @@ export function Header() {
                     </button>
                   </DropdownMenuTrigger>
 
-                  <DropdownMenuContent className="w-56 mt-2" align="end" forceMount>
-                    <DropdownMenuLabel>
+                  <DropdownMenuContent className="w-60 mt-2" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="font-medium text-gray-900">{user.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                        <p className="text-sm font-medium leading-none truncate">{user.name}</p>
+                        <p className="text-xs leading-none text-muted-foreground truncate">{user.email}</p>
+                        <div className="pt-1">
+                          <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold">
+                            {user.role || ''}
+                          </Badge>
+                        </div>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => router.push("/dashboard")} className="cursor-pointer">
-                      <LayoutDashboard className="mr-2 h-4 w-4 text-gray-500" /> Dashboard
+                    <DropdownMenuItem onClick={() => router.push(`/dashboard/${user?.role}`)} className="cursor-pointer">
+                      <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer">
-                      <User className="mr-2 h-4 w-4 text-gray-500" /> Profile
+                    <DropdownMenuItem onClick={() => router.push(`/users/${user?.username}`)} className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" /> Public Profile
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">

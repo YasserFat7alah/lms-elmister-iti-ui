@@ -4,10 +4,11 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  Menu, LogOut, LayoutDashboard, Search, User, Bell, Settings
+  Menu, LogOut, LayoutDashboard, Search, User, Bell, AlertTriangle
 } from "lucide-react";
 import { logout } from "@/redux/slices/authSlice";
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
+import { isTeacherProfileComplete } from "@/lib/utils/teacherProfile";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 const LMSNavbar = ({ setSidebarOpen }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -35,6 +37,7 @@ const LMSNavbar = ({ setSidebarOpen }) => {
   }, []);
 
   const user = isMounted ? userInfo?.user : null;
+  const isProfileIncomplete = user && user.role === "teacher" && !isTeacherProfileComplete(user);
 
   const handleLogout = async () => {
     try {
@@ -52,7 +55,28 @@ const LMSNavbar = ({ setSidebarOpen }) => {
   if (!isMounted || !user) return <div className="h-16 bg-white border-b border-gray-200 animate-pulse"></div>;
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-white border-b border-gray-200 h-16">
+    <>
+      {/* Warning Banner for Incomplete Teacher Profile */}
+      {isProfileIncomplete && (
+        <div className="sticky top-0 z-40 w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg">
+          <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
+            <div className="flex items-center gap-3 flex-1">
+              <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+              <p className="text-sm font-medium">
+                Please complete your profile to access all dashboard features.
+              </p>
+            </div>
+            <Link
+              href="/completeProfile"
+              className="ml-4 px-4 py-1.5 bg-white text-orange-600 rounded-md text-sm font-semibold hover:bg-orange-50 transition-colors whitespace-nowrap"
+            >
+              Complete Profile
+            </Link>
+          </div>
+        </div>
+      )}
+
+      <header className={`sticky ${isProfileIncomplete ? 'top-[57px]' : 'top-0'} z-30 w-full bg-white border-b border-gray-200 h-16`}>
       <div className="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
 
         <div className="flex items-center gap-4 flex-1">
@@ -110,14 +134,11 @@ const LMSNavbar = ({ setSidebarOpen }) => {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/dashboard/teacher/analytics' : '/dashboard/student/my-learning')} className="cursor-pointer">
+              <DropdownMenuItem onClick={() => router.push(`/dashboard/${user?.role}`)} className="cursor-pointer">
                 <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push(user?.role === 'teacher' ? '/dashboard/teacher/profile' : '/dashboard/student/profile')} className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" /> My Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/dashboard/settings')} className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" /> Settings
+              <DropdownMenuItem onClick={() => router.push(`/users/${user?.username}`)} className="cursor-pointer">
+                <User className="mr-2 h-4 w-4" /> Public Profile
               </DropdownMenuItem>              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" /> Log out
@@ -127,6 +148,7 @@ const LMSNavbar = ({ setSidebarOpen }) => {
         </div>
       </div>
     </header>
+    </>
   );
 }
 

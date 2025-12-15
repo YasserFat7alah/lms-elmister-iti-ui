@@ -368,11 +368,15 @@ const UserProfileContent = () => {
 
     if (userLoading) return <div className="min-h-screen flex items-center justify-center"><Spinner size={40} /></div>;
     if (userError || !user) {
+        // Check if identifier looks like a MongoDB ObjectId (24 hex characters)
+        const isObjectId = username && /^[0-9a-fA-F]{24}$/.test(username);
+        const displayIdentifier = isObjectId ? username : `@${username}`;
+        
         return (
             <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-4">
                 <div className="text-6xl mb-4">😕</div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">User not found</h1>
-                <p className="text-gray-500 mb-6">The user @{username} does not exist or is unavailable.</p>
+                <p className="text-gray-500 mb-6">The user {displayIdentifier} does not exist or is unavailable.</p>
                 <Button onClick={() => router.push('/teachers')} variant="outline">Browse Teachers</Button>
             </div>
         );

@@ -98,11 +98,12 @@ export const publicApiSlice = apiSlice.injectEndpoints({
             providesTags: ["Teachers"],
         }),
         getUserByUsername: builder.query({
-            query: (username) => ({
-                url: `/public/users/${username}`,
+            query: (identifier) => ({
+                // identifier can be username or email - encode it for URL safety
+                url: `/public/users/${encodeURIComponent(identifier)}`,
                 method: "GET",
             }),
-            providesTags: (result, error, username) => [{ type: "Users", id: username }],
+            providesTags: (result, error, identifier) => [{ type: "Users", id: identifier }],
         }),
     }),
 });

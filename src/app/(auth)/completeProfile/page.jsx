@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
-import { useCompleteProfileMutation } from "@/redux/api/endPoints/usersApiSlice"; 
+import { useDispatch } from "react-redux";
+import { useCompleteProfileMutation, useGetMeQuery } from "@/redux/api/endPoints/usersApiSlice"; 
+import { setCredentials } from "@/redux/slices/authSlice";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 import FormikInput from "@/components/authComponents/FormikInput";
@@ -26,7 +28,9 @@ const completeProfileSchema = Yup.object().shape({
 
 export default function CompleteProfilePage() {
   const router = useRouter();
-const [completeProfile, { isLoading }] = useCompleteProfileMutation();
+  const dispatch = useDispatch();
+  const [completeProfile, { isLoading }] = useCompleteProfileMutation();
+  const { refetch: refetchUser } = useGetMeQuery();
   const [serverError, setServerError] = useState("");
   const initialValues = {
     gender: "male",
@@ -58,7 +62,20 @@ const handleSubmit = async (values, { setSubmitting }) => {
 
       console.log("Sending Flat Payload:", payload);
 
-const res = await completeProfile(payload).unwrap();
+      await completeProfile(payload).unwrap();
+      
+      // Refresh user data to get updated teacherData
+      try {
+        const userRes = await refetchUser();
+        const userData = userRes.data?.data || userRes.data;
+        if (userData?.user) {
+          dispatch(setCredentials({ user: userData.user, accessToken: userData.accessToken || null }));
+        }
+      } catch (err) {
+        console.warn("Failed to refresh user data:", err);
+      }
+      
+      // Redirect to dashboard
       router.push("/dashboard/teacher/analytics");
       
     } catch (err) {

@@ -1,18 +1,37 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import Sidebar from "@/components/DashboardComponents/Sidebar/Sidebar";
 import LMSNavbar from "@/components/shared/dashboard/LMSNavbar";
 import { FullPageLoader } from "@/components/shared/Loader";
+import { isTeacherProfileComplete } from "@/lib/utils/teacherProfile";
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    // Check if teacher profile is complete when accessing teacher dashboard
+    if (isMounted && userInfo?.user) {
+      const user = userInfo.user;
+      const isTeacherRoute = pathname?.startsWith("/dashboard/teacher");
+      const isCompleteProfileRoute = pathname === "/completeProfile";
+      
+      if (isTeacherRoute && !isCompleteProfileRoute && user.role === "teacher") {
+        if (!isTeacherProfileComplete(user)) {
+          router.replace("/completeProfile");
+        }
+      }
+    }
+  }, [isMounted, userInfo, pathname, router]);
 
   if (!isMounted || !userInfo) {
     return <FullPageLoader message="Initializing Dashboard..." />;

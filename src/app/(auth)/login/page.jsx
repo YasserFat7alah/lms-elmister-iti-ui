@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Formik, Form } from "formik";
 import { loginSchema } from "@/lib/validations";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -10,14 +10,10 @@ import { setCredentials } from "@/redux/slices/authSlice";
 import { Button } from "@/components/ui/button";
 import FormikInput from "@/components/authComponents/FormikInput";
 import FormikPassword from "@/components/authComponents/FormikPassword";
-import { Spinner } from "@/components/shared/Loader";
-import { GraduationCap, HomeIcon } from "lucide-react";
+import { Spinner, FullPageLoader } from "@/components/shared/Loader";
 import Image from "next/image";
-import logo from "@/assets/images/logo.png";
 import { BASE_URL, USERS_URL_DATA } from "@/constants";
 import { toast } from "react-hot-toast";
-
-import { Suspense } from "react";
 
 function LoginContent() {
   const router = useRouter();
@@ -45,7 +41,6 @@ function LoginContent() {
 
     (async () => {
       setOauthProcessing(true);
-      oauthToastId.current = toast.loading("Signing in with Google...");
       try {
         const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
           method: "GET",
@@ -65,12 +60,12 @@ function LoginContent() {
           }
           const role = user?.role;
           const dashboardPaths = {
-            admin: "/dashboard/admin/analytics",
+            admin: "/dashboard/admin/dashboard",
             teacher: "/dashboard/teacher/analytics",
             student: "/dashboard/student/my-learning",
             parent: "/dashboard/parent/overview",
           };
-          toast.success("Signed in with Google", { id: oauthToastId.current });
+          toast.success("Signed in with Google");
           router.push(dashboardPaths[role] || "/");
           return;
         } else {
@@ -78,14 +73,13 @@ function LoginContent() {
             window.history.replaceState({}, "", window.location.pathname);
           }
           setServerError("Google sign-in failed to validate session. Please login manually.");
-          toast.error("Google sign-in validation failed", { id: oauthToastId.current });
+          toast.error("Google sign-in validation failed");
         }
       } catch (err) {
         setServerError("Network error during Google sign-in. Please try again.");
-        toast.error("Network error during Google sign-in", { id: oauthToastId.current });
+        toast.error("Network error during Google sign-in");
       } finally {
         setOauthProcessing(false);
-        oauthToastId.current = null;
       }
     })();
   }, [searchParams, dispatch, router]);
@@ -116,74 +110,78 @@ function LoginContent() {
     }
   };
 
+  if (oauthProcessing) {
+    return <FullPageLoader message="Signing in..." />;
+  }
+
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 ">
-      <div className="hidden bg-muted lg:block relative h-screen overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1616531770192-6eaea74c2456?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
-          alt="Login Cover"
-          className="h-full w-full object-cover"
-        />
+    <div className="h-screen overflow-hidden lg:grid lg:grid-cols-2">
+      <div className="hidden lg:block relative h-full">
+        <div className="absolute inset-0 -z-10 h-full">
+          <Image
+            src="https://images.unsplash.com/photo-1616531770192-6eaea74c2456?q=80&w=870&auto=format&fit=crop"
+            alt="Login Cover"
+            fill
+            className="object-cover"
+            priority={false}
+          />
+        </div>
       </div>
 
-      <div className="flex items-center justify-center py-12 bg-gray-50">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="mb-4 flex items-center justify-between">
-            <Link href="/" className="inline-block px-2 py-2 bg-[#ff5372] text-white rounded hover:bg-[#ff274f]">
-              <HomeIcon className="inline-block h-5 w-5 mr-1" /> back
+      <div className="h-full overflow-y-auto flex items-center justify-center py-6 px-4 sm:px-8 bg-gray-50">
+        <div className="mx-auto w-full max-w-[450px] gap-4">
+          <div className="mb-6 flex justify-start">
+            <Link href="/" aria-label="Back to home">
+              <Image src="/logo.svg" alt="El-Mister Logo" width={120} height={32} priority />
             </Link>
-            <Image src={logo} alt="El-Mister Logo" className="h-12 w-auto" />
           </div>
 
-          <div className="grid gap-2 text-center">
-            <div className="flex justify-center mb-4 lg:hidden">
-              <GraduationCap className="h-10 w-10 text-primary" />
-            </div>
-            <h1 className="text-3xl font-bold">Welcome back!</h1>
-            <p className="text-balance text-muted-foreground">Enter your email and password below to login</p>
+          <div className="grid gap-1 text-center mb-4">
+            <h1 className="text-2xl font-bold">Welcome back!</h1>
+            <p className="text-xs text-muted-foreground">Enter your email and password below to login</p>
           </div>
 
           <Formik initialValues={{ email: "", password: "" }} validationSchema={loginSchema} onSubmit={handleLoginSubmit}>
-            {({ isSubmitting }) => (
-              <Form className="space-y-4">
+            {({ isSubmitting, isValid, dirty }) => (
+              <Form className="space-y-2">
                 <FormikInput label="Email" name="email" type="email" />
                 <FormikPassword label="Password" name="password" />
 
-                {(serverError || oauthProcessing) && (
-                  <div className="p-3 text-sm text-red-600 bg-red-100 rounded">
-                    {oauthProcessing ? "Processing Google sign-in..." : serverError}
-                  </div>
-                )}
-
-                <div className="text-center">
-                  <Link href="/forgetPassword" className="underline text-sm mt-2 font-semibold hover:text-primary">
-                    Forget your password?
+                <div className="text-right">
+                  <Link href="/forgetPassword" className="underline text-xs font-semibold hover:text-[#FF4667]">
+                    Forget password?
                   </Link>
                 </div>
 
-                <Button type="submit" className="w-full bg-[#FF4667]" disabled={isLoading || isSubmitting || oauthProcessing}>
-                  {isLoading || oauthProcessing ? <Spinner size={20} className="text-white" /> : "Login"}
+                {serverError && (
+                  <div className="p-2 text-xs text-red-600 bg-red-50 rounded">
+                    {serverError}
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full bg-[#FF4667] h-10" disabled={isLoading || isSubmitting || !isValid || !dirty}>
+                  {isLoading || isSubmitting ? <Spinner size={20} className="text-white" /> : "Login"}
                 </Button>
               </Form>
             )}
           </Formik>
 
-          <div className="text-center text-sm">
-            Don't have an account?
-            <Link href="/signup" className="underline font-semibold hover:text-primary mx-1">
-              Register
-            </Link>
-            <br />
+          <div className="mt-4 space-y-3 text-center">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-200" /></div>
+              <div className="relative flex justify-center text-xs uppercase"><span className="bg-gray-50 px-2 text-gray-500">Or continue with</span></div>
+            </div>
 
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-500 mb-2">login with</p>
-              <a
-                href={`${BASE_URL}/auth/google`}
-                className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"
-              >
-                <img className="h-5 w-5 mr-2" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
-                <span>Continue with Google</span>
-              </a>
+            <a
+              href={`${BASE_URL}/auth/google`}
+              className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition h-10"
+            >
+              <img className="h-4 w-4 mr-2" src="https://www.svgrepo.com/show/475656/google-color.svg" loading="lazy" alt="google logo" />
+              <span>Google</span>
+            </a>
+
+            <div className="text-sm">
+              Don't have an account? <Link href="/signup" className="underline font-semibold text-[#FF4667] ml-1">Register</Link>
             </div>
           </div>
         </div>
@@ -194,7 +192,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center"><Spinner /></div>}>
+    <Suspense fallback={<FullPageLoader message="Loading..." />}>
       <LoginContent />
     </Suspense>
   )
