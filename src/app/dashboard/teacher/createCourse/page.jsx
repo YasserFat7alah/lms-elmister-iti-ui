@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { Users, CheckCircle2, Lock, Edit3, Calendar, DollarSign, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import MediaUploader from "@/components/teacherCreateCourse/MediaUploader";
-import GroupModal from "@/components/teacherCreateCourse/GroupModal";
+import MediaUploader from "@/components/TeacherCreateCourse/MediaUploader";
+import GroupModal from "@/components/TeacherCreateCourse/GroupModal";
 import { useCreateCourseMutation, useUpdateCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
 import { useCreateGroupMutation } from "@/redux/api/endPoints/groupsApiSlice";
-import CourseBasicInfo from "@/components/teacherCreateCourse/CourseBasicInfo";
+import CourseBasicInfo from "@/components/TeacherCreateCourse/CourseBasicInfo";
 
 const DAY_MAP_TO_BACKEND = {
   Saturday: "sat",
