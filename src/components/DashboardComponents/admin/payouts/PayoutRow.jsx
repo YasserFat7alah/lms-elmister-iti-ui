@@ -2,24 +2,23 @@
 import { Button } from '@/components/ui/button';
 import { Check, Eye, Trash2, X } from 'lucide-react';
 import React from 'react'
-import StatusBadge from './StatusBadge ';
+import StatusBadge from './StatusBadge';
 
 const PayoutRow = ({ payout, onView, onApprove, onReject, onDelete, isSelected, onToggleSelect }) => {
 
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-        });
-    };
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
 
 
   return (
-     <tr 
-      className={`border-b border-gray-100 transition-colors cursor-pointer ${
-        isSelected ? 'bg-[#392b80]/10' : 'hover:bg-gray-50'
-      }`}
+    <tr
+      className={`border-b border-gray-100 transition-colors cursor-pointer ${isSelected ? 'bg-[#392b80]/10' : 'hover:bg-gray-50'
+        }`}
       onClick={onToggleSelect}
     >
       <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>

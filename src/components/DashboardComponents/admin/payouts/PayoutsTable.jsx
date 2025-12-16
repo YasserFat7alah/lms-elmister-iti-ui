@@ -4,8 +4,8 @@ import { mockPayouts } from "@/data/mockPayouts";
 import { AlertCircle, Clock, CheckCircle, XCircle, DollarSign, Search, ChevronUp, ChevronDown, Eye, Trash2, Check, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import StatsCard from "./StatsCard";
-import ViewDetailsModal from "./ViewDetailsModal ";
-import ActionModal from "./ActionModal ";
+import ViewDetailsModal from "./ViewDetailsModal";
+import ActionModal from "./ActionModal";
 import BulkBtn from "../BulkBtn";
 import ConfirmDeletePopUp from "../newsletter/ConfirmDeletePopup";
 
@@ -31,7 +31,7 @@ const PayoutsPage = () => {
   // Filter data based on search term
   const filteredPayouts = React.useMemo(() => {
     return payouts.filter((p) => {
-      const matchesSearch = 
+      const matchesSearch =
         p.teacher.name.toLowerCase().includes(search.toLowerCase()) ||
         p.teacher._id.toLowerCase().includes(search.toLowerCase()) ||
         p.teacher.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -57,7 +57,7 @@ const PayoutsPage = () => {
     return [...dataToSort].sort((a, b) => {
       // Handle nested properties
       let aValue, bValue;
-      
+
       if (sortConfig.key === 'teacher') {
         aValue = a.teacher.name;
         bValue = b.teacher.name;
@@ -89,8 +89,8 @@ const PayoutsPage = () => {
     if (sortConfig.key !== key) {
       return <ChevronUp className="w-3 h-3 opacity-30" />;
     }
-    return sortConfig.direction === 'asc' 
-      ? <ChevronUp className="w-3 h-3" /> 
+    return sortConfig.direction === 'asc'
+      ? <ChevronUp className="w-3 h-3" />
       : <ChevronDown className="w-3 h-3" />;
   };
 
@@ -138,11 +138,11 @@ const PayoutsPage = () => {
         payouts.map((p) =>
           p._id === payout._id
             ? {
-                ...p,
-                status: "approved",
-                approvedBy: { _id: "admin_current", name: "Current Admin" },
-                adminNote: note || "Approved and scheduled for processing.",
-              }
+              ...p,
+              status: "approved",
+              approvedBy: { _id: "admin_current", name: "Current Admin" },
+              adminNote: note || "Approved and scheduled for processing.",
+            }
             : p
         )
       );
@@ -151,11 +151,11 @@ const PayoutsPage = () => {
         payouts.map((p) =>
           p._id === payout._id
             ? {
-                ...p,
-                status: "rejected",
-                rejectedAt: new Date().toISOString(),
-                adminNote: note,
-              }
+              ...p,
+              status: "rejected",
+              rejectedAt: new Date().toISOString(),
+              adminNote: note,
+            }
             : p
         )
       );
@@ -242,17 +242,17 @@ const PayoutsPage = () => {
         {/* Table */}
         <Card className="shadow-xl border border-gray-100 bg-white rounded-2xl overflow-hidden">
           {/* Table Header with Search, Filters and Bulk Actions */}
-          <div className="bg-gradient-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
+          <div className="bg-linear-to-r from-[#392b80c9]/20 to-indigo-500/5 p-4 border-b border-gray-100">
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 w-full">
               {/* Left side: Search and Status Filter */}
               <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:flex-1 lg:justify-end">
                 {/* Right side: Bulk Button */}
-              <div className="flex-shrink-0 lg:ml-4">
-                <BulkBtn
-                  selectedCount={selectedRows.length}
-                  onDelete={handleBulkDelete}
-                />
-              </div>
+                <div className="shrink-0 lg:ml-4">
+                  <BulkBtn
+                    selectedCount={selectedRows.length}
+                    onDelete={handleBulkDelete}
+                  />
+                </div>
                 {/* Search */}
                 <div className="relative lg:w-64 xl:w-72">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -281,7 +281,7 @@ const PayoutsPage = () => {
                 </div>
               </div>
 
-            
+
             </div>
           </div>
 
@@ -299,7 +299,7 @@ const PayoutsPage = () => {
                         className="w-4 h-4 text-[#392b80] rounded border-gray-300 focus:ring-[#392b80] cursor-pointer"
                       />
                     </th>
-                    <th 
+                    <th
                       className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort('teacher')}
                     >
@@ -308,7 +308,7 @@ const PayoutsPage = () => {
                         {getSortIcon('teacher')}
                       </div>
                     </th>
-                    <th 
+                    <th
                       className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort('amount')}
                     >
@@ -317,7 +317,7 @@ const PayoutsPage = () => {
                         {getSortIcon('amount')}
                       </div>
                     </th>
-                    <th 
+                    <th
                       className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort('status')}
                     >
@@ -326,7 +326,7 @@ const PayoutsPage = () => {
                         {getSortIcon('status')}
                       </div>
                     </th>
-                    <th 
+                    <th
                       className="px-4 py-3 text-left whitespace-nowrap text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort('requestedBy')}
                     >
@@ -335,7 +335,7 @@ const PayoutsPage = () => {
                         {getSortIcon('requestedBy')}
                       </div>
                     </th>
-                    <th 
+                    <th
                       className="px-4 py-3 text-left whitespace-nowrap text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort('approvedBy')}
                     >
@@ -344,7 +344,7 @@ const PayoutsPage = () => {
                         {getSortIcon('approvedBy')}
                       </div>
                     </th>
-                    <th 
+                    <th
                       className="px-4 py-3 text-left whitespace-nowrap text-xs font-bold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort('createdAt')}
                     >
@@ -363,11 +363,10 @@ const PayoutsPage = () => {
                     sortedData.map((payout) => (
                       <tr
                         key={payout._id}
-                        className={`transition-colors cursor-pointer ${
-                          selectedRows.includes(payout._id)
-                            ? "bg-[#392b80]/10"
-                            : "hover:bg-gray-50"
-                        }`}
+                        className={`transition-colors cursor-pointer ${selectedRows.includes(payout._id)
+                          ? "bg-[#392b80]/10"
+                          : "hover:bg-gray-50"
+                          }`}
                         onClick={() => toggleRowSelection(payout._id)}
                       >
                         <td className="pl-4 py-3">
@@ -389,12 +388,11 @@ const PayoutsPage = () => {
                           <p className="text-sm font-bold text-emerald-600">${payout.amount}</p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                            payout.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${payout.status === 'pending' ? 'bg-amber-100 text-amber-700' :
                             payout.status === 'approved' ? 'bg-blue-100 text-blue-700' :
-                            payout.status === 'paid' ? 'bg-green-100 text-green-700' :
-                            'bg-red-100 text-red-700'
-                          }`}>
+                              payout.status === 'paid' ? 'bg-green-100 text-green-700' :
+                                'bg-red-100 text-red-700'
+                            }`}>
                             {payout.status.charAt(0).toUpperCase() + payout.status.slice(1)}
                           </span>
                         </td>
@@ -492,11 +490,10 @@ const PayoutsPage = () => {
                 {sortedData.map((payout) => (
                   <div
                     key={payout._id}
-                    className={`p-4 border rounded-xl transition-all ${
-                      selectedRows.includes(payout._id)
-                        ? "bg-[#392b80]/10 border-[#392b80]"
-                        : "bg-white border-gray-200"
-                    }`}
+                    className={`p-4 border rounded-xl transition-all ${selectedRows.includes(payout._id)
+                      ? "bg-[#392b80]/10 border-[#392b80]"
+                      : "bg-white border-gray-200"
+                      }`}
                     onClick={() => toggleRowSelection(payout._id)}
                   >
                     <div className="space-y-4">
@@ -521,12 +518,11 @@ const PayoutsPage = () => {
                         </div>
 
                         {/* Status Badge */}
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                          payout.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${payout.status === 'pending' ? 'bg-amber-100 text-amber-700' :
                           payout.status === 'approved' ? 'bg-blue-100 text-blue-700' :
-                          payout.status === 'paid' ? 'bg-green-100 text-green-700' :
-                          'bg-red-100 text-red-700'
-                        }`}>
+                            payout.status === 'paid' ? 'bg-green-100 text-green-700' :
+                              'bg-red-100 text-red-700'
+                          }`}>
                           {payout.status.charAt(0).toUpperCase() + payout.status.slice(1)}
                         </span>
                       </div>
@@ -537,12 +533,12 @@ const PayoutsPage = () => {
                           <span className="font-medium min-w-16">Amount:</span>
                           <span className="font-bold text-emerald-600">${payout.amount}</span>
                         </div>
-                        
+
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <span className="font-medium min-w-16">Requested:</span>
                           <span className="truncate">{payout.requestedBy?.name || 'N/A'}</span>
                         </div>
-                        
+
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <span className="font-medium min-w-16">Approved:</span>
                           <span className="truncate">{payout.approvedBy?.name || 'Pending'}</span>
@@ -557,7 +553,7 @@ const PayoutsPage = () => {
                       {/* Action Buttons - Colored divs with icons */}
                       <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
                         {/* View Button */}
-                        <div 
+                        <div
                           className="flex-1 flex items-center justify-center p-2.5 bg-blue-50 text-blue-600 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -570,7 +566,7 @@ const PayoutsPage = () => {
                         {/* Conditional Approve/Reject Buttons */}
                         {payout.status === 'pending' && (
                           <>
-                            <div 
+                            <div
                               className="flex-1 flex items-center justify-center p-2.5 bg-green-50 text-green-600 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -579,7 +575,7 @@ const PayoutsPage = () => {
                             >
                               <Check className="w-4 h-4" />
                             </div>
-                            <div 
+                            <div
                               className="flex-1 flex items-center justify-center p-2.5 bg-red-50 text-red-600 rounded-lg cursor-pointer hover:bg-red-100 transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -592,7 +588,7 @@ const PayoutsPage = () => {
                         )}
 
                         {/* Delete Button */}
-                        <div 
+                        <div
                           className="flex-1 flex items-center justify-center p-2.5 bg-red-50 text-red-600 rounded-lg cursor-pointer hover:bg-red-100 transition-colors"
                           onClick={(e) => {
                             e.stopPropagation();

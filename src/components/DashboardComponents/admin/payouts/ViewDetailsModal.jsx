@@ -1,5 +1,5 @@
 import React from 'react'
-import StatusBadge from './StatusBadge ';
+import StatusBadge from './StatusBadge';
 import { Button } from '@/components/ui/button';
 import { DollarSign, X } from 'lucide-react';
 
@@ -18,16 +18,16 @@ const ViewDetailsModal = ({ payout, onClose }) => {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
-      <div 
+      <div
         className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#392b80]/5 to-indigo-500/5 p-6 border-b border-gray-200 rounded-t-2xl sticky top-0 bg-white z-10">
+        <div className="bg-linear-to-r from-[#392b80]/5 to-indigo-500/5 p-6 border-b border-gray-200 rounded-t-2xl sticky top-0 bg-white z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-[#392b80]/10 rounded-lg">
@@ -152,7 +152,7 @@ const ViewDetailsModal = ({ payout, onClose }) => {
         <div className="flex gap-3 p-6 pt-4 border-t border-gray-100">
           <button
             onClick={onClose}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl font-semibold hover:from-gray-600 hover:to-gray-700 transition-all hover:shadow-md"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-gray-500 to-gray-600 text-white rounded-xl font-semibold hover:from-gray-600 hover:to-gray-700 transition-all hover:shadow-md"
           >
             Close
           </button>
