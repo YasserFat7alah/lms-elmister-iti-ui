@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import SubscibedEmails from "@/components/DashboardComponents/admin/newsletter/SubscibedEmails";
 import StatsCardsLetter from "@/components/DashboardComponents/admin/newsletter/StateCardsLetter";
 import NewsletterTabel from "@/components/DashboardComponents/admin/newsletter/NewsletterTabel";
-import NewsPopup from "@/components/dashboardComponents/admin/newsletter/NewsPopup";
+
 import AddNewsLetterBtn from "@/components/dashboardComponents/admin/newsletter/AddNewsLetterBtn";
 import {
   useGetSubscribersQuery,
@@ -15,8 +15,9 @@ import { toast } from "react-hot-toast";
 import { Spinner } from "@/components/shared/Loader";
 
 import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin';
+import NewsPopup from "@/components/DashboardComponents/admin/newsletter/NewsPopup";
 
-const page = () => {
+const Page = () => {
   const { data: subscribersData, isLoading: isLoadingSubscribers } = useGetSubscribersQuery();
   const { data: newslettersData, isLoading: isLoadingNewsletters } = useGetNewslettersQuery();
   const [sendNewsletter, { isLoading: isSending }] = useSendNewsletterMutation();
@@ -157,4 +158,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

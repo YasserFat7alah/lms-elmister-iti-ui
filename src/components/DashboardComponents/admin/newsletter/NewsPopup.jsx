@@ -38,7 +38,7 @@ const NewsPopup = ({ editingItem, setIsPopupOpen, handleSend }) => {
     } else {
       formik.resetForm();
     }
-  }, [editingItem]);
+  }, [editingItem, formik]);
 
   const handleClose = () => {
     formik.resetForm();
