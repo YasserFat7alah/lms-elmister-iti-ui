@@ -6,7 +6,7 @@ export function middleware(request) {
   const searchParams = nextUrl.searchParams;
 
   const token = request.cookies.get("accessToken")?.value || request.cookies.get("token")?.value;
-  
+
   const refreshToken = request.cookies.get("refreshToken")?.value;
 
   const role = request.cookies.get("user_role")?.value || request.cookies.get("role")?.value;
@@ -18,18 +18,18 @@ export function middleware(request) {
   const isAuthPath = authPaths.some((p) => path.startsWith(p));
 
   if ((token || refreshToken) && isAuthPath && !oauthCallbackPathAllowed) {
-    if (role === "admin") return NextResponse.redirect(new URL("/dashboard/admin/dashboard", request.url));
-    if (role === "teacher") return NextResponse.redirect(new URL("/dashboard/teacher/analytics", request.url)); 
+    if (role === "admin") return NextResponse.redirect(new URL("/dashboard/admin", request.url));
+    if (role === "teacher") return NextResponse.redirect(new URL("/dashboard/teacher/analytics", request.url));
     if (role === "student") return NextResponse.redirect(new URL("/dashboard/student/my-learning", request.url));
     if (role === "parent") return NextResponse.redirect(new URL("/dashboard/parent/overview", request.url));
-    
+
     return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (path === "/completeProfile" && !token && !refreshToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-  
+
   if (path.startsWith("/dashboard") && !token && !refreshToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }

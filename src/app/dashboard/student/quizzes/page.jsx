@@ -42,7 +42,7 @@ const StudentQuizzesPage = () => {
             <div className="space-y-6">
                 <Breadcrumbs items={breadcrumbItems} className="w-fit" />
 
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-gradient-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-linear-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
                     <div>
                         <h1 className="text-3xl font-extrabold text-[#392b80] flex items-center gap-3">
                             My Quizzes
@@ -72,7 +72,9 @@ const StudentQuizzesPage = () => {
 
                         let statusColor = 'bg-blue-50 text-blue-700';
                         let StatusIcon = PlayCircle;
-                        let link = `/dashboard/student/quizzes/${quiz._id}/take`;
+
+                        // New Logic: Always go to Details Page
+                        let link = `/dashboard/student/quizzes/${quiz._id}`;
 
                         if (isGraded) {
                             if (isFailed) {
@@ -82,23 +84,16 @@ const StudentQuizzesPage = () => {
                                 statusColor = 'bg-green-50 text-green-700';
                                 StatusIcon = CheckCircle;
                             }
-                            link = `/dashboard/student/quizzes/${quiz._id}/result`;
                         } else if (isSubmitted) {
                             statusColor = 'bg-yellow-50 text-yellow-700';
                             StatusIcon = Clock;
-                            link = `/dashboard/student/quizzes/${quiz._id}/result`;
                         } else if (isOverdue) {
                             statusColor = 'bg-red-50 text-red-700';
                             StatusIcon = AlertCircle;
                         }
 
                         const handleQuizClick = (e) => {
-                            if (isOverdue) {
-                                e.preventDefault();
-                                toast.error("This quiz has passed its deadline.");
-                            } else {
-                                router.push(link);
-                            }
+                            router.push(link);
                         };
 
                         return (

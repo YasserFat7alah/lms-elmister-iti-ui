@@ -27,12 +27,12 @@ function SignUpContent() {
   const [serverError, setServerError] = useState("");
   const [loadingSession, setLoadingSession] = useState(true);
   const [isOauthSession, setIsOauthSession] = useState(false);
-  
+
   // Get role from query params, default to "parent"
   const roleFromQuery = searchParams.get("role");
   const validRoles = ["admin", "teacher", "parent", "student"];
   const defaultRole = validRoles.includes(roleFromQuery) ? roleFromQuery : "parent";
-  
+
   const [initialValues, setInitialValues] = useState({
     name: "",
     email: "",
@@ -42,6 +42,8 @@ function SignUpContent() {
     gender: "male",
     phone: "",
     role: defaultRole,
+    gradeLevel: "", // Added
+    specialization: "", // Added
   });
 
   useEffect(() => {
@@ -90,6 +92,10 @@ function SignUpContent() {
     try {
       const { confirmPassword, ...rest } = values;
       const payload = { ...rest, role: defaultRole };
+
+      // Sanitize payload
+      if (defaultRole !== 'student') delete payload.gradeLevel;
+      if (defaultRole !== 'teacher') delete payload.specialization;
       if (payload.age) payload.age = Number(payload.age);
 
       const res = await register(payload).unwrap();
@@ -187,7 +193,7 @@ function SignUpContent() {
             <p className="text-xs text-muted-foreground">
               {isOauthSession
                 ? "We got your Google info. Please complete the missing fields."
-                : defaultRole === "teacher" 
+                : defaultRole === "teacher"
                   ? "Join our teaching community and start sharing your knowledge."
                   : "Sign up to get started."}
             </p>
@@ -212,6 +218,31 @@ function SignUpContent() {
                 </div>
 
                 <FormikPhoneInput label="Phone Number" name="phone" placeholder="+20..." />
+
+                {defaultRole === "student" && (
+                  <FormikSelect
+                    label="Grade Level"
+                    name="gradeLevel"
+                    options={[
+                      { value: "1", label: "Grade 1" },
+                      { value: "2", label: "Grade 2" },
+                      { value: "3", label: "Grade 3" },
+                      { value: "4", label: "Grade 4" },
+                      { value: "5", label: "Grade 5" },
+                      { value: "6", label: "Grade 6" },
+                      { value: "7", label: "Grade 7" },
+                      { value: "8", label: "Grade 8" },
+                      { value: "9", label: "Grade 9" },
+                      { value: "10", label: "Grade 10" },
+                      { value: "11", label: "Grade 11" },
+                      { value: "12", label: "Grade 12" },
+                    ]}
+                  />
+                )}
+
+                {defaultRole === "teacher" && (
+                  <FormikInput label="Specialization" name="specialization" placeholder="e.g. Mathematics" />
+                )}
 
                 {!isOauthSession && (
                   <div className="grid grid-cols-1 gap-2">

@@ -15,7 +15,7 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
         // Teacher: Get My Quizzes
         getTeacherQuizzes: builder.query({
             query: () => ({
-                url: "/quizzes/my-quizzes",
+                url: "/quizzes/teacher/my-quizzes",
                 method: "GET",
             }),
             providesTags: ["Quizzes"],
@@ -42,7 +42,7 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
         // Student: Get All My Quizzes
         getStudentQuizzes: builder.query({
             query: () => ({
-                url: "/quizzes/student/my-quizzes",
+                url: "/quizzes/my-quizzes",
                 method: "GET",
             }),
             providesTags: ["Quizzes"],
@@ -79,7 +79,7 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
         // Parent: Get Child Quizzes (All)
         getChildQuizzes: builder.query({
             query: (studentId) => ({
-                url: `/quizzes/student/${studentId}/quizzes`,
+                url: `/quizzes/student/${studentId}`,
                 method: "GET",
             }),
             providesTags: ["Quizzes", "Submissions"],
@@ -101,7 +101,7 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
         // Shared: Get Submission by ID
         getSubmissionById: builder.query({
             query: (submissionId) => ({
-                url: `/quizzes/submissions/${submissionId}`,
+                url: `/quizzes/submission/${submissionId}`,
                 method: "GET"
             }),
             providesTags: ["Submissions"]
@@ -110,7 +110,7 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
         // Teacher: Grade Submission
         gradeSubmission: builder.mutation({
             query: ({ submissionId, additionalScore, feedback }) => ({
-                url: `/quizzes/submissions/${submissionId}/grade`,
+                url: `/quizzes/submission/${submissionId}/grade`,
                 method: "PATCH",
                 body: { additionalScore, feedback }
             }),

@@ -3,7 +3,7 @@
 import { useGetChildrenQuery } from "@/redux/api/endPoints/childrenApiSlice";
 import { useGetChildQuizzesQuery } from "@/redux/api/endPoints/quizzesApiSlice";
 import { useState } from "react";
-import { User, CheckCircle, Clock, AlertCircle, PlayCircle, Lock } from 'lucide-react';
+import { User, CheckCircle, Clock, AlertCircle, PlayCircle, Lock, FileText } from 'lucide-react';
 
 const ChildQuizzesList = ({ childId }) => {
     // New query that returns ALL quizzes with status
@@ -101,7 +101,7 @@ const ParentQuizzesPage = () => {
             <div className="space-y-6">
                 <Breadcrumbs items={breadcrumbItems} className="w-fit" />
 
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-gradient-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-linear-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
                     <div>
                         <h1 className="text-3xl font-extrabold text-[#392b80] flex items-center gap-3">
                             Children's Grades

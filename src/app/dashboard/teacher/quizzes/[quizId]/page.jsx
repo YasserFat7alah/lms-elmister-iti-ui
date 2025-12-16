@@ -72,7 +72,7 @@ const SubmissionReviewModal = ({ submissionId, onClose }) => {
 
                     {/* Questions & Answers */}
                     <div className="space-y-6">
-                        {quiz.questions.map((question, index) => {
+                        {quiz.questions?.map((question, index) => {
                             const studentAnswer = answers.find(a => a.questionId === question._id)?.answer;
                             const isCorrect = String(studentAnswer) === String(question.correctAnswer);
 
@@ -195,7 +195,7 @@ const QuizDetailsPage = () => {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-600 flex items-center text-sm"><FileText className="w-4 h-4 mr-2" /> Questions</span>
-                                    <span className="font-medium text-gray-900 text-sm">{quiz.questions.length}</span>
+                                    <span className="font-medium text-gray-900 text-sm">{quiz.questions?.length || 0}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-600 flex items-center text-sm"><CheckCircle className="w-4 h-4 mr-2" /> Total Points</span>
@@ -215,7 +215,7 @@ const QuizDetailsPage = () => {
                         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                             <h3 className="font-semibold text-gray-900 mb-4">Questions Preview</h3>
                             <div className="space-y-4">
-                                {quiz.questions.map((q, i) => (
+                                {quiz.questions?.map((q, i) => (
                                     <div key={i} className="p-3 bg-gray-50 rounded-lg text-sm">
                                         <p className="font-medium text-gray-800 mb-1">{i + 1}. {q.text}</p>
                                         <div className="flex justify-between text-xs text-gray-500">

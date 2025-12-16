@@ -3,6 +3,7 @@
 import { useGetTeacherQuizzesQuery } from "@/redux/api/endPoints/quizzesApiSlice";
 import { Plus, Calendar, Users, Clock, FileText, ChevronRight } from 'lucide-react';
 import Breadcrumbs from "@/components/shared/Breadcrumbs";
+import Link from "next/link";
 
 const TeacherQuizzesPage = () => {
     const { data, isLoading, isError } = useGetTeacherQuizzesQuery();
@@ -35,7 +36,7 @@ const TeacherQuizzesPage = () => {
             <div className="space-y-6">
                 <Breadcrumbs items={breadcrumbItems} className="w-fit" />
 
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-gradient-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-linear-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
                     <div>
                         <h1 className="text-3xl font-extrabold text-[#392b80] flex items-center gap-3">
                             My Quizzes
@@ -95,7 +96,7 @@ const TeacherQuizzesPage = () => {
                                     </div>
                                     <div className="flex items-center text-sm text-gray-600">
                                         <FileText className="w-4 h-4 mr-2 text-gray-400" />
-                                        <span>{quiz.questions.length} Questions</span>
+                                        <span>{quiz.questions?.length || 0} Questions</span>
                                     </div>
                                 </div>
 

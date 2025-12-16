@@ -71,7 +71,7 @@ export default function ChatWidget() {
     }
 
     return (
-        <div className="fixed bottom-5 left-5 z-[9999] font-sans" dir="auto">
+        <div className="fixed bottom-5 right-5 z-[9999] font-sans" dir="auto">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -82,14 +82,13 @@ export default function ChatWidget() {
                         style={{ maxHeight: "calc(100vh - 100px)", height: "500px" }}
                     >
                         {/* Header */}
-                        <div className="bg-[#2563EB] p-4 flex items-center justify-between text-white shadow-md">
+                        <div className="bg-[#FF0055] p-4 flex items-center justify-between text-white shadow-md">
                             <div className="flex items-center gap-3">
                                 <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm">
                                     <MessageCircle size={20} />
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-sm">El Mister AI</h3>
-                                    <p className="text-[10px] text-blue-100 opacity-90">Powered by Gemini & Llama 3</p>
                                 </div>
                             </div>
                             <button
@@ -112,7 +111,7 @@ export default function ChatWidget() {
                                 >
                                     <div
                                         className={`max-w-[85%] p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === "user"
-                                            ? "bg-[#2563EB] text-white rounded-br-none"
+                                            ? "bg-[#FF0055] text-white rounded-br-none"
                                             : "bg-white border border-gray-100 text-gray-800 rounded-bl-none"
                                             }`}
                                     >
@@ -145,7 +144,7 @@ export default function ChatWidget() {
                                     onClick={handleSend}
                                     disabled={!message.trim() || isLoading}
                                     className={`p-2 rounded-full transition-all duration-200 ${message.trim() && !isLoading
-                                        ? "bg-[#2563EB] text-white hover:bg-blue-700 shadow-md transform hover:scale-105"
+                                        ? "bg-[#FF0055] text-white hover:bg-pink-700 shadow-md transform hover:scale-105"
                                         : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                         }`}
                                 >
@@ -166,7 +165,7 @@ export default function ChatWidget() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsOpen(true)}
-                    className="bg-[#2563EB] hover:bg-blue-700 text-white p-4 rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center transition-all group"
+                    className="bg-[#FF0055] hover:bg-pink-700 text-white p-4 rounded-full shadow-lg shadow-pink-500/30 flex items-center justify-center transition-all group"
                 >
                     <MessageCircle size={28} className="group-hover:rotate-12 transition-transform" />
                 </motion.button>

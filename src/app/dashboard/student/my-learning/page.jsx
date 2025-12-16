@@ -93,7 +93,7 @@ export default function StudentDashboardPage() {
       <div className="space-y-6">
         <Breadcrumbs items={breadcrumbItems} className="w-fit" />
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-gradient-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-linear-to-r from-white to-gray-50 p-8 rounded-3xl border border-gray-100 shadow-sm">
           <div>
             <h1 className="text-3xl font-extrabold text-[#392b80] flex items-center gap-3">
               Welcome back, {userInfo?.user?.name?.split(' ')[0]}
@@ -140,16 +140,30 @@ export default function StudentDashboardPage() {
               <div className="divide-y divide-gray-50">
                 {todaysSessions.map(session => {
                   const isOnline = session.type === 'online' && session.meetingLink;
-                  const href = isOnline ? session.meetingLink : `/dashboard/student/my-learning/${session.groupId?._id || session.groupId}`;
+
+                  // Fix: Properly determine href for offline sessions
+                  // If groupId is populated (object), use its _id. If string, use as is. 
+                  // If groupId is missing, fallback to dashboard root or handle safely.
+                  const groupId = typeof session.groupId === 'object' ? session.groupId?._id : session.groupId;
+                  const href = isOnline
+                    ? session.meetingLink
+                    : groupId
+                      ? `/dashboard/student/my-learning/${groupId}`
+                      : '#'; // or some safe fallback
+
                   const LinkComponent = isOnline ? 'a' : Link;
+                  // If href is '#', we might want to prevent navigation or just let it be non-clickable visually?
+                  // But user wants it to "bring to something". 
+                  // Assuming "my-learning/[groupId]" is the "Course Details" or "Group Details" page.
+
                   const linkProps = isOnline ? { href, target: "_blank", rel: "noopener noreferrer" } : { href };
 
                   return (
-                    <LinkComponent key={session._id} {...linkProps} className="block group/item">
+                    <LinkComponent key={session._id} {...linkProps} className={`block group/item ${!isOnline && !groupId ? 'cursor-default pointer-events-none' : ''}`}>
                       <div className="p-6 hover:bg-gray-50 transition-colors duration-200 flex items-start gap-5 cursor-pointer">
                         <div className="bg-[#392b80]/5 text-[#392b80] rounded-2xl p-4 text-center min-w-[80px] group-hover/item:bg-[#392b80] group-hover/item:text-white transition-colors duration-300">
-                          <span className="block text-xs font-bold uppercase tracking-wider">{format(new Date(session.date), 'MMM')}</span>
-                          <span className="block text-2xl font-extrabold mt-1">{format(new Date(session.date), 'dd')}</span>
+                          <span className="block text-xs font-bold uppercase tracking-wider">{session.date ? format(new Date(session.date), 'MMM') : 'N/A'}</span>
+                          <span className="block text-2xl font-extrabold mt-1">{session.date ? format(new Date(session.date), 'dd') : '--'}</span>
                         </div>
                         <div className="flex-1 py-1">
                           <h4 className="font-bold text-lg text-gray-900 group-hover/item:text-[#392b80] transition-colors flex items-center gap-2">
@@ -211,7 +225,7 @@ export default function StudentDashboardPage() {
                     <Link href={`/dashboard/student/assignments/${assign._id}`} key={assign._id} className="block group">
                       <div className="p-4 flex items-center justify-between hover:bg-gray-50 rounded-2xl transition-colors cursor-pointer">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 shrink-0">
                             <FileText size={18} />
                           </div>
                           <div>
@@ -221,7 +235,7 @@ export default function StudentDashboardPage() {
                         </div>
                         <div className="text-right">
                           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-orange-700 bg-orange-50">
-                            Due {format(new Date(assign.dueDate), 'MMM dd')}
+                            Due {assign.dueDate ? format(new Date(assign.dueDate), 'MMM dd') : 'N/A'}
                           </span>
                         </div>
                       </div>
@@ -251,7 +265,7 @@ export default function StudentDashboardPage() {
                     <Link href={`/dashboard/student/quizzes/${quiz._id}/take`} key={quiz._id} className="block group">
                       <div className="p-4 flex items-center justify-between hover:bg-gray-50 rounded-2xl transition-colors cursor-pointer">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
                             <Trophy size={18} />
                           </div>
                           <div>
@@ -261,7 +275,7 @@ export default function StudentDashboardPage() {
                         </div>
                         <div className="text-right">
                           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-purple-700 bg-purple-50">
-                            {format(new Date(quiz.dueDate), 'MMM dd')}
+                            {quiz.dueDate ? format(new Date(quiz.dueDate), 'MMM dd') : 'N/A'}
                           </span>
                         </div>
                       </div>

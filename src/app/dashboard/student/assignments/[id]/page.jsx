@@ -7,6 +7,8 @@ import SubmissionEditor from "@/components/DashboardComponents/student/assignmen
 import ReadOnlyView from "@/components/DashboardComponents/student/assignments/ReadOnlyView";
 import { useSelector } from "react-redux";
 import { useGetStudentAssignmentDetailsQuery } from "@/redux/api/endPoints/assignmentsApiSlice";
+import { useSubmitAssignmentMutation } from "@/redux/api/endPoints/submissionsApiSlice";
+import { toast } from "react-hot-toast";
 
 // STATUS Constants
 export const STATUS = {
@@ -84,6 +86,7 @@ export default function AssignmentDetailPage() {
   const assignmentId = params.id;
 
   const { data: details, isLoading, isError, error } = useGetStudentAssignmentDetailsQuery(assignmentId);
+  const [submitAssignment, { isLoading: isSubmitting }] = useSubmitAssignmentMutation();
 
   const assignment = details?.data; // Direct assignment object
   const submission = details?.submission;
@@ -101,17 +104,21 @@ export default function AssignmentDetailPage() {
   const isLocked = status === STATUS.OVERDUE_SUBMITTED || status === STATUS.GRADED;
   const isMissed = status === STATUS.MISSED;
 
-  const handleSubmission = (values, resetForm) => {
-    console.log("Payload:", {
-      assignmentId: assignment._id,
-      studentId: userInfo.user._id,
-      content: values.content,
-      file: values.file,
-      isLate: isLateSubmission,
-      userInfo,
-    });
-    resetForm();
-    alert("Check console for submission object!");
+  const handleSubmission = async (values, resetForm) => {
+    try {
+      const formData = new FormData();
+      formData.append("content", values.content || "");
+      if (values.file) {
+        formData.append("document", values.file);
+      }
+
+      await submitAssignment({ assignmentId: assignment._id, formData }).unwrap();
+      toast.success("Assignment submitted successfully!");
+      resetForm();
+    } catch (err) {
+      console.error("Submission Error:", err);
+      toast.error(err?.data?.message || "Failed to submit assignment");
+    }
   };
 
   return (

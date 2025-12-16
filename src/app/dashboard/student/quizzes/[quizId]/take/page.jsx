@@ -72,7 +72,7 @@ const TakeQuizPage = () => {
         try {
             await submitQuiz({ quizId, answers: formattedAnswers }).unwrap();
             toast.success('Quiz submitted successfully!');
-            router.push(`/dashboard/student/quizzes/${quizId}/result`);
+            router.push('/dashboard/student/quizzes');
         } catch (error) {
             console.error('Error submitting quiz:', error);
             toast.error(`Failed to submit quiz: ${error.data?.message || 'Unknown error'}`);
@@ -96,7 +96,7 @@ const TakeQuizPage = () => {
                     <div className="flex justify-between items-center">
                         <div>
                             <h1 className="text-xl font-bold text-gray-900">{quiz.title}</h1>
-                            <p className="text-sm text-gray-500">{quiz.questions.length} Questions • {quiz.totalGrade} Points</p>
+                            <p className="text-sm text-gray-500">{quiz.questions?.length || 0} Questions • {quiz.totalGrade} Points</p>
                         </div>
                         {timeLeft !== null && (
                             <div className={`flex items-center gap-2 px-4 py-2 rounded-lg font-mono font-bold text-lg ${timeLeft < 60 ? 'bg-red-50 text-red-600' : 'bg-indigo-50 text-indigo-600'
@@ -109,7 +109,7 @@ const TakeQuizPage = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {quiz.questions.map((question, index) => (
+                    {quiz.questions?.map((question, index) => (
                         <div key={question._id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <div className="flex justify-between mb-4">
                                 <span className="font-semibold text-gray-900">Question {index + 1}</span>
@@ -119,7 +119,7 @@ const TakeQuizPage = () => {
                             <p className="text-lg text-gray-800 mb-6">{question.text}</p>
 
                             <div className="space-y-3">
-                                {question.type === 'mcq' && question.options.map((option, optIndex) => (
+                                {question.type === 'mcq' && question.options?.map((option, optIndex) => (
                                     <label key={optIndex} className={`flex items-center p-4 rounded-lg border cursor-pointer transition ${answers[question._id] === option
                                         ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                                         : 'border-gray-200 hover:border-gray-300'

@@ -53,7 +53,6 @@ const ROLE_LINKS = {
     { label: "Teachers", href: "/dashboard/parent/teachers", icon: Users },
     { label: "Payments", href: "/dashboard/parent/payments", icon: CreditCard },
     { label: "Messages", href: "/dashboard/parent/messages", icon: MessageSquare },
-    { label: "Notifications", href: "/dashboard/parent/notifications", icon: IoMdNotificationsOutline }
   ],
 
   admin: [
@@ -257,20 +256,6 @@ const Sidebar = ({ open, setOpen }) => {
                   <span>Support Center</span>
                 </Link>
               )}
-
-              <Link
-                href="/settings"
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                  ${pathname === '/settings'
-                    ? "bg-[#FF0055]/10 text-[#FF0055]"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }
-                `}
-              >
-                <Settings size={19} className={pathname === '/settings' ? "text-[#FF0055]" : "text-gray-400"} />
-                <span>Settings</span>
-              </Link>
 
               <button
                 onClick={handleLogout}
