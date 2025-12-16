@@ -1,11 +1,11 @@
 "use client"
 import React from 'react'
 import CourseTabs from "@/components/DashboardComponents/admin/courses/CourseTabs";
-import HeaderAdmin from '@/components/DashboardComponents/admin/HeaderAdmin';
 import { useGetCoursesQuery } from '@/redux/api/endPoints/coursesApiSlice';
 import CourseCardStates from '@/components/DashboardComponents/admin/courses/CourseCardStates';
+import HeaderAdmin from '@/components/DashboardComponents/admin/HeaderAdmin';
 
-const page = () => {
+const Page = () => {
 
   const { data } = useGetCoursesQuery();
 
@@ -31,5 +31,4 @@ const page = () => {
   )
 }
 
-export default page
-
+export default Page

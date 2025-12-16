@@ -3,7 +3,7 @@ import CourseTable from '@/components/shared/CourseTable'
 
 
 
-const page = () => {
+const Page = () => {
   return (
     <div>
 
@@ -13,4 +13,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

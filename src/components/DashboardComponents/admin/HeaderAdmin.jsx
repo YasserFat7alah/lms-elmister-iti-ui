@@ -1,4 +1,3 @@
-import { children } from '@/data/parentData'
 import React from 'react'
 
 const HeaderAdmin = ({ title, description, children }) => {

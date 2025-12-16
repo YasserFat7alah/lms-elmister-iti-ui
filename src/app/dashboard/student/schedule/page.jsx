@@ -3,7 +3,7 @@ import CourseTable from '@/components/shared/CourseTable';
 
 import Breadcrumbs from "@/components/shared/Breadcrumbs";
 
-const page = () => {
+const Page = () => {
   const breadcrumbItems = [
     { label: "Dashboard", href: "/dashboard/student" },
     { label: "Schedule" }
@@ -17,4 +17,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

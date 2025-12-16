@@ -15,7 +15,7 @@ import DeleteModal from "@/components/shared/DeleteModal";
 import { toast } from "react-hot-toast";
 
 
-const page = () => {
+const Page = () => {
     const { id } = useParams();
     const router = useRouter();
     const { data: childData, isLoading, isError, error } = useGetChildByIdQuery(id, {
@@ -191,4 +191,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

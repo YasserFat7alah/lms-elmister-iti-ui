@@ -9,7 +9,7 @@ import { Spinner } from '@/components/shared/Loader';
 
 import Breadcrumbs from "@/components/shared/Breadcrumbs";
 
-const page = () => {
+const Page = () => {
 
   const { data, isLoading, isError } = useGetAllUsersQuery({ limit: 1000 });
 
@@ -45,4 +45,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

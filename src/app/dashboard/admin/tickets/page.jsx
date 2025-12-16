@@ -2,7 +2,7 @@ import HeaderAdmin from '@/components/DashboardComponents/admin/HeaderAdmin'
 import TicketsTable from '@/components/DashboardComponents/admin/ticketsComponent/TicketsTable'
 import React from 'react'
 
-const page = () => {
+const Page = () => {
   return (
     <div className="space-y-6 p-6 min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Header */}
@@ -17,4 +17,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

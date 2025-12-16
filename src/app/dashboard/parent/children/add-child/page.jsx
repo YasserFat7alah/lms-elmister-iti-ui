@@ -4,7 +4,7 @@ import { IoReturnUpBack } from "react-icons/io5";
 import React from 'react'
 import BackBtn from '@/components/DashboardComponents/parent/mychildComponent/BackBtn';
 
-const page = () => {
+const Page = () => {
 
 
   return (
@@ -16,4 +16,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

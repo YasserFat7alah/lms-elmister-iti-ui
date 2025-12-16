@@ -6,7 +6,7 @@ import { PlusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
-const page = () => {
+const Page = () => {
   return (
     <div className="space-y-6">
       <div className='flex items-center justify-between'>
@@ -27,4 +27,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

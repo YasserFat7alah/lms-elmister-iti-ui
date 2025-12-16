@@ -1,8 +1,8 @@
 import React from 'react'
-import HeaderAdmin from '@/components/DashboardComponents/admin/HeaderAdmin'
 import SubscriptionsTabs from '@/components/DashboardComponents/admin/subscriptionComponents/SubscriptionsTabs';
+import HeaderAdmin from '@/components/DashboardComponents/admin/HeaderAdmin';
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       {/* Header */}
@@ -16,4 +16,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
