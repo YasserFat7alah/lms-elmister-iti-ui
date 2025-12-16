@@ -1,5 +1,5 @@
 import React from 'react'
-import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin'
+import HeaderAdmin from '@/components/DashboardComponents/admin/HeaderAdmin'
 import SubscriptionsTabs from '@/components/DashboardComponents/admin/subscriptionComponents/SubscriptionsTabs';
 
 const page = () => {

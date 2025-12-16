@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
-import Sidebar from "@/components/DashboardComponents/Sidebar/Sidebar";
+import Sidebar from "@/components/DashboardComponents/sidebar/Sidebar";
 import LMSNavbar from "@/components/shared/dashboard/LMSNavbar";
 import { FullPageLoader } from "@/components/shared/Loader";
 import { isTeacherProfileComplete } from "@/lib/utils/teacherProfile";
@@ -24,13 +24,13 @@ export default function DashboardLayout({ children }) {
       const user = userInfo.user;
       const isTeacherRoute = pathname?.startsWith("/dashboard/teacher");
       const isCompleteProfileRoute = pathname === "/completeProfile";
-      
-    //   if (isTeacherRoute && !isCompleteProfileRoute && user.role === "teacher") {
-    //     if (!isTeacherProfileComplete(user)) {
-    //       router.replace("/completeProfile");
-    //     }
-    //   }
-     }
+
+      //   if (isTeacherRoute && !isCompleteProfileRoute && user.role === "teacher") {
+      //     if (!isTeacherProfileComplete(user)) {
+      //       router.replace("/completeProfile");
+      //     }
+      //   }
+    }
   }, [isMounted, userInfo, pathname, router]);
 
   if (!isMounted || !userInfo) {

@@ -1,4 +1,4 @@
-import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin'
+import HeaderAdmin from '@/components/DashboardComponents/admin/HeaderAdmin'
 import TicketsTable from '@/components/DashboardComponents/admin/ticketsComponent/TicketsTable'
 import React from 'react'
 

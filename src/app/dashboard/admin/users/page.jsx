@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import UsersTabs from "@/components/DashboardComponents/admin/users/UserTabs";
-import HeaderAdmin from '@/components/dashboardComponents/admin/HeaderAdmin';
+import HeaderAdmin from '@/components/DashboardComponents/admin/HeaderAdmin';
 import { useGetAllUsersQuery } from '@/redux/api/endPoints/usersApiSlice';
 import UserStateCards from '@/components/DashboardComponents/admin/users/UserStateCards';
 import { Spinner } from '@/components/shared/Loader';
