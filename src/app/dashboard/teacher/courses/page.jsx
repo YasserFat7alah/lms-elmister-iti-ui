@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 import { useGetCoursesQuery, useDeleteCourseMutation } from "@/redux/api/endPoints/coursesApiSlice";
 import { toast } from "react-hot-toast";
-import CourseDetailsModal from "@/components/TeacherCreateCourse/CourseDetailsModal";
+import CourseDetailsModal from "@/components/CreateCourseComponents/CourseDetailsModal";
 
 const StatusBadge = ({ status }) => {
   const styles = {

@@ -8,8 +8,8 @@ import { Users, CheckCircle2, Lock, Trash2, Edit3, ArrowLeft, Calendar, DollarSi
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/shared/Loader";
 
-import MediaUploader from "@/components/TeacherCreateCourse/MediaUploader";
-import GroupModal from "@/components/TeacherCreateCourse/GroupModal";
+import MediaUploader from "@/components/CreateCourseComponents/MediaUploader";
+import GroupModal from "@/components/CreateCourseComponents/GroupModal";
 
 import {
   useGetCourseByIdQuery,
@@ -23,7 +23,7 @@ import {
   useDeleteGroupMutation,
   useUpdateGroupMutation,
 } from "@/redux/api/endPoints/groupsApiSlice";
-import CourseBasicInfo from "@/components/TeacherCreateCourse/CourseBasicInfo";
+import CourseBasicInfo from "@/components/CreateCourseComponents/CourseBasicInfo";
 
 const DAY_MAP_TO_BACKEND = {
   Saturday: "sat",
