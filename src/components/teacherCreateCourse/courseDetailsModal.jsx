@@ -5,7 +5,15 @@ import {
   X, BookOpen, Users, Calendar, Clock, DollarSign, 
   BarChart, PlayCircle, GraduationCap, Globe, Layers, MapPin, Link as LinkIcon, AlertCircle
 } from "lucide-react";
+
+// Declare Badge component outside of the main component to prevent re-creation on re-renders
+const Badge = ({ children, colorClass }) => (
+  <span className={`px-2.5 py-0.5 rounded-md text-[11px] uppercase font-bold tracking-wide border ${colorClass}`}>
+    {children}
+  </span>
+);
 import { Button } from "@/components/ui/button";
+import Image from "../../../node_modules/next/image";
 
 const CourseDetailsModal = ({ isOpen, onClose, course }) => {
   if (!isOpen || !course) return null;
@@ -21,12 +29,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
   };
 
   const videoUrl = course.video?.url;
-
-  const Badge = ({ children, colorClass }) => (
-    <span className={`px-2.5 py-0.5 rounded-md text-[11px] uppercase font-bold tracking-wide border ${colorClass}`}>
-      {children}
-    </span>
-  );
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 transition-all duration-300">
@@ -73,7 +75,7 @@ const CourseDetailsModal = ({ isOpen, onClose, course }) => {
               ) : (
                 <div className="relative w-full h-full min-h-[320px]">
                   {course.thumbnail?.url ? (
-                     <img 
+                     <Image 
                        src={course.thumbnail.url} 
                        alt={course.title} 
                        className="w-full h-full object-cover opacity-60"
