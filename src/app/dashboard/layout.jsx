@@ -8,28 +8,25 @@ import { FullPageLoader } from "@/components/shared/Loader";
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+
   const router = useRouter();
   const pathname = usePathname();
   const { userInfo } = useSelector((state) => state.auth);
 
-  // Initialize isMounted to true directly, as it's only used to prevent server-side rendering issues
-  // and should be true as soon as the component mounts on the client.
-  // No need for a separate useEffect to set it.
-  // const [isMounted, setIsMounted] = useState(false); // Old state
-  // useEffect(() => { setIsMounted(true); }, []); // Old effect
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
 
   useEffect(() => {
     if (userInfo?.user) {
       const user = userInfo.user;
       const isTeacherRoute = pathname?.startsWith("/dashboard/teacher");
       const isCompleteProfileRoute = pathname === "/completeProfile";
-      
-    //   if (isTeacherRoute && !isCompleteProfileRoute && user.role === "teacher") {
-    //     if (!isTeacherProfileComplete(user)) {
-    //       router.replace("/completeProfile");
-    //     }
-    //   }
+
+      //   if (isTeacherRoute && !isCompleteProfileRoute && user.role === "teacher") {
+      //     if (!isTeacherProfileComplete(user)) {
+      //       router.replace("/completeProfile");
+      //     }
+      //   }
     }
   }, [isMounted, userInfo, pathname, router]);
 
