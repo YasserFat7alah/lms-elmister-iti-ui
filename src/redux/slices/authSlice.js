@@ -33,8 +33,23 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
 
+        
+        const cookieOptions = { 
+            expires: 7, // 7 days
+            secure: process.env.NODE_ENV === 'production', // مهم جداً للبرودكشن
+            sameSite: 'strict' 
+        };
+
         if (state.userInfo.user?.role) {
-          Cookies.set('user_role', state.userInfo.user.role, { expires: 7 });
+          Cookies.set('user_role', state.userInfo.user.role, cookieOptions);
+        }
+
+        if (accessToken) {
+            Cookies.set('accessToken', accessToken, cookieOptions);
+        }
+
+        if (refreshToken) {
+            Cookies.set('refreshToken', refreshToken, cookieOptions);
         }
       }
     },
@@ -43,6 +58,8 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.removeItem('userInfo');
         Cookies.remove('user_role');
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
       }
     },
   },
