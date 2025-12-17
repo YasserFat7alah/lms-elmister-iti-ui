@@ -38,7 +38,8 @@ import Breadcrumbs from "@/components/shared/Breadcrumbs";
 export default function GroupDetailsPage() {
   const { id: groupId } = useParams();
   const [activeTab, setActiveTab] = useState("schedule");
-  // ... existing state ...
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLessonToEdit, setSelectedLessonToEdit] = useState(null);
 
   const breadcrumbItems = [
     { label: "Dashboard", href: "/dashboard/teacher" },
@@ -46,13 +47,56 @@ export default function GroupDetailsPage() {
     { label: "Group Details" }
   ];
 
-  // ... existing code ...
+  const { data: group, isLoading: groupLoading } = useGetGroupByIdQuery(groupId, {
+    skip: !groupId,
+  });
+  const { data: lessonsResponse, isLoading: lessonsLoading } = useGetLessonsByGroupQuery(
+    { groupId, page: 1, limit: 50 },
+    { skip: !groupId }
+  );
+  const [deleteLesson] = useDeleteLessonMutation();
+
+  const groupName = group?.data?.title || "Loading...";
+
+  // Handle lessons data structure (might be nested in data property or data.data)
+  const lessonsData = lessonsResponse?.data?.data || lessonsResponse?.data || lessonsResponse;
+  const lessons = Array.isArray(lessonsData) ? lessonsData : [];
+
+  const now = new Date();
+  const pastLessons = lessons.filter(lesson => new Date(lesson.date) < now);
+  const upcomingLessons = lessons.filter(lesson => new Date(lesson.date) >= now);
+
+  const handleDeleteLesson = async (e, lessonId) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!confirm("Are you sure you want to delete this lesson?")) return;
+
+    try {
+      await deleteLesson(lessonId).unwrap();
+      toast.success("Lesson deleted successfully");
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to delete lesson");
+    }
+  };
+
+  if (groupLoading || lessonsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50/50 p-6 space-y-6">
       <CreateSessionModal
         isOpen={isModalOpen}
-        // ...
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedLessonToEdit(null);
+        }}
+        groupId={groupId}
         lessonToEdit={selectedLessonToEdit}
       />
 
@@ -65,7 +109,6 @@ export default function GroupDetailsPage() {
           </div>
           <p className="text-gray-500 text-sm mt-1">Manage schedule, attendance, and students.</p>
         </div>
-// ... rest of header
 
         <div className="flex gap-3">
           <Button
@@ -86,8 +129,8 @@ export default function GroupDetailsPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id
-                ? "border-[#FF4667] text-[#FF4667]"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              ? "border-[#FF4667] text-[#FF4667]"
+              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
           >
             <tab.icon size={18} />
@@ -270,7 +313,7 @@ export default function GroupDetailsPage() {
         )}
 
         {activeTab === "students" && (
-          <GroupStudentsList students={group?.students || []} groupId={groupId} lessons={lessons} />
+          <GroupStudentsList students={group?.data?.students || []} groupId={groupId} lessons={lessons} />
         )}
 
         {activeTab === "settings" && (
