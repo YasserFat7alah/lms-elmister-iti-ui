@@ -38,7 +38,7 @@ const Topbar = ({ setOpen }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        {user?.role !== 'parent' && <Dropdown />}
+        <Dropdown />
         <AvatarMenu user={user} />
       </div>
     </header>

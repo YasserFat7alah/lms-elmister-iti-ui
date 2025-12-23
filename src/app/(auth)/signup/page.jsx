@@ -105,10 +105,10 @@ function SignUpContent() {
       dispatch(setCredentials({ user, accessToken }));
       const role = user?.role;
       const map = {
-        admin: "/dashboard/admin/dashboard",
+        admin: "/dashboard/admin/",
         teacher: "/completeProfile",
-        student: "/dashboard/student/my-learning",
-        parent: "/dashboard/parent/overview",
+        student: "/dashboard/student/",
+        parent: "/dashboard/parent/",
       };
       router.push(map[role] || "/");
     } catch (err) {
@@ -147,10 +147,10 @@ function SignUpContent() {
 
       const role = user?.role;
       const map = {
-        admin: "/dashboard/admin/dashboard",
-        teacher: "/dashboard/teacher/analytics",
-        student: "/dashboard/student/my-learning",
-        parent: "/dashboard/parent/overview",
+        admin: "/dashboard/admin/",
+        teacher: "/dashboard/teacher/",
+        student: "/dashboard/student/",
+        parent: "/dashboard/parent/",
       };
       router.push(map[role] || "/");
     } catch (err) {

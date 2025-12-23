@@ -59,7 +59,7 @@ const ROLE_LINKS = {
     {
       group: "Dashboard",
       items: [
-        { label: "Anayltics", href: "/dashboard/admin/analytics", icon: LayoutDashboard },
+        { label: "Anayltics", href: "/dashboard/admin", icon: LayoutDashboard },
       ],
     },
     {

@@ -4,11 +4,12 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  Menu, LogOut, LayoutDashboard, Search, User, Bell, AlertTriangle
+  Menu, LogOut, LayoutDashboard, Search, User, AlertTriangle
 } from "lucide-react";
 import { logout } from "@/redux/slices/authSlice";
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
 import { isTeacherProfileComplete } from "@/lib/utils/teacherProfile";
+import NotificationDropdown from "@/components/DashboardComponents/Topbar/Notification/Dropdown";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,77 +78,74 @@ const LMSNavbar = ({ setSidebarOpen }) => {
       )}
 
       <header className={`sticky ${isProfileIncomplete ? 'top-[57px]' : 'top-0'} z-30 w-full bg-white border-b border-gray-200 h-16`}>
-      <div className="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
 
-        <div className="flex items-center gap-4 flex-1">
-          {setSidebarOpen && (
-            <button
-              onClick={() => setSidebarOpen(prev => !prev)}
-              className="lg:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              <Menu size={24} />
+          <div className="flex items-center gap-4 flex-1">
+            {setSidebarOpen && (
+              <button
+                onClick={() => setSidebarOpen(prev => !prev)}
+                className="lg:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                <Menu size={24} />
+              </button>
+            )}
+
+            <div className="hidden md:flex items-center w-full max-w-md relative">
+              <Search className="absolute left-3 text-gray-400" size={18} />
+              <Input
+                placeholder="Search courses, students..."
+                className="pl-10 bg-gray-50 border-gray-200 focus:bg-white transition-all rounded-full h-10"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-4">
+
+            <button className="md:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-full">
+              <Search size={20} />
             </button>
-          )}
 
-          <div className="hidden md:flex items-center w-full max-w-md relative">
-            <Search className="absolute left-3 text-gray-400" size={18} />
-            <Input
-              placeholder="Search courses, students..."
-              className="pl-10 bg-gray-50 border-gray-200 focus:bg-white transition-all rounded-full h-10"
-            />
+            <NotificationDropdown />
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-9 w-9 border border-gray-200 transition-transform hover:scale-105">
+                    <AvatarImage src={user?.avatar?.url} alt={user?.name} className="object-cover" />
+                    <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
+                      {getInitials(user?.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="w-60 mt-2" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none truncate">{user?.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground truncate">{user?.email}</p>
+                    <div className="pt-1">
+                      <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold">
+                        {user?.role || ''}
+                      </Badge>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push(`/dashboard/${user?.role}`)} className="cursor-pointer">
+                  <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push(`/users/${user?.username}`)} className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" /> Public Profile
+                </DropdownMenuItem>              <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" /> Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-
-        <div className="flex items-center gap-2 sm:gap-4">
-
-          <button className="md:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-full">
-            <Search size={20} />
-          </button>
-
-          <button className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
-            <Bell size={20} />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-[#FF0055] rounded-full border border-white"></span>
-          </button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar className="h-9 w-9 border border-gray-200 transition-transform hover:scale-105">
-                  <AvatarImage src={user?.avatar?.url} alt={user?.name} className="object-cover" />
-                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
-                    {getInitials(user?.name)}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent className="w-60 mt-2" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none truncate">{user?.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground truncate">{user?.email}</p>
-                  <div className="pt-1">
-                    <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold">
-                      {user?.role || ''}
-                    </Badge>
-                  </div>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push(`/dashboard/${user?.role}`)} className="cursor-pointer">
-                <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push(`/users/${user?.username}`)} className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" /> Public Profile
-              </DropdownMenuItem>              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">
-                <LogOut className="mr-2 h-4 w-4" /> Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-    </header>
+      </header>
     </>
   );
 }

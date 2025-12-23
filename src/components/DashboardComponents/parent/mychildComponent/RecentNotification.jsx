@@ -3,29 +3,34 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { MdOutlineNotificationsActive } from "react-icons/md";
 import Link from 'next/link';
-import { setLoading, setNotifications } from '@/redux/slices/notificationSlice';
+import { useGetNotificationsQuery } from '@/redux/api/endPoints/notificationsApiSlice';
+import { setNotifications } from '@/redux/slices/notificationSlice';
+import { formatDistanceToNow } from 'date-fns';
 
 const RecentNotification = () => {
   const dispatch = useDispatch();
-  const { notifications, isLoading } = useSelector(state => state.notifications);
+  const { notifications } = useSelector(state => state.notifications);
 
-  // fetch Notifications
+  // Fetch notifications using RTK Query
+  const { data: fetchedNotifications, isLoading } = useGetNotificationsQuery();
+
+  // Sync fetched notifications to Redux store
   useEffect(() => {
-    dispatch(setLoading(true));
+    if (fetchedNotifications) {
+      dispatch(setNotifications(fetchedNotifications));
+    }
+  }, [fetchedNotifications, dispatch]);
 
-    setTimeout(() => {  // Simulate async fetch
-      const dummy = [
-        { id: "n1", user: "Ahmed Salem", title: "New math assignment posted", read: false, timeAgo: "Just now" },
-        { id: "n2", user: "Sarah Salem", title: "Science project update", read: false, timeAgo: "3 hours ago" },
-        { id: "n3", user: "Sarah Salem", title: "New study materials uploaded", read: true, timeAgo: "2 days ago" }
-      ];
-      dispatch(setNotifications(dummy));
-      dispatch(setLoading(false));
-    }, 500);
-  }, [dispatch]);
+  const formatTimeAgo = (date) => {
+    try {
+      return formatDistanceToNow(new Date(date), { addSuffix: true });
+    } catch {
+      return "recently";
+    }
+  };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (notifications.length === 0) return <div className='text-center text-gray-500'>No notifications found</div>;
+  if (isLoading) return <div className="p-4 text-center text-gray-500">Loading...</div>;
+  if (notifications.length === 0) return <div className='p-4 text-center text-gray-500'>No notifications found</div>;
 
   return (
     <div className="p-4 bg-white rounded-xl shadow-sm my-6">
@@ -39,21 +44,21 @@ const RecentNotification = () => {
       <div className="rounded-2xl border shadow-sm overflow-hidden">
         {notifications.slice(0, 3).map(item => (
           <div
-            key={item.id}
-            className={`flex items-start gap-2 p-4 cursor-pointer border-b  ${
-              item.read ? "bg-white" : "bg-blue-50"
-            }`}
+            key={item._id}
+            className={`flex items-start gap-2 p-4 cursor-pointer border-b ${item.isRead ? "bg-white" : "bg-blue-50"
+              }`}
           >
             <p className="text-blue-500 mt-1"><MdOutlineNotificationsActive size={20} /></p>
             <div>
-              <p className="font-medium text-gray-800">{item.user} : <span className="text-gray-700">{item.title}</span></p>
-              <p className="text-gray-500 text-sm">{item.timeAgo}</p>
+              <p className="font-medium text-gray-800">{item.title}</p>
+              <p className="text-sm text-gray-600">{item.message}</p>
+              <p className="text-gray-500 text-sm">{formatTimeAgo(item.createdAt)}</p>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default RecentNotification;

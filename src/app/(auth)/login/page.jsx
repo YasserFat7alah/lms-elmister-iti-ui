@@ -60,10 +60,10 @@ function LoginContent() {
           }
           const role = user?.role;
           const dashboardPaths = {
-            admin: "/dashboard/admin/dashboard",
-            teacher: "/dashboard/teacher/analytics",
-            student: "/dashboard/student/my-learning",
-            parent: "/dashboard/parent/overview",
+            admin: "/dashboard/admin/",
+            teacher: "/dashboard/teacher/",
+            student: "/dashboard/student/",
+            parent: "/dashboard/parent/",
           };
           toast.success("Signed in with Google");
           router.push(dashboardPaths[role] || "/");
@@ -94,10 +94,10 @@ function LoginContent() {
       dispatch(setCredentials({ user, accessToken, refreshToken }));
       const role = user.role;
       const dashboardPaths = {
-        admin: "/dashboard/admin/dashboard",
-        teacher: "/dashboard/teacher/analytics",
-        student: "/dashboard/student/my-learning",
-        parent: "/dashboard/parent/overview",
+        admin: "/dashboard/admin",
+        teacher: "/dashboard/teacher",
+        student: "/dashboard/student",
+        parent: "/dashboard/parent",
       };
       const targetPath = searchParams.get("redirect") || dashboardPaths[role] || "/";
       toast.success("Logged in", { id: toastId });

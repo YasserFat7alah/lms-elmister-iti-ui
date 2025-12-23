@@ -1,37 +1,44 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    notifications: [
-      { id: "n1", user: "Ahmed Salem", title: "New math assignment posted", read: false, timeAgo: "Just now" },
-      { id: "n2", user: "Sarah Salem", title: "Science project update", read: false, timeAgo: "3 hours ago" },
-      { id: "n3", user: "Sarah Salem", title: "New study materials uploaded", read: true, timeAgo: "2 days ago" },
-      { id: "n4", user: "Sarah Salem", title: "New study materials uploaded", read: true, timeAgo: "3 days ago" }
-    ]
+    notifications: [],
+    unreadCount: 0,
 };
 
 const notificationSlice = createSlice({
     name: "notifications",
     initialState,
     reducers: {
-        markAllAsRead: (state) => {
-            state.notifications = state.notifications.map(n => ({
-                ...n,
-                read: true
-            }));
-        } ,
+        setNotifications: (state, action) => {
+            state.notifications = action.payload;
+            state.unreadCount = action.payload.filter(n => !n.isRead).length;
+        },
         addNotification: (state, action) => {
             state.notifications.unshift(action.payload);
+            if (!action.payload.isRead) {
+                state.unreadCount += 1;
+            }
         },
-        setLoading: (state, action) => {
-            state.isLoading = action.payload;
-          },
-          setNotifications: (state, action) => {
-            state.notifications = action.payload;
-        }
+        markAsRead: (state, action) => {
+            const notification = state.notifications.find(n => n._id === action.payload);
+            if (notification && !notification.isRead) {
+                notification.isRead = true;
+                state.unreadCount -= 1;
+            }
+        },
+        markAllAsRead: (state) => {
+            state.notifications.forEach(n => n.isRead = true);
+            state.unreadCount = 0;
+        },
+        deleteNotification: (state, action) => {
+            const notification = state.notifications.find(n => n._id === action.payload);
+            state.notifications = state.notifications.filter(n => n._id !== action.payload);
+            if (notification && !notification.isRead) {
+                state.unreadCount -= 1;
+            }
+        },
     },
 });
 
-
-export const { markAllAsRead, addNotification, setLoading, setNotifications } = notificationSlice.actions;
+export const { setNotifications, addNotification, markAsRead, markAllAsRead, deleteNotification } = notificationSlice.actions;
 export default notificationSlice.reducer;

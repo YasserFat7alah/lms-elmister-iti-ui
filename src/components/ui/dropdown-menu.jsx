@@ -6,11 +6,10 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-function DropdownMenu({
-  ...props
-}) {
-  return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
-}
+const DropdownMenu = React.forwardRef((props, ref) => {
+  return <DropdownMenuPrimitive.Root {...props} />;
+});
+DropdownMenu.displayName = "DropdownMenu";
 
 function DropdownMenuPortal({
   ...props
@@ -18,11 +17,10 @@ function DropdownMenuPortal({
   return (<DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />);
 }
 
-function DropdownMenuTrigger({
-  ...props
-}) {
-  return (<DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />);
-}
+const DropdownMenuTrigger = React.forwardRef((props, ref) => {
+  return <DropdownMenuPrimitive.Trigger ref={ref} {...props} />;
+});
+DropdownMenuTrigger.displayName = "DropdownMenuTrigger";
 
 function DropdownMenuContent({
   className,
