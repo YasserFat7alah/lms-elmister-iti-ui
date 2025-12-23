@@ -1,14 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com', 
+        hostname: 'images.unsplash.com',
       },
       {
         protocol: 'https',
-        hostname: 'github.com', 
+        hostname: 'github.com',
       },
       {
         protocol: 'https',

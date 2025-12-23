@@ -42,6 +42,7 @@ function LoginContent() {
     (async () => {
       setOauthProcessing(true);
       try {
+        // Cookies are automatically sent with credentials: 'include'
         const res = await fetch(`${BASE_URL}${USERS_URL_DATA}/me`, {
           method: "GET",
           credentials: "include",
@@ -54,7 +55,8 @@ function LoginContent() {
 
         if (res.ok) {
           const user = body.user || body.data?.user || body;
-          dispatch(setCredentials({ user, accessToken: null }));
+          // No need for accessToken - httpOnly cookies handle authentication
+          dispatch(setCredentials({ user }));
           if (typeof window !== "undefined") {
             window.history.replaceState({}, "", window.location.pathname);
           }
