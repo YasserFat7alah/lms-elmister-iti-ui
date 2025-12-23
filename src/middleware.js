@@ -5,11 +5,9 @@ export function middleware(request) {
   const path = nextUrl.pathname;
   const searchParams = nextUrl.searchParams;
 
-  const token = request.cookies.get("accessToken")?.value || request.cookies.get("token")?.value;
-
-  const refreshToken = request.cookies.get("refreshToken")?.value;
-
-  const role = request.cookies.get("user_role")?.value || request.cookies.get("role")?.value;
+  // NOTE: We can't read httpOnly cookies (accessToken, refreshToken) from middleware
+  // when backend is on different domain. We check user_role as authentication indicator.
+  const role = request.cookies.get("user_role")?.value;
 
   const oauthSuccessInQuery = searchParams.get("success") === "true";
   const oauthCallbackPathAllowed = path === "/login" && oauthSuccessInQuery;
@@ -17,7 +15,8 @@ export function middleware(request) {
   const authPaths = ["/login", "/signup", "/forgetPassword", "/teacher-signup", "/reset-password"];
   const isAuthPath = authPaths.some((p) => path.startsWith(p));
 
-  if ((token || refreshToken) && isAuthPath && !oauthCallbackPathAllowed) {
+  // If user has role (indicating they're logged in) and trying to access auth pages
+  if (role && isAuthPath && !oauthCallbackPathAllowed) {
     if (role === "admin") return NextResponse.redirect(new URL("/dashboard/admin", request.url));
     if (role === "teacher") return NextResponse.redirect(new URL("/dashboard/teacher/analytics", request.url));
     if (role === "student") return NextResponse.redirect(new URL("/dashboard/student/my-learning", request.url));
@@ -26,11 +25,12 @@ export function middleware(request) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (path === "/completeProfile" && !token && !refreshToken) {
+  // Protect dashboard routes - redirect to login if no role
+  if (path === "/completeProfile" && !role) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (path.startsWith("/dashboard") && !token && !refreshToken) {
+  if (path.startsWith("/dashboard") && !role) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
