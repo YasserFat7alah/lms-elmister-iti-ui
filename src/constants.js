@@ -1,6 +1,6 @@
 // Use relative path for API calls (proxied through Next.js)
 // In production, this gets proxied to the actual backend URL via next.config.mjs rewrites
-export const BASE_URL = process.env.NEXT_PUBLIC_USE_PROXY === 'true' ? '/api/v1' : process.env.NEXT_PUBLIC_API_URL;
+export const BASE_URL = process.env.NEXT_PUBLIC_USE_PROXY === 'true' ? '/api' : process.env.NEXT_PUBLIC_API_URL;
 
 // Socket URL always points directly to backend (sockets can't be proxied easily)
 export const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:4040';
