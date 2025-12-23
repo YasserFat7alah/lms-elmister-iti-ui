@@ -33,24 +33,19 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
 
-        
-        const cookieOptions = { 
-            expires: 7, // 7 days
-            secure: process.env.NODE_ENV === 'production', // مهم جداً للبرودكشن
-            sameSite: 'strict' 
+
+        const cookieOptions = {
+          expires: 7, // 7 days
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict'
         };
 
         if (state.userInfo.user?.role) {
           Cookies.set('user_role', state.userInfo.user.role, cookieOptions);
         }
 
-        if (accessToken) {
-            Cookies.set('accessToken', accessToken, cookieOptions);
-        }
-
-        if (refreshToken) {
-            Cookies.set('refreshToken', refreshToken, cookieOptions);
-        }
+        // DO NOT set accessToken/refreshToken cookies here
+        // Backend sets them as httpOnly cookies which are more secure
       }
     },
     logout: (state) => {
@@ -58,8 +53,7 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.removeItem('userInfo');
         Cookies.remove('user_role');
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
+        // accessToken and refreshToken are httpOnly cookies, cleared by backend
       }
     },
   },
