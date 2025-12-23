@@ -9,7 +9,7 @@ export const connectSocket = (token) => {
         const socketUrl = SOCKET_URL || (apiUrl ? new URL(apiUrl).origin : undefined);
         socket = io(socketUrl, {
             auth: { token },
-            transports: ["websocket"],
+            transports: ["polling"], // Use polling for Vercel compatibility
             path: '/socket.io',
         });
         // Debug logging
