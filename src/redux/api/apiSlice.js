@@ -9,10 +9,8 @@ const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
-    const token = getState().auth.userInfo?.accessToken;
-    if (token) {
-      headers.set("authorization", `Bearer ${token}`);
-    }
+    // Authentication is handled via httpOnly cookies
+    // No need to send Authorization header
     return headers;
   },
 });
