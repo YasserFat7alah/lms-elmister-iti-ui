@@ -27,7 +27,7 @@ const CourseCard = ({ course }) => {
         lessonsCount, // Assuming we might have this, or fallback
         totalStudents,
         averageRating,
-        totalRatings,
+        ratingsCount,
         activeGroups,
         tags,
         teacher,
@@ -143,7 +143,7 @@ const CourseCard = ({ course }) => {
                         {/* Ratings (Left) */}
                         <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-900">
                             <Rating defaultRating={averageRating || 0} readOnly size="sm" />
-                            <span>{averageRating || 0} ({totalRatings || 0})</span>
+                            <span>{averageRating || 0} ({ratingsCount || 0})</span>
                         </div>
 
                         {/* Students (Right) */}

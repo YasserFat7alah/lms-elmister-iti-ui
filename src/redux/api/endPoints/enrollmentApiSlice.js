@@ -59,10 +59,32 @@ export const enrollmentApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Enrollment', 'Children'],
         }),
+        forceCancelEnrollment: builder.mutation({
+            query: ({ enrollmentId, data }) => ({
+                url: `${ENROLLMENT_URL}/${enrollmentId}/force`,
+                method: 'DELETE',
+                body: data
+            }),
+            invalidatesTags: ['Enrollment', 'Children'],
+        }),
         renewEnrollment: builder.mutation({
             query: (enrollmentId) => ({
                 url: `${ENROLLMENT_URL}/${enrollmentId}/renew`,
                 method: 'PATCH',
+            }),
+            invalidatesTags: ['Enrollment', 'Children'],
+        }),
+        completePayment: builder.mutation({
+            query: (enrollmentId) => ({
+                url: `${ENROLLMENT_URL}/${enrollmentId}/pay`,
+                method: 'POST',
+            }),
+            // No invalidation needed as it redirects to Stripe
+        }),
+        removeEnrollment: builder.mutation({
+            query: (enrollmentId) => ({
+                url: `${ENROLLMENT_URL}/${enrollmentId}/remove`,
+                method: 'DELETE',
             }),
             invalidatesTags: ['Enrollment', 'Children'],
         }),
@@ -77,5 +99,8 @@ export const {
     useUpdateEnrollmentStatusMutation,
     useGetEnrollmentsByStudentQuery,
     useCancelEnrollmentMutation,
-    useRenewEnrollmentMutation
+    useForceCancelEnrollmentMutation,
+    useRenewEnrollmentMutation,
+    useCompletePaymentMutation,
+    useRemoveEnrollmentMutation
 } = enrollmentApiSlice;

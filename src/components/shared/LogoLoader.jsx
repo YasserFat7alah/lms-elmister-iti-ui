@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 export default function LogoLoader({
   variant = "pulse",
-  background = "bg-white/80", // خلفية شبه شفافة افتراضية
+  background = "bg-white/80",
   logoSrc = "https://res.cloudinary.com/dcrps0oeu/image/upload/v1765069001/logo_j0nj4m.png",
   className = "",
 }) {

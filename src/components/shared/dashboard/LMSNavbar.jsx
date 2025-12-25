@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { logout } from "@/redux/slices/authSlice";
 import { useLogoutApiMutation } from "@/redux/api/endPoints/usersApiSlice";
-import { isTeacherProfileComplete } from "@/lib/utils/teacherProfile";
 import NotificationDropdown from "@/components/DashboardComponents/Topbar/Notification/Dropdown";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,7 @@ import Link from "next/link";
 
 const LMSNavbar = ({ setSidebarOpen }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [hasTeacherProfile, setHasTeacherProfile] = useState(null); // null = loading
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -38,7 +38,43 @@ const LMSNavbar = ({ setSidebarOpen }) => {
   }, []);
 
   const user = isMounted ? userInfo?.user : null;
-  const isProfileIncomplete = user && user.role === "teacher" && !isTeacherProfileComplete(user);
+
+  // Check if teacher has created their profile via API
+  useEffect(() => {
+    const checkProfile = async () => {
+      if (!user || user.role !== 'teacher' || !userInfo?.accessToken) {
+        setHasTeacherProfile(true); // Not a teacher or no token
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/teacher/profile/exists`,
+          {
+            headers: {
+              'Authorization': `Bearer ${userInfo.accessToken}`
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setHasTeacherProfile(data.data?.exists || false);
+        } else {
+          setHasTeacherProfile(true); // On error, don't show banner
+        }
+      } catch (error) {
+        console.error('Error checking teacher profile:', error);
+        setHasTeacherProfile(true); // On error, don't show banner
+      }
+    };
+
+    if (isMounted) {
+      checkProfile();
+    }
+  }, [isMounted, user, userInfo?.accessToken]);
+
+  const isProfileIncomplete = user && user.role === "teacher" && hasTeacherProfile === false;
 
   const handleLogout = async () => {
     try {

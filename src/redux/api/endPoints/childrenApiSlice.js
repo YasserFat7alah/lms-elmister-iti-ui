@@ -81,6 +81,7 @@ export const childrenApiSlice = apiSlice.injectEndpoints({
             transformResponse: (response) => {
                 return response?.data || response;
             },
+            providesTags: ["Children", "Enrollment"],
         }),
 
         getChildrenTeachers: builder.query({

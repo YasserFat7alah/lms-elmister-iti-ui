@@ -56,7 +56,7 @@ const FilterContainer = ({
                 <Sheet open={isOpen} onOpenChange={setIsOpen}>
                     <SheetTrigger asChild>
                         <Button
-                            className="fixed bottom-6 right-6 z-50 rounded-full shadow-xl h-14 w-14 p-0 bg-[#392b80] text-white hover:bg-[#392b80]/90 hover:scale-105 transition-all duration-300"
+                            className="fixed bottom-6 left-6 z-50 rounded-full shadow-xl h-14 w-14 p-0 bg-[#392b80] text-white hover:bg-[#392b80]/90 hover:scale-105 transition-all duration-300"
                             size="icon"
                         >
                             <FaFilter size={20} />

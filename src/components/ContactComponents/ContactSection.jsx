@@ -41,27 +41,32 @@ export default function ContactSection() {
     {
       icon: FaPhone,
       label: "PHONE NUMBER",
-      details: "+1 (555) 123-4567",
+      details: "+20 1019 719 364",
     },
     {
       icon: FaEnvelope,
       label: "EMAIL ADDRESS",
-      details: "hello@etutorapp.com",
+      details: "yasserfat7alah@gmail.com",
     },
     {
       icon: FaClock,
       label: "WORKING HOURS",
-      details: "Mon - Fri: 9AM to 6PM",
+      details: "Sun - Thu: 9AM to 6PM",
     },
   ];
 
   return (
-    <div className="py-16 px-4 md:px-8 lg:px-16">
+    <div id="contact-form" className="py-20 px-4 md:px-8 lg:px-16 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl font-bold text-gray-900 text-center mb-4">Contact Us</h2>
-        <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-          We're here to help. Reach out with any questions and we'll respond as soon as possible.
-        </p>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
+            Send Us a
+            <span className="block text-purple-600">Message</span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            We're here to help. Reach out with any questions and we'll respond as soon as possible.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left side - Contact Info */}
@@ -86,7 +91,7 @@ export default function ContactSection() {
           </div>
 
           {/* Right side - Contact Form */}
-          <div className="bg-gray-50 p-8 rounded-lg">
+          <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-200">
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}

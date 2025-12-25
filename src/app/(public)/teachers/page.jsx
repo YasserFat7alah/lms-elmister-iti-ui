@@ -105,7 +105,8 @@ const TeachersContent = () => {
     limit: 12,
     search: searchQuery,
     selectedSubjects: selectedSubjects.length > 0 ? selectedSubjects : undefined,
-    rating: ratingFilter || undefined
+    rating: ratingFilter || undefined,
+    sort: 'top_rated'
   };
 
   const { data: teachersData, isLoading, isError, error } = useGetPublicTeachersQuery(queryParams);

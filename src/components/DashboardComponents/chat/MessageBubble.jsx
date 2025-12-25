@@ -1,4 +1,5 @@
 import React from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const MessageBubble = ({ message, isOwn }) => {
     const time = new Date(message.createdAt).toLocaleTimeString('en-US', {
@@ -6,13 +7,25 @@ const MessageBubble = ({ message, isOwn }) => {
         minute: '2-digit'
     });
 
+    // Get avatar URL from sender - check both possible structures
+    const avatarUrl = message.sender?.avatar?.url || message.sender?.avatar;
+
     return (
         <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-4`}>
             <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
                 {!isOwn && (
-                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                        {message.sender?.name?.charAt(0).toUpperCase() || '?'}
-                    </div>
+                    <Avatar className="w-8 h-8 shrink-0">
+                        {avatarUrl && (
+                            <AvatarImage
+                                src={avatarUrl}
+                                alt={message.sender?.name || 'User'}
+                                className="object-cover"
+                            />
+                        )}
+                        <AvatarFallback className="bg-gradient-to-br from-[#392b80] to-[#FF0055] text-white font-bold text-sm">
+                            {message.sender?.name?.charAt(0).toUpperCase() || '?'}
+                        </AvatarFallback>
+                    </Avatar>
                 )}
 
                 <div>
@@ -21,8 +34,8 @@ const MessageBubble = ({ message, isOwn }) => {
                     )}
                     <div
                         className={`rounded-2xl px-4 py-2 ${isOwn
-                                ? 'bg-blue-600 text-white rounded-br-sm'
-                                : 'bg-gray-100 text-gray-900 rounded-bl-sm'
+                            ? 'bg-[#392b80] text-white rounded-br-sm'
+                            : 'bg-gray-100 text-gray-900 rounded-bl-sm'
                             }`}
                     >
                         <p className="text-sm wrap-break-word">{message.text}</p>

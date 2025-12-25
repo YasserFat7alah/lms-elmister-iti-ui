@@ -39,6 +39,8 @@ export const publicApiSlice = apiSlice.injectEndpoints({
                     params.priceRanges.forEach(range => queryParams.append("priceRanges", range));
                 }
 
+                if (params.sort) queryParams.append("sort", params.sort);
+
                 // Language Filter
                 if (params.languageFilter && Array.isArray(params.languageFilter)) {
                     params.languageFilter.forEach(lang => queryParams.append("courseLanguage", lang));
@@ -80,7 +82,9 @@ export const publicApiSlice = apiSlice.injectEndpoints({
                 if (params.page) queryParams.append("page", params.page);
                 if (params.limit) queryParams.append("limit", params.limit);
                 if (params.search) queryParams.append("search", params.search);
+                if (params.search) queryParams.append("search", params.search);
                 if (params.rating) queryParams.append("rating", params.rating);
+                if (params.sort) queryParams.append("sort", params.sort);
 
                 if (params.subject && Array.isArray(params.subject)) {
                     params.subject.forEach(s => queryParams.append("subject", s));

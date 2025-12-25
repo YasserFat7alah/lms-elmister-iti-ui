@@ -1,11 +1,10 @@
-
 import { Hero } from "@/components/homeComponents/Hero"
 import { FAQ } from "@/components/homeComponents/Faq"
 import { Header } from "@/components/shared/Header"
 import { Footer } from "@/components/shared/Footer"
 import Subjects from "@/components/homeComponents/Subjects"
-import Goals from "@/components/homeComponents/Goals"
-import Instructors from "@/components/homeComponents/Instructors"
+import Instructors from "@/components/homeComponents/Instructors";
+import FeaturedCourses from "@/components/homeComponents/FeaturedCourses";
 import TrustedBy from "@/components/homeComponents/TrustedBy"
 import NewsletterSection from "@/components/homeComponents/NewsletterSection"
 
@@ -18,6 +17,7 @@ export default function Home() {
       <main className="flex-1">
         <Hero />
         <Subjects />
+        <FeaturedCourses />
         <Features />
         <Instructors />
         <TrustedBy />

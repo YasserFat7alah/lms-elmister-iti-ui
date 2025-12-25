@@ -3,7 +3,6 @@ import "./globals.css"
 import StoreProvider from "@/redux/StoreProvider";
 import { Toaster } from 'react-hot-toast';
 import { SocketProvider } from "@/lib/socket/socketContext";
-import ChatWidget from "@/components/shared/ChatWidget";
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -21,7 +20,6 @@ export default function RootLayout({ children }) {
         <StoreProvider>
           <SocketProvider>
             {children}
-            <ChatWidget />
             <Toaster position="top-center" />
           </SocketProvider>
         </StoreProvider>

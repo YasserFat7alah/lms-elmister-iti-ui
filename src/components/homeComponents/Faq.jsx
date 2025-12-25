@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { HiQuestionMarkCircle, HiChevronDown } from "react-icons/hi";
 
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
@@ -41,56 +42,92 @@ export function FAQ() {
   };
 
   return (
-    <section className="w-full bg-white py-10 md:py-10">
+    <section className="w-full bg-white py-20 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
+          {/* Image Column */}
           <div className="hidden lg:block order-1">
-            <div className="order-2 lg:order-1">
-              <div className="relative">
-                <div className="absolute -inset-4 bg-linear-to-br from-purple-100 to-pink-100 rounded-3xl blur-3xl opacity-60 -z-10"></div>
-                <img
-                  src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623480/ImageContainer_xysdoi.png"
-                  alt="El-Mister Team"
-                  width={600}
-                  height={600}
-                  className="rounded-3xl shadow-2xl object-cover w-full"
-                />
-
-              </div>
+            <div className="relative">
+              <div className="absolute -inset-4 bg-linear-to-br from-purple-100 to-pink-100 rounded-3xl blur-3xl opacity-60 -z-10"></div>
+              <img
+                src="https://res.cloudinary.com/dcrps0oeu/image/upload/v1764623480/ImageContainer_xysdoi.png"
+                alt="El-Mister Support Team"
+                width={600}
+                height={600}
+                className="rounded-3xl shadow-2xl object-cover w-full hover:scale-105 transition-transform duration-500"
+              />
             </div>
           </div>
 
+          {/* FAQ Content Column */}
           <div className="order-1 lg:order-2">
-            <h2 className="text-4xl md:text-4xl font-black text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-gray-600 mb-10">
-              Explore detailed answers to the most common questions about our platform.
-            </p>
 
+            {/* Header */}
+            <div className="mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full mb-6">
+                <HiQuestionMarkCircle className="text-purple-600 text-xl" />
+                <span className="text-sm font-semibold text-purple-600 tracking-wide uppercase">Support</span>
+              </div>
+
+              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+                Frequently Asked
+                <span className="block text-purple-600">Questions</span>
+              </h2>
+
+              <p className="text-xl text-gray-600 leading-relaxed">
+                Find quick answers to common questions about our platform and services.
+              </p>
+            </div>
+
+            {/* Accordion */}
             <div className="space-y-4">
               {faqs.map((faq, index) => (
-                <div key={index} className="border-b border-gray-200 pb-4">
+                <div
+                  key={index}
+                  className="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden hover:border-purple-200 transition-all duration-300"
+                >
                   <button
                     onClick={() => toggleAccordion(index)}
-                    className="w-full flex justify-between items-center gap-4 py-3 text-left hover:text-[#FF4667] transition-colors group"
+                    className="w-full flex justify-between items-center gap-4 p-6 text-left group"
                   >
-                    <span className="font-medium text-gray-800 group-hover:text-[#FF4667]">
+                    <span className="font-bold text-gray-900 group-hover:text-purple-600 transition-colors text-lg">
                       {faq.question}
                     </span>
-                    <span className="text-2xl font-bold text-[#FF4667]">
-                      {openIndex === index ? "−" : "+"}
-                    </span>
+                    <HiChevronDown
+                      className={`flex-shrink-0 w-6 h-6 text-purple-600 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
+                        }`}
+                    />
                   </button>
-                  {openIndex === index && (
-                    <div className="mt-3 pb-2">
-                      <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                      }`}
+                  >
+                    <div className="px-6 pb-6 pt-2">
+                      <p className="text-gray-600 leading-relaxed text-base">
+                        {faq.answer}
+                      </p>
                     </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
+
+            {/* Bottom CTA */}
+            <div className="mt-10 p-6 bg-purple-50 rounded-2xl border border-purple-100">
+              <p className="text-gray-700 font-medium mb-2">Still have questions?</p>
+              <p className="text-gray-600 text-sm mb-4">
+                Our support team is here to help you get the most out of El-Mister.
+              </p>
+              <a
+                href="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors shadow-lg shadow-purple-600/20"
+              >
+                Contact Support
+              </a>
+            </div>
+
           </div>
 
         </div>

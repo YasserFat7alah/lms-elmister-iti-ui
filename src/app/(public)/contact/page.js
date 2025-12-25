@@ -9,10 +9,10 @@ export default function Contact() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-       <ContactHero/>
-       <BranchesGrid/>
-       <ContactSection/>
-       <MapSection/>
+        <ContactHero />
+        <BranchesGrid />
+        <MapSection />
+        <ContactSection />
       </main>
     </div>
   )

@@ -45,10 +45,21 @@ const Page = () => {
   const childrenCount = children.length;
   // Calculate total active subscriptions
   const activeSubscriptions = subscriptionData?.children?.reduce((acc, child) => {
-    return acc + (child.enrolledCourses?.length || 0);
+    const activeCount = child.enrolledCourses?.filter(course =>
+      course.status === 'active' || course.cancelAtPeriodEnd
+    ).length || 0;
+    return acc + activeCount;
   }, 0) || 0;
 
-  const monthlyRequirement = subscriptionData?.totalMonthlyFee || 0;
+  const monthlyRequirement = subscriptionData?.children?.reduce((acc, child) => {
+    const childTotal = child.enrolledCourses?.reduce((sum, course) => {
+      if (course.status === 'active') {
+        return sum + (course.price || 0);
+      }
+      return sum;
+    }, 0) || 0;
+    return acc + childTotal;
+  }, 0) || 0;
 
   return (
     <div className="space-y-10 p-4 max-w-7xl mx-auto">

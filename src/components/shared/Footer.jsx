@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { RiMailLine, RiPhoneLine, RiMapPinLine, RiFacebookCircleFill, RiTwitterXFill, RiInstagramLine, RiLinkedinFill } from "react-icons/ri";
+import { RiMailLine, RiPhoneLine, RiMapPinLine, RiFacebookCircleFill, RiGithubFill, RiInstagramLine, RiLinkedinFill } from "react-icons/ri";
 import Image from "next/image";
 
 import { useState } from "react";
@@ -54,40 +54,40 @@ export function Footer() {
               Empowering education through technology. A platform designed to manage, deliver, and track learning experiences seamlessly.
             </p>
             <div className="flex items-center gap-4 pt-2">
-              <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-[#FF0055] hover:text-white transition-all text-gray-400">
-                <RiFacebookCircleFill size={20} />
+              <a href="https://www.linkedin.com/in/yasserfat7alah/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-[#0077B5] hover:text-white transition-all text-gray-400">
+                <RiLinkedinFill size={20} />
               </a>
-              <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-[#FF0055] hover:text-white transition-all text-gray-400">
-                <RiTwitterXFill size={20} />
-              </a>
-              <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-[#FF0055] hover:text-white transition-all text-gray-400">
+              <a href="https://www.instagram.com/yasserfat7alah/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-[#E4405F] hover:text-white transition-all text-gray-400">
                 <RiInstagramLine size={20} />
               </a>
-              <a href="#" className="p-2 bg-white/5 rounded-full hover:bg-[#FF0055] hover:text-white transition-all text-gray-400">
-                <RiLinkedinFill size={20} />
+              <a href="https://www.facebook.com/YasserFat7alah/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-[#1877F2] hover:text-white transition-all text-gray-400">
+                <RiFacebookCircleFill size={20} />
+              </a>
+              <a href="https://github.com/yasserfat7alah" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full hover:bg-[#333] hover:text-white transition-all text-gray-400">
+                <RiGithubFill size={20} />
               </a>
             </div>
           </div>
 
-          {/* LINKS - For Instructor */}
+          {/* LINKS - Navigations */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-gray-100">For Instructor</h3>
+            <h3 className="font-bold text-lg mb-6 text-gray-100">Navigations</h3>
             <ul className="space-y-3 text-gray-400">
-              <li><Link href="/becomeAnInstrcutor" className="hover:text-[#FF0055] transition-colors inline-block">Become an Instructor</Link></li>
-              <li><Link href="/login" className="hover:text-[#FF0055] transition-colors inline-block">Instructor Login</Link></li>
-              <li><Link href="#" className="hover:text-[#FF0055] transition-colors inline-block">Instructor Dashboard</Link></li>
-              <li><Link href="#" className="hover:text-[#FF0055] transition-colors inline-block">My Students</Link></li>
+              <li><Link href="/" className="hover:text-[#FF0055] transition-colors inline-block">Home</Link></li>
+              <li><Link href="/courses" className="hover:text-[#FF0055] transition-colors inline-block">Courses</Link></li>
+              <li><Link href="/teachers" className="hover:text-[#FF0055] transition-colors inline-block">Teachers</Link></li>
+              <li><Link href="/contact" className="hover:text-[#FF0055] transition-colors inline-block">Contact Us</Link></li>
+              <li><Link href="/about" className="hover:text-[#FF0055] transition-colors inline-block">About Us</Link></li>
             </ul>
           </div>
 
-          {/* LINKS - For Student */}
+          {/* LINKS - Actions */}
           <div>
-            <h3 className="font-bold text-lg mb-6 text-gray-100">For Student</h3>
+            <h3 className="font-bold text-lg mb-6 text-gray-100">Actions</h3>
             <ul className="space-y-3 text-gray-400">
-              <li><Link href="/courses" className="hover:text-[#FF0055] transition-colors inline-block">Explore Courses</Link></li>
-              <li><Link href="/login" className="hover:text-[#FF0055] transition-colors inline-block">Student Login</Link></li>
-              <li><Link href="/signup" className="hover:text-[#FF0055] transition-colors inline-block">Register</Link></li>
-              <li><Link href="#" className="hover:text-[#FF0055] transition-colors inline-block">My Learning</Link></li>
+              <li><Link href="/login" className="hover:text-[#FF0055] transition-colors inline-block">Login</Link></li>
+              <li><Link href="/signup" className="hover:text-[#FF0055] transition-colors inline-block">Signup as a Parent</Link></li>
+              <li><Link href="/becomeAnInstrcutor" className="hover:text-[#FF0055] transition-colors inline-block">Become an Instructor</Link></li>
             </ul>
           </div>
 
@@ -123,14 +123,14 @@ export function Footer() {
                 <RiMapPinLine className="text-[#FF0055] text-lg mt-0.5 group-hover:scale-110 transition-transform" />
                 <span>Information Technology Institute, Tanta</span>
               </div>
-              <div className="flex items-center gap-3 group cursor-pointer hover:text-white transition-colors">
+              <a href="mailto:yasserfat7alah@gmail.com" className="flex items-center gap-3 group cursor-pointer hover:text-white transition-colors">
                 <RiMailLine className="text-[#FF0055] text-lg group-hover:scale-110 transition-transform" />
-                <span>hello@elmister.com</span>
-              </div>
-              <div className="flex items-center gap-3 group cursor-pointer hover:text-white transition-colors">
+                <span>yasserfat7alah@gmail.com</span>
+              </a>
+              <a href="tel:+201019719364" className="flex items-center gap-3 group cursor-pointer hover:text-white transition-colors">
                 <RiPhoneLine className="text-[#FF0055] text-lg group-hover:scale-110 transition-transform" />
-                <span>+1 (555) 123-4567</span>
-              </div>
+                <span>+20 1019 719 364</span>
+              </a>
             </div>
           </div>
         </div>
