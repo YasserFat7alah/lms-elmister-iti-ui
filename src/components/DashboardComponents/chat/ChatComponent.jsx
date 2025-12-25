@@ -10,8 +10,10 @@ import { Send, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Spinner } from '@/components/shared/Loader';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getDaySeparatorLabel, isDifferentDay } from '@/utils/dateFormatters';
+import { isProductionEnvironment } from '@/lib/socket/socket';
 
 const ChatComponent = () => {
+    const isProduction = isProductionEnvironment();
     const { socket, connected } = useSocket();
     const { userInfo } = useSelector((state) => state.auth);
     const searchParams = useSearchParams();
@@ -582,6 +584,14 @@ const ChatComponent = () => {
                 </div>
             )}
 
+            {/* Production Caution Banner */}
+            {isProduction && (
+                <div className="bg-yellow-50 border-b border-yellow-200 p-3 flex items-center gap-2 text-yellow-800">
+                    <AlertCircle size={18} />
+                    <span className="text-sm font-medium">⚠️ Real-time chat is disabled in production. Messages may be delayed.</span>
+                </div>
+            )}
+
             <div className="flex h-[calc(100vh-180px)]">
                 {/* Conversations List */}
                 <div className={`w-full md:w-80 border-r border-gray-200 flex flex-col ${showChatOnMobile ? 'hidden md:flex' : 'flex'
@@ -590,7 +600,12 @@ const ChatComponent = () => {
                     <div className="p-4 border-b-2 border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
                         <h2 className="text-xl font-bold text-gray-900">Messages</h2>
                         <p className="text-sm text-gray-600 mt-1">
-                            {connected ? (
+                            {isProduction ? (
+                                <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                                    Production Mode (Real-time disabled)
+                                </span>
+                            ) : connected ? (
                                 <span className="flex items-center gap-1">
                                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                                     Connected

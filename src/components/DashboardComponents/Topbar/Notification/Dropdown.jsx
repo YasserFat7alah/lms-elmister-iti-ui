@@ -12,8 +12,10 @@ import { setNotifications, addNotification, markAsRead, markAllAsRead, deleteNot
 import { useSocket } from "@/lib/socket/socketContext";
 import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
+import { isProductionEnvironment } from "@/lib/socket/socket";
 
 const Dropdown = () => {
+  const isProduction = isProductionEnvironment();
   const dispatch = useDispatch();
   const { socket, connected } = useSocket();
   const { notifications, unreadCount } = useSelector((state) => state.notifications);
@@ -32,6 +34,8 @@ const Dropdown = () => {
 
   // Listen for real-time notifications via socket
   useEffect(() => {
+    // Disable real-time notifications in production
+    if (isProduction) return;
     if (!socket || !connected) return;
 
     const handleNotification = (notification) => {
@@ -44,7 +48,7 @@ const Dropdown = () => {
 
     socket.on("notification", handleNotification);
     return () => socket.off("notification", handleNotification);
-  }, [socket, connected, dispatch]);
+  }, [socket, connected, dispatch, isProduction]);
 
   const handleMarkAsRead = async (notificationId) => {
     try {
@@ -99,24 +103,38 @@ const Dropdown = () => {
         align="end"
         className="w-80 bg-white shadow-lg rounded-lg overflow-hidden z-[9999] p-0"
       >
-        {/* Sticky Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-10">
-          <h3 className="font-semibold text-gray-900">Notifications</h3>
-          {notifications.length > 0 && !isLoading && (
-            <button
-              onClick={handleMarkAllAsRead}
-              className="text-xs text-green-600 hover:text-green-700 font-medium flex items-center gap-1 transition-colors"
-            >
-              <CheckCircle className="w-3.5 h-3.5" />
-              Mark all read
-            </button>
+        {/* Header */}
+        <div className="flex flex-col gap-2 p-4 border-b border-gray-200 bg-gray-50">
+          <div className="flex justify-between items-center">
+            <h3 className="font-semibold text-gray-900">Notifications</h3>
+            {notifications.length > 0 && !isLoading && (
+              <button
+                onClick={handleMarkAllAsRead}
+                className="text-xs text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+              >
+                <CheckCircle size={14} />
+                Mark all read
+              </button>
+            )}
+          </div>
+          {/* Production Warning */}
+          {isProduction && (
+            <div className="flex items-center gap-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-800 text-xs">
+              <span>⚠️</span>
+              <span>Real-time notifications disabled in production</span>
+            </div>
           )}
-          {isLoading && <span className="text-xs text-gray-500">Loading...</span>}
         </div>
+        {/* Loading state for notifications */}
+        {isLoading && (
+          <div className="py-3 px-4 text-center text-gray-500 text-sm">
+            Loading notifications...
+          </div>
+        )}
 
         {/* Scrollable Notifications List */}
         <div className="max-h-80 overflow-y-auto">
-          {notifications.length === 0 ? (
+          {notifications.length === 0 && !isLoading ? (
             <div className="py-12 text-center text-gray-500 text-sm">
               No notifications found
             </div>

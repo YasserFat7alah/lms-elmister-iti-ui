@@ -3,7 +3,16 @@ import { io } from "socket.io-client";
 
 let socket;
 
+// Check if we're in production
+const isProduction = process.env.NEXT_PUBLIC_ENV === 'production';
+
 export const connectSocket = (token) => {
+    // Disable socket connection in production
+    if (isProduction) {
+        console.warn("Real-time features are disabled in production environment");
+        return null;
+    }
+
     if (!socket) {
         const apiUrl = BASE_URL;
         const socketUrl = SOCKET_URL || (apiUrl ? new URL(apiUrl).origin : undefined);
@@ -21,3 +30,5 @@ export const connectSocket = (token) => {
 };
 
 export const getSocket = () => socket;
+
+export const isProductionEnvironment = () => isProduction;
